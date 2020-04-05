@@ -9,11 +9,3 @@ type SoloArtist struct {
 	Country  string
 	Birthday time.Time
 }
-
-func (s *SoloArtist) ID() int {
-	return s.id
-}
-
-func (s *SoloArtist) Name() string {
-	return s.name
-}

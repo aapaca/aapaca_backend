@@ -9,11 +9,3 @@ type GroupArtist struct {
 	Birthday time.Time
 	Members []interface{}
 }
-
-func (g *GroupArtist) ID() int {
-	return g.id
-}
-
-func (g *GroupArtist) Name() string {
-	return g.name
-}
