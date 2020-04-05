@@ -3,8 +3,8 @@ package domain
 import "time"
 
 type SoloArtist struct {
-	id       int
-	name     string
+	Id       int
+	Name     string
 	Part     []Occupation
 	Country  string
 	Birthday time.Time

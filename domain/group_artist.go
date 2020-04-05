@@ -3,8 +3,8 @@ package domain
 import "time"
 
 type GroupArtist struct {
-	id       int
-	name     string
+	Id       int
+	Name     string
 	Country  string
 	Birthday time.Time
 	Members []interface{}
