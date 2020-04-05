@@ -7,7 +7,7 @@ type GroupArtist struct {
 	name     string
 	Country  string
 	Birthday time.Time
-	Members[] Artist
+	Members []interface{}
 }
 
 func (g *GroupArtist) ID() int {
