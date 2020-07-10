@@ -1,6 +1,6 @@
 package domain
 
 type Occupation struct {
-	ID int
+	ID    int
 	Title string
 }

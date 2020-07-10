@@ -5,7 +5,7 @@ import "time"
 type SoloArtist struct {
 	Id       int
 	Name     string
-	Part     []Occupation
+	Parts    []Occupation
 	Country  string
 	Birthday time.Time
 }
