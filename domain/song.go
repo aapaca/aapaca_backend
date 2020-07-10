@@ -6,6 +6,6 @@ type Song struct {
 	PrimaryArtist   interface{}
 	AttendedArtists []interface{}
 	Label           string // TODO レーベルも構造体にする
-	Album           Album
+	Albums          []Album
 	Genre           string // TODO ジャンルも構造体にする
 }
