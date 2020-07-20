@@ -1,12 +1,14 @@
 version: '3'
 services:
   db:
-    build: .
+    build: ./docker/mysql
     environment:
+      - MYSQL_DATABASE=aapaca
       - MYSQL_ROOT_PASSWORD=passwd
       - MYSQL_USER=conv
       - MYSQL_PASSWORD=passwd
     ports:
       - 3306:3306
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
