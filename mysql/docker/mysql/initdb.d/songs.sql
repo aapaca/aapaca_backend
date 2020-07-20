@@ -6,5 +6,3 @@ CREATE TABLE aapaca.songs (
     genre VARCHAR(256),
     PRIMARY KEY (id)
 );
-
-INSERT INTO songs (name, primary_artist_id) VALUES ("Automatic", 1)
