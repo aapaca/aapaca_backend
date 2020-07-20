@@ -10,9 +10,12 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./mysql:/var/lib/mysql
       - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
       # for Mac
       - ./docker/mysql/conf.d:/root/conf.d
+      - ./mysql:/var/lib/mysql
       # for Windows
       # - ./docker/mysql/conf.d:/etc/mysql/conf.d
+      # - db-data:/var/lib/mysql
+# volumes:
+#   db-data:
