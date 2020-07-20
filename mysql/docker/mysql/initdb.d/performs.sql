@@ -1,4 +1,4 @@
-CREATE TABLE performs (
+CREATE TABLE aapaca.performs (
     id INT NOT NULL AUTO_INCREMENT,
     song_id INT NOT NULL,
     artist_id INT NOT NULL,
