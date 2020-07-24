@@ -1,0 +1,30 @@
+version: '3'
+services:
+  api:
+    build: ./src/app
+    volumes:
+      - ./src/app:/app
+    ports:
+      - 1323:1323
+    depends_on:
+      - "db"
+  db:
+    build: ./mysql/docker/mysql
+    environment:
+      - MYSQL_DATABASE=aapaca
+      - MYSQL_ROOT_PASSWORD=passwd
+      - MYSQL_USER=conv
+      - MYSQL_PASSWORD=passwd
+    container_name: mysql-container
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+      # for Mac
+      # - ./mysql/docker/mysql/conf.d:/root/conf.d
+      # - ./mysql:/var/lib/mysql
+      # for Windows
+      - ./mysql/docker/mysql/conf.d:/etc/mysql/conf.d
+      - db-data:/var/lib/mysql
+volumes:
+  db-data:
