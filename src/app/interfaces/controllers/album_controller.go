@@ -4,7 +4,6 @@ import (
 	"github.com/labstack/echo"
 	"net/http"
 	"strconv"
-	// "../../domain"
 	"../database"
 	"../../usecase"
 )

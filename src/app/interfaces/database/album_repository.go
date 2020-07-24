@@ -1,7 +1,7 @@
 package database
 
 import (
-	"time"
+	"fmt"
 	"../../domain"
 )
 
@@ -10,22 +10,19 @@ type AlbumRepository struct {
 }
 
 func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
-	row, err := repo.Query("SELECT id, name, primary_artist_id, label, released_date FROM albums WHERE id = ?", id)
+	row, err := repo.Query("SELECT id, name FROM albums WHERE id = ?", id)
 	defer row.Close()
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	var album_id int
 	var name string
-	var label string
-	var released_date time.Time
 	row.Next()
-	if err = row.Scan(&album_id, &name, &label, &released_date); err != nil {
+	if err = row.Scan(&album_id, &name); err != nil {
 		return
 	}
 	album.ID = album_id
 	album.Name = name
-	album.Label = label
-	album.ReleasedDate = released_date
 	return
 }
