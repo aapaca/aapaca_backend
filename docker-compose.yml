@@ -9,7 +9,7 @@ services:
     depends_on:
       - "db"
   db:
-    build: ./mysql/docker/mysql
+    build: ./mysql
     environment:
       - MYSQL_DATABASE=aapaca
       - MYSQL_ROOT_PASSWORD=passwd
@@ -19,12 +19,13 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./mysql/docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d
       # for Mac
-      # - ./mysql/docker/mysql/conf.d:/root/conf.d
-      # - ./mysql:/var/lib/mysql
+      # - ./mysql/conf.d:/root/conf.d
+      # - ./mysql/mysql:/var/lib/mysql
       # for Windows
-      - ./mysql/docker/mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/conf.d:/etc/mysql/conf.d
       - db-data:/var/lib/mysql
+# for Windows
 volumes:
   db-data:
