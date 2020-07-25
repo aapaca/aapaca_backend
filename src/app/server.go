@@ -1,6 +1,6 @@
 package main
 
-import "./infrastructure"
+import "infrastructure"
 
 func main() {
 	infrastructure.Init()

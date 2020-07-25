@@ -2,7 +2,7 @@ package infrastructure
 
 import (
     "database/sql"
-    "../interfaces/database"
+    "interfaces/database"
     _ "github.com/go-sql-driver/mysql"
 )
 

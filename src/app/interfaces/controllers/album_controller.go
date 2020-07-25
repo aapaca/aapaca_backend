@@ -4,8 +4,8 @@ import (
 	"github.com/labstack/echo"
 	"net/http"
 	"strconv"
-	"../database"
-	"../../usecase"
+	"interfaces/database"
+	"usecase"
 )
 
 type AlbumController struct {

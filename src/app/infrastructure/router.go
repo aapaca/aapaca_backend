@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	"github.com/labstack/echo"
-	"../interfaces/controllers"
+	"interfaces/controllers"
 )
 
 func Init() {

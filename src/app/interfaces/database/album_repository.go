@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-	"../../domain"
+	"domain"
 )
 
 type AlbumRepository struct {

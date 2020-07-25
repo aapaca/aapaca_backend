@@ -1,6 +1,6 @@
 package usecase
 
-import "../domain"
+import "domain"
 
 type AlbumInteractor struct {
 	AlbumRepository AlbumRepository
