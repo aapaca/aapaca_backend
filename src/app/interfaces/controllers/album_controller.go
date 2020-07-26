@@ -27,7 +27,7 @@ func (controller *AlbumController) Show() echo.HandlerFunc {
 		id, _ := strconv.Atoi(c.Param("id"))
 		album, err := controller.Interactor.AlbumById(id)
 		if err != nil {
-
+			return c.JSON(http.StatusBadRequest, APIError("Album Not Found"))
 		}
 		return c.JSON(http.StatusOK, album)
 	}

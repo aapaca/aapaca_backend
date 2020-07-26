@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"domain"
 )
 
@@ -13,7 +12,6 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 	row, err := repo.Query("SELECT albums.id, albums.name, artists.name FROM albums INNER JOIN artists ON albums.primary_artist_id = artists.id WHERE albums.id = ?", id)
 	defer row.Close()
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
 	var album_id int
