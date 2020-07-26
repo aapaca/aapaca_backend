@@ -21,11 +21,11 @@ services:
     volumes:
       - ./mysql/initdb.d:/docker-entrypoint-initdb.d
       # for Mac
-      # - ./mysql/conf.d:/root/conf.d
-      # - ./mysql/mysql:/var/lib/mysql
+      - ./mysql/conf.d:/root/conf.d
+      - ./mysql/mysql:/var/lib/mysql
       # for Windows
-      - ./mysql/conf.d:/etc/mysql/conf.d
-      - db-data:/var/lib/mysql
+      # - ./mysql/conf.d:/etc/mysql/conf.d
+      # - db-data:/var/lib/mysql
 # for Windows
-volumes:
-  db-data:
+# volumes:
+#   db-data:
