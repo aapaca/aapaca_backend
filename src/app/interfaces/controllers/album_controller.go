@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"github.com/labstack/echo"
+	"interfaces/database"
 	"net/http"
 	"strconv"
-	"interfaces/database"
 	"usecase"
 )
 
@@ -13,9 +13,9 @@ type AlbumController struct {
 }
 
 func NewAlbumController(sqlHandler database.SqlHandler) *AlbumController {
-	return &AlbumController {
-		Interactor: usecase.AlbumInteractor {
-			AlbumRepository: &database.AlbumRepository {
+	return &AlbumController{
+		Interactor: usecase.AlbumInteractor{
+			AlbumRepository: &database.AlbumRepository{
 				SqlHandler: sqlHandler,
 			},
 		},
