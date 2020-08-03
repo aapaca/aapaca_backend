@@ -2,6 +2,8 @@ version: '3'
 services:
   api:
     build: ./src/app
+    env_file:
+      - .env
     volumes:
       - ./src/app:/app
     ports:
@@ -10,14 +12,11 @@ services:
       - "db"
   db:
     build: ./mysql
-    environment:
-      - MYSQL_DATABASE=aapaca
-      - MYSQL_ROOT_PASSWORD=passwd
-      - MYSQL_USER=conv
-      - MYSQL_PASSWORD=passwd
-    container_name: mysql-container
+    env_file:
+      - .env
+    container_name: ${MYSQL_CONTAINER}
     ports:
-      - 3306:3306
+      - ${MYSQL_PORT}:${MYSQL_PORT}
     volumes:
       - ./mysql/initdb.d:/docker-entrypoint-initdb.d
       # for Mac
