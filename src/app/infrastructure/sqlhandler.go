@@ -11,7 +11,9 @@ type SqlHandler struct {
 }
 
 func NewSqlHandler() database.SqlHandler {
-	conn, err := sql.Open("mysql", "conv:passwd@tcp(mysql-container:3306)/aapaca")
+	c := NewDBConfig()
+	dbPath := c.User + ":" + c.Password + "@tcp(" + c.Container + ":" + c.Port + ")/" + c.Database
+	conn, err := sql.Open("mysql", dbPath)
 	if err != nil {
 		panic(err)
 	}
