@@ -19,3 +19,6 @@
 .idea/modules.xml
 .idea/vcs.xml
 .idea/workspace.xml
+
+# Go files
+*go.sum

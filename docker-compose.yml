@@ -1,0 +1,30 @@
+version: '3'
+services:
+  api:
+    build: ./src/app
+    env_file:
+      - .env
+    volumes:
+      - ./src/app:/app
+    ports:
+      - 1323:1323
+    depends_on:
+      - "db"
+  db:
+    build: ./mysql
+    env_file:
+      - .env
+    container_name: ${MYSQL_CONTAINER}
+    ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+    volumes:
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d
+      # for Mac
+      - ./mysql/conf.d:/root/conf.d
+      - ./mysql/mysql:/var/lib/mysql
+      # for Windows
+      # - ./mysql/conf.d:/etc/mysql/conf.d
+      # - db-data:/var/lib/mysql
+# for Windows
+# volumes:
+#   db-data:
