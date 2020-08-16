@@ -2,7 +2,7 @@ package domain
 
 import "time"
 
-type GroupArtist struct {
+type Artist struct {
 	Id       int
 	Name     string
 	Country  string
