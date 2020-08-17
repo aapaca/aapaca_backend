@@ -8,4 +8,5 @@ type Artist struct {
 	Country  string
 	Birthday time.Time
 	Members  []interface{}
+	ImageURL string
 }

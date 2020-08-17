@@ -9,4 +9,5 @@ type Album struct {
 	Credits       []Credit
 	Label         string // レーベルも構造体にすべきかもしれない
 	ReleasedDate  time.Time
+	ImageURL      string
 }
