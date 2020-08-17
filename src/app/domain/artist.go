@@ -3,7 +3,7 @@ package domain
 import "time"
 
 type Artist struct {
-	Id       int
+	ID       int
 	Name     string
 	Country  string
 	Birthday time.Time
