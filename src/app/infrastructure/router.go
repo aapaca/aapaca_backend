@@ -7,7 +7,8 @@ import (
 
 func Init() {
 	e := echo.New()
-	albumController := controllers.NewAlbumController(NewSqlHandler())
-	e.GET("/album/:id", albumController.Show())
+	sqlHandler := NewSqlHandler()
+	albumController := controllers.NewAlbumController(sqlHandler)
+	e.GET("/albums/:id", albumController.Show())
 	e.Logger.Fatal(e.Start(":1323"))
 }
