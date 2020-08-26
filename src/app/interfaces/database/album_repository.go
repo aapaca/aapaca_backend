@@ -22,29 +22,14 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 	defaultBirthday := time.Time{}
 	defaultMembers := []domain.Artist{}
 	// load album info
-	row, err := repo.Query(`SELECT albums.id, albums.name, artists.id, artists.name, albums.released_date
-							FROM albums
-							INNER JOIN artists
-								ON albums.primary_artist_id = artists.id
-								AND albums.id = ?`, id)
-	defer row.Close()
-	if err != nil {
-		return
-	}
 	pArtist := domain.Artist{
 		Birthday: &defaultBirthday,
 		Members:  defaultMembers,
 		ImageURL: dummyURL,
 	}
-	row.Next()
-	if err = row.Scan(&album.ID, &album.Name, &pArtist.ID, &pArtist.Name, &album.ReleasedDate); err != nil {
-		return
-	}
-	album.PrimaryArtist = pArtist
-	album.ImageURL = dummyURL
 
-	// load credits
-	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, occupations.id, occupations.title
+	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, oc.id, oc.title,
+								albums.id, albums.name, albums.released_date, p_art.id, p_art.name
 							FROM artists
 							INNER JOIN performs
 							 	ON performs.artist_id = artists.id
@@ -53,15 +38,19 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 							INNER JOIN contains
 								ON contains.song_id = songs.id
 								AND contains.album_id = ?
-							INNER JOIN occupations
-							 	ON occupations.id = performs.occupation_id`, id)
+							INNER JOIN occupations as oc
+								ON oc.id = performs.occupation_id
+							INNER JOIN albums
+								ON albums.id = contains.album_id
+							INNER JOIN artists as p_art
+								ON p_art.id = albums.primary_artist_id`, id)
 	defer rows.Close()
 	creditMap := map[int]*domain.Credit{}
 	for rows.Next() {
 		var artistId int
 		var artistName string
 		part := domain.Occupation{}
-		if err = rows.Scan(&artistId, &artistName, &part.ID, &part.Title); err != nil {
+		if err = rows.Scan(&artistId, &artistName, &part.ID, &part.Title, &album.ID, &album.Name, &album.ReleasedDate, &pArtist.ID, &pArtist.Name); err != nil {
 			return
 		}
 		if _, ok := creditMap[artistId]; !ok {
@@ -78,6 +67,8 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 		}
 		creditMap[artistId].Parts = append(creditMap[artistId].Parts, part)
 	}
+	album.PrimaryArtist = pArtist
+	album.ImageURL = dummyURL
 	album.Credits = values(creditMap)
 	return
 }
