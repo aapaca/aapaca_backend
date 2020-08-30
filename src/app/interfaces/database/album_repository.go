@@ -18,18 +18,16 @@ func values(creditMap map[int]*domain.Credit) []domain.Credit {
 }
 
 func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
-	const dummyURL = "http://placeimg.com/200/200/any"
 	defaultBirthday := time.Time{}
 	defaultMembers := []domain.Artist{}
 	// load album info
 	pArtist := domain.Artist{
 		Birthday: &defaultBirthday,
 		Members:  defaultMembers,
-		ImageURL: dummyURL,
 	}
 
-	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, oc.id, oc.title,
-								albums.id, albums.name, albums.released_date, p_art.id, p_art.name
+	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title,
+								albums.id, albums.name, albums.released_date, albums.image_url, p_art.id, p_art.name, p_art.image_url
 							FROM artists
 							INNER JOIN performs
 							 	ON performs.artist_id = artists.id
@@ -49,8 +47,9 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 	for rows.Next() {
 		var artistId int
 		var artistName string
+		var artistImgURL string
 		part := domain.Occupation{}
-		if err = rows.Scan(&artistId, &artistName, &part.ID, &part.Title, &album.ID, &album.Name, &album.ReleasedDate, &pArtist.ID, &pArtist.Name); err != nil {
+		if err = rows.Scan(&artistId, &artistName, &artistImgURL, &part.ID, &part.Title, &album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
 			return
 		}
 		if _, ok := creditMap[artistId]; !ok {
@@ -60,7 +59,7 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 					Name:     artistName,
 					Birthday: &defaultBirthday,
 					Members:  defaultMembers,
-					ImageURL: dummyURL,
+					ImageURL: artistImgURL,
 				},
 				Parts: []domain.Occupation{},
 			}
@@ -68,7 +67,6 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 		creditMap[artistId].Parts = append(creditMap[artistId].Parts, part)
 	}
 	album.PrimaryArtist = pArtist
-	album.ImageURL = dummyURL
 	album.Credits = values(creditMap)
 	return
 }
