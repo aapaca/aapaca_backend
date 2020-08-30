@@ -8,6 +8,6 @@ type Album struct {
 	PrimaryArtist interface{}
 	Credits       []Credit
 	Label         string // レーベルも構造体にすべきかもしれない
-	ReleasedDate  time.Time
+	ReleasedDate  *time.Time
 	ImageURL      string
 }

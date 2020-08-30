@@ -6,7 +6,7 @@ type Artist struct {
 	ID       int
 	Name     string
 	Country  string
-	Birthday time.Time
-	Members  []interface{}
+	Birthday *time.Time
+	Members  interface{}
 	ImageURL string
 }
