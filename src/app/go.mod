@@ -16,6 +16,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/labstack/echo v3.3.10+incompatible // indirect
 	github.com/labstack/gommon v0.3.0 // indirect
+	github.com/stretchr/testify v1.6.1
 	golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899 // indirect
 	golang.org/x/tools v0.0.0-20200917221617-d56e4e40bc9d // indirect
 	infrastructure v0.0.0-00010101000000-000000000000
