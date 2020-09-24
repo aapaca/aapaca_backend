@@ -3,13 +3,8 @@ package database
 import (
 	"domain"
 	"github.com/stretchr/testify/assert"
-	"sort"
 	"testing"
 )
-
-func sortSlice(s []domain.Credit) {
-	sort.Slice(s, func(i, j int) bool { return s[i].Artist.ID < s[j].Artist.ID })
-}
 
 func TestValues(t *testing.T) {
 	t.Run("Convert Empty map to array", func(t *testing.T) {
@@ -32,16 +27,12 @@ func TestValues(t *testing.T) {
 			{Artist: artist2, Parts: part},
 			{Artist: artist3, Parts: part},
 		}
-
 		creditMap := map[int]*domain.Credit{}
 		for i := range credits {
 			creditMap[i] = &credits[i]
 		}
 
 		got := values(creditMap)
-		// スライスgotの順序がcreditsと異なる可能性があるので、Artist.IDに基づいてソーティングする
-		sortSlice(credits)
-		sortSlice(got)
-		assert.Equal(t, credits, got, "Error")
+		assert.ElementsMatch(t, credits, got)
 	})
 }
