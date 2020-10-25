@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"domain"
+	"errors"
 	"time"
 )
 
@@ -75,6 +76,11 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 			Title: partTitle.String,
 		}
 		creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
+	}
+	// if rows have no columns, return err
+	if album.ID != id {
+		err = errors.New("album not found")
+		return
 	}
 	album.PrimaryArtist = pArtist
 	album.Credits = values(creditMap)
