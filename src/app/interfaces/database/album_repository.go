@@ -1,7 +1,9 @@
 package database
 
 import (
+	"database/sql"
 	"domain"
+	"errors"
 	"time"
 )
 
@@ -25,46 +27,60 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 		Birthday: &defaultBirthday,
 		Members:  defaultMembers,
 	}
-
 	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title,
 								albums.id, albums.name, albums.released_date, albums.image_url, p_art.id, p_art.name, p_art.image_url
-							FROM artists
-							INNER JOIN performs
-							 	ON performs.artist_id = artists.id
-							INNER JOIN songs
-								ON songs.id = performs.song_id
-							INNER JOIN contains
-								ON contains.song_id = songs.id
-								AND contains.album_id = ?
-							INNER JOIN occupations as oc
-								ON oc.id = performs.occupation_id
-							INNER JOIN albums
-								ON albums.id = contains.album_id
+							FROM albums
 							INNER JOIN artists as p_art
-								ON p_art.id = albums.primary_artist_id`, id)
+								ON albums.primary_artist_id = p_art.id
+								AND albums.id = ?
+							LEFT OUTER JOIN contains
+								ON albums.id = contains.album_id
+							LEFT OUTER JOIN songs
+								ON contains.song_id = songs.id
+							LEFT OUTER JOIN performs
+								ON songs.id = performs.song_id
+							LEFT OUTER JOIN artists
+								ON performs.artist_id = artists.id
+							LEFT OUTER JOIN occupations as oc
+								ON performs.occupation_id = oc.id
+							`, id)
 	defer rows.Close()
 	creditMap := map[int]*domain.Credit{}
 	for rows.Next() {
-		var artistId int
-		var artistName string
-		var artistImgURL string
-		part := domain.Occupation{}
-		if err = rows.Scan(&artistId, &artistName, &artistImgURL, &part.ID, &part.Title, &album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
+		var nullableArtistID sql.NullInt64
+		var artistName sql.NullString
+		var artistImgURL sql.NullString
+		var partID sql.NullInt64
+		var partTitle sql.NullString
+		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
 			return
 		}
-		if _, ok := creditMap[artistId]; !ok {
-			creditMap[artistId] = &domain.Credit{
+		if !nullableArtistID.Valid { // credit is empty
+			break
+		}
+		artistID := int(nullableArtistID.Int64)
+		if _, ok := creditMap[artistID]; !ok {
+			creditMap[artistID] = &domain.Credit{
 				Artist: domain.Artist{
-					ID:       artistId,
-					Name:     artistName,
+					ID:       int(artistID),
+					Name:     artistName.String,
 					Birthday: &defaultBirthday,
 					Members:  defaultMembers,
-					ImageURL: artistImgURL,
+					ImageURL: artistImgURL.String,
 				},
 				Parts: []domain.Occupation{},
 			}
 		}
-		creditMap[artistId].Parts = append(creditMap[artistId].Parts, part)
+		part := domain.Occupation{
+			ID:    int(partID.Int64),
+			Title: partTitle.String,
+		}
+		creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
+	}
+	// if rows have no columns, return err
+	if album.ID != id {
+		err = errors.New("album not found")
+		return
 	}
 	album.PrimaryArtist = pArtist
 	album.Credits = values(creditMap)
