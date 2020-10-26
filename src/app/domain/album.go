@@ -10,4 +10,6 @@ type Album struct {
 	Label         string // レーベルも構造体にすべきかもしれない
 	ReleasedDate  *time.Time
 	ImageURL      string
+	Description   string
+	Links         map[string]string
 }
