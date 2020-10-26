@@ -1,0 +1,53 @@
+title: Artist
+type: object
+properties:
+  ID:
+    type: integer
+  Name:
+    type: string
+  Country:
+    type: string
+  Birthday:
+    type: string
+    format: date
+  Members:
+    type: array
+    items:
+      $ref: ./Artist.v1.yaml
+  ImageURL:
+    type: string
+    format: uri
+  Description:
+    type: string
+  Links:
+    type: object
+    additionalProperties:
+      type: string
+      format: uri
+x-examples:
+  Common:
+    ID: 1
+    Name: Common
+    Country: U.S.
+    Birthday: '1972-03-13'
+    Members:
+      - {}
+    ImageURL: 'http://example.com'
+    Description: 'Lonnie Rashid Lynn (born March 13, 1972), better known by his stage name Common (formerly Common Sense), is an American rapper, actor and writer.'
+    Links:
+      amazon_music: 'https://www.amazon.com/Common/e/B000AQ3K7O/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+      itunes: 'https://music.apple.com/us/artist/common/64490'
+      spotify: 'https://open.spotify.com/artist/2GHclqNVjqGuiE5mA7BEoc'
+  Robert Glasper:
+    ID: 2
+    Name: Robert Glasper
+    Country: U.S.
+    Birthday: '1978-04-05'
+    Members:
+      - {}
+    ImageURL: 'http://example.com'
+    Description: 'Robert Andre Glasper (born April 6, 1978) is an American pianist and record producer. He has been nominated for seven Grammy Awards and has won three Grammys and one Emmy Award.'
+    Links:
+      amazon_music: 'https://www.amazon.com/Robert-Glasper/e/B00197K67U/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+      apple music: 'https://music.apple.com/us/artist/robert-glasper/4643652'
+      spotify: 'https://open.spotify.com/artist/5cM1PvItlR21WUyBnsdMcn'

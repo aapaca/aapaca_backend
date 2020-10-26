@@ -1,0 +1,9 @@
+title: Credit
+type: object
+properties:
+  Artist:
+    $ref: ./Artist.v1.yaml
+  Parts:
+    type: array
+    items:
+      $ref: ./Occupation.v1.yaml

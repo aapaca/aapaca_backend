@@ -1,0 +1,78 @@
+title: Album
+type: object
+x-examples:
+  Black America Again:
+    ID: 0
+    Name: string
+    PrimaryArtist:
+      ID: 0
+      Name: string
+      Country: string
+      Birthday: '2019-08-24'
+      Members:
+        - ID: 0
+          Name: string
+          Country: string
+          Birthday: '2019-08-24'
+          Members:
+            - {}
+          ImageURL: 'http://example.com'
+          Description: string
+          Links:
+            property1: 'http://example.com'
+            property2: 'http://example.com'
+      ImageURL: 'http://example.com'
+      Description: string
+      Links:
+        property1: 'http://example.com'
+        property2: 'http://example.com'
+    Credits:
+      - Artist:
+          ID: 0
+          Name: string
+          Country: string
+          Birthday: '2019-08-24'
+          Members:
+            - {}
+          ImageURL: 'http://example.com'
+          Description: string
+          Links:
+            property1: 'http://example.com'
+            property2: 'http://example.com'
+        Parts:
+          - ID: 0
+            Title: string
+    Label: string
+    ReleasedDate: '2019-08-24'
+    ImageURL: 'http://example.com'
+    Description: string
+    Links:
+      property1: 'http://example.com'
+      property2: 'http://example.com'
+description: entity of album
+properties:
+  ID:
+    type: integer
+  Name:
+    type: string
+  PrimaryArtist:
+    $ref: ./Artist.v1.yaml
+  Credits:
+    type: array
+    items:
+      $ref: ./Credit.v1.yaml
+  Label:
+    type: string
+  ReleasedDate:
+    type: string
+    format: date
+  ImageURL:
+    type: string
+    format: uri
+  Description:
+    type: string
+  Links:
+    type: object
+    additionalProperties:
+      type: string
+      format: uri

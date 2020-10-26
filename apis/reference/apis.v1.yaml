@@ -1,0 +1,487 @@
+openapi: 3.0.0
+info:
+  title: aapaca apis
+  version: '1.0'
+  contact: {}
+  description: APIs for Aapaca
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/albums/{albumId}':
+    parameters:
+      - schema:
+          type: number
+        name: albumId
+        in: path
+        description: Album ID
+        required: true
+    get:
+      summary: Get an album corresponding to album ID.
+      tags:
+        - album
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Album.v1.yaml
+              examples:
+                Black America Again:
+                  value:
+                    ID: 1
+                    Name: Black America Again
+                    PrimaryArtist:
+                      ID: 1
+                      Name: Common
+                      Country: ''
+                      Birthday: ''
+                      Members:
+                        - {}
+                      ImageURL: 'http://example.com'
+                      Description: ''
+                      Links: {}
+                    Credits:
+                      - Artist:
+                          ID: 1
+                          Name: Common
+                          Country: ''
+                          Birthday: ''
+                          Members:
+                            - {}
+                          ImageURL: 'http://example.com'
+                          Description: ''
+                          Links: {}
+                        Parts:
+                          - ID: 1
+                            Title: Executive Producer
+                      - Artist:
+                          ID: 2
+                          Name: Robert Glasper
+                          Country: ''
+                          Birthday: ''
+                          Members: []
+                          ImageURL: 'http://example.com'
+                          Description: ''
+                          Links: {}
+                        Parts:
+                          - ID: 2
+                            Title: Composer
+                          - ID: 3
+                            Title: Piano
+                          - ID: 4
+                            Title: Keyboard
+                    Label: ARTium
+                    ReleasedDate: '2016-11-04'
+                    ImageURL: 'http://example.com'
+                    Description: 'Thematically and structurally, Black America Again distills the essence of its parent release like few other pre-album singles. Filled with love, grief, and rage, Common traces .... '
+                    Links:
+                      amazon_music: 'https://www.amazon.com/Black-America-Again-Explicit-Common/dp/B01MCRSTN4/ref=sr_1_1?dchild=1&keywords=common&qid=1603611857&s=dmusic&sr=1-1'
+                      apple music: 'https://music.apple.com/us/album/black-america-again/1440895412'
+                      spotify: 'https://open.spotify.com/album/2DTbGcv40CSMW0P4yAQQBa'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Response:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    Response: Album Not Found
+      operationId: get-albums-albumId
+      description: Album IDに対応するアルバムの情報を取得できる。このエンドポイントは、Albumページの上部にあるアルバムについての情報と、アルバムに参加するアーティスト（Personnel）を提供する。
+  '/artists/{artistId}':
+    parameters:
+      - schema:
+          type: integer
+        name: artistId
+        in: path
+        required: true
+        description: ID of artist
+    get:
+      summary: Get an artist corresponding to artist ID
+      tags:
+        - artist
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Artist.v1.yaml
+              examples:
+                Common:
+                  value:
+                    ID: 1
+                    Name: Common
+                    Country: U.S.
+                    Birthday: '1972-03-13'
+                    Members:
+                      - {}
+                    ImageURL: 'http://example.com'
+                    Description: 'Lonnie Rashid Lynn (born March 13, 1972), better known by his stage name Common (formerly Common Sense), is an American rapper, actor and writer.'
+                    Links:
+                      amazon_music: 'https://www.amazon.com/Common/e/B000AQ3K7O/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+                      apple music: 'https://music.apple.com/us/artist/common/64490'
+                      spotify: 'https://open.spotify.com/artist/2GHclqNVjqGuiE5mA7BEoc'
+                Robert Glasper:
+                  value:
+                    ID: 2
+                    Name: Robert Glasper
+                    Country: U.S.
+                    Birthday: '1978-04-05'
+                    Members:
+                      - {}
+                    ImageURL: 'http://example.com'
+                    Description: 'Robert Andre Glasper (born April 6, 1978) is an American pianist and record producer. He has been nominated for seven Grammy Awards and has won three Grammys and one Emmy Award.'
+                    Links:
+                      amazon_music: 'https://www.amazon.com/Robert-Glasper/e/B00197K67U/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+                      apple music: 'https://music.apple.com/us/artist/robert-glasper/4643652'
+                      spotify: 'https://open.spotify.com/artist/5cM1PvItlR21WUyBnsdMcn'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Response:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    Responce: Artist Not Found
+      operationId: get-artists-artistID
+      description: Artist IDに対応するアーティストの情報を取得できる。このエンドポイントは、Artistページにおける上部のプロフィールを提供する。Artistがグループであれば、これに所属するメンバー（Members）も提供する。
+      parameters: []
+  '/songs/{songId}':
+    parameters:
+      - schema:
+          type: string
+        name: songId
+        in: path
+        required: true
+    get:
+      summary: Get a song corresponding to song ID
+      tags:
+        - song
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Song.v1.yaml
+              examples:
+                Joy and Peace:
+                  value:
+                    ID: 1
+                    Name: Joy and Peace
+                    PrimaryArtist:
+                      ID: 1
+                      Name: Common
+                      Country: ''
+                      Birthday: ''
+                      Members:
+                        - {}
+                      ImageURL: 'http://example.com'
+                      Description: ''
+                      Links: {}
+                    Credits:
+                      - Artist:
+                          ID: 1
+                          Name: Common
+                          Country: ''
+                          Birthday: ''
+                          Members: []
+                          ImageURL: 'http://example.com'
+                          Description: ''
+                          Links: {}
+                        Parts:
+                          - ID: 1
+                            Title: Exective Producer
+                      - Artist:
+                          ID: 2
+                          Name: Robert Glasper
+                          Country: ''
+                          Birthday: ''
+                          Members: []
+                          ImageURL: 'http://example.com'
+                          Description: ''
+                          Links: {}
+                        Parts:
+                          - ID: 2
+                            Title: Composer
+                          - ID: 3
+                            Title: Piano
+                          - ID: 4
+                            Title: Keyboard
+                    Label: ARTium
+                    Albums:
+                      - ID: 1
+                        Name: Black America Again
+                        PrimaryArtist:
+                          ID: 1
+                          Name: Common
+                          Country: ''
+                          Birthday: ''
+                          Members: []
+                          ImageURL: ''
+                          Description: ''
+                          Links: {}
+                        Credits: []
+                        Label: ARTium
+                        ReleasedDate: '2016-11-04'
+                        ImageURL: 'http://example.com'
+                        Description: ''
+                        Links: {}
+                    Genre: Hiphop
+                    ReleasedDate: '2016-11-04'
+                    Time: '02:40'
+                    ImageURL: 'http://example.com'
+                    Links:
+                      amazon music: 'https://www.amazon.com/Joy-Peace-Explicit-feat-Bilal/dp/B01MF58RNV/ref=sr_1_2?dchild=1&keywords=common+joy+and+peace&qid=1603626572&sr=8-2'
+                      apple music: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
+                      spotify: 'https://open.spotify.com/track/5VRq8bpbbSsROTLMTraLNN'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Response:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    Response: Song Not Found
+      operationId: get-songs-songId
+      description: Song IDに対応する曲の情報を取得できる。このエンドポイントはsongページにある曲名やPrimary Artistのほか、参加アーティスト（Personnel）や曲を収録しているアルバム（Appears on）を提供する。
+  '/artists/{artistId}/albums':
+    parameters:
+      - schema:
+          type: string
+        name: artistId
+        in: path
+        required: true
+    get:
+      summary: Get albums that the artist released as a primary artist
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Album.v1.yaml
+              examples:
+                Common:
+                  value:
+                    - ID: 1
+                      Name: Black America Again
+                      PrimaryArtist:
+                        ID: 1
+                        Name: Common
+                        Country: ''
+                        Birthday: ''
+                        Members:
+                          - {}
+                        ImageURL: 'http://example.com'
+                        Description: ''
+                        Links: {}
+                      Credits: []
+                      Label: ''
+                      ReleasedDate: '2016-11-04'
+                      ImageURL: 'http://example.com'
+                      Description: ''
+                      Links: {}
+                    - ID: 2
+                      Name: Let Love
+                      PrimaryArtist:
+                        ID: 1
+                        Name: Common
+                        Country: ''
+                        Birthday: ''
+                        Members:
+                          - {}
+                        ImageURL: 'http://example.com'
+                        Description: ''
+                        Links: {}
+                      Credits: []
+                      Label: ''
+                      ReleasedDate: '2019-08-30'
+                      ImageURL: 'http://example.com'
+                      Description: ''
+                      Links: {}
+      operationId: get-artists-artistId-albums
+      description: アーティストがPrimary Artistとしてリリースしたアルバムを取得できる。このエンドポイントは、Artistページにおけるアルバム一覧（Discography）を提供する。
+      tags:
+        - artist
+  '/artists/{artistId}/songs':
+    parameters:
+      - schema:
+          type: string
+        name: artistId
+        in: path
+        required: true
+    get:
+      summary: Get songs that the artist attended
+      tags:
+        - artist
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Song.v1.yaml
+              examples:
+                Robert Glasper:
+                  value:
+                    - ID: 1
+                      Name: Joy And Peace
+                      PrimaryArtist:
+                        ID: 1
+                        Name: Common
+                        Country: ''
+                        Birthday: ''
+                        Members:
+                          - {}
+                        ImageURL: ''
+                        Description: ''
+                        Links: {}
+                      Credits: []
+                      Label: ''
+                      Albums:
+                        - ID: 1
+                          Name: Black America Again
+                          PrimaryArtist:
+                            ID: 1
+                            Name: Common
+                            Country: ''
+                            Birthday: ''
+                            Members: []
+                            ImageURL: ''
+                            Description: ''
+                            Links: {}
+                          Credits: []
+                          Label: ARTium
+                          ReleasedDate: '2016-11-04'
+                          ImageURL: 'http://example.com'
+                          Description: ''
+                          Links: {}
+                      Genre: ''
+                      ReleasedDate: '2016-11-04'
+                      Time: '02:40'
+                      ImageURL: 'http://example.com'
+                      Links: {}
+                    - ID: 2
+                      Name: Home
+                      PrimaryArtist:
+                        ID: 1
+                        Name: Common
+                        Country: ''
+                        Birthday: ''
+                        Members:
+                          - {}
+                        ImageURL: ''
+                        Description: ''
+                        Links: {}
+                      Credits: []
+                      Label: ''
+                      Albums:
+                        - ID: 1
+                          Name: Black America Again
+                          PrimaryArtist:
+                            ID: 1
+                            Name: Common
+                            Country: ''
+                            Birthday: ''
+                            Members: []
+                            ImageURL: ''
+                            Description: ''
+                            Links: {}
+                          Credits: []
+                          Label: ARTium
+                          ReleasedDate: '2016-11-04'
+                          ImageURL: 'http://example.com'
+                          Description: ''
+                          Links: {}
+                      Genre: ''
+                      ReleasedDate: '2016-11-04'
+                      Time: '02:40'
+                      ImageURL: 'http://example.com'
+                      Links: {}
+      operationId: get-artists-artistId-songs
+      description: アーティストが参加している曲を取得できる。ただし、参加楽曲のうちアーティストがPrimary Artistとして参加している曲は除く。このエンドポイントは、Artistページにおける参加楽曲一覧（Attended Songs）を提供する。
+  '/albums/{albumId}/songs':
+    parameters:
+      - schema:
+          type: string
+        name: albumId
+        in: path
+        required: true
+    get:
+      summary: Get songs contained in an album
+      tags:
+        - album
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                additionalProperties:
+                  type:
+                    $ref: ../models/Song.v1.yaml
+              examples:
+                Black America Again:
+                  value:
+                    '1':
+                      ID: 1
+                      Name: Joy And Peace
+                      PrimaryArtist: {}
+                      Credits: []
+                      Label: ''
+                      Albums: []
+                      Genre: ''
+                      ReleasedDate: ''
+                      Time: '02:40'
+                      ImageURL: ''
+                      Links:
+                        amazon music: 'https://www.amazon.com/dp/B01MF58RNV/ref=dm_ws_tlw_trk1'
+                        apple music: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
+                        spotify: 'https://open.spotify.com/track/5VRq8bpbbSsROTLMTraLNN'
+                    '2':
+                      ID: 2
+                      Name: Home
+                      PrimaryArtist: {}
+                      Credits: []
+                      Label: ''
+                      Albums: []
+                      Genre: ''
+                      ReleasedDate: ''
+                      Time: '03:31'
+                      ImageURL: ''
+                      Links:
+                        amazon music: 'https://www.amazon.com/dp/B01MAUS0UK/ref=dm_ws_tlw_trk2'
+                        apple music: 'https://music.apple.com/jp/album/home-feat-bilal/1440895412?i=1163889626'
+                        spotify: 'https://open.spotify.com/track/0Ngv6ohi19LTwiLIlmiFEf'
+      operationId: get-albums-albumId-songs
+      description: Album Idに対応するアルバムに収録されている曲を提供する。このエンドポイントは、Albumページの下部にある収録曲（Songs）を曲順と合わせて提供する。
+components:
+  schemas: {}
+tags:
+  - name: album
+  - name: artist
+  - name: song
