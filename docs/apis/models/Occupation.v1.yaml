@@ -1,11 +1,11 @@
 title: Occupation
 type: object
-properties:
-  ID:
-    type: integer
-  Title:
-    type: string
 x-examples:
   Piano:
     ID: 1
     Title: Piano
+properties:
+  id:
+    type: integer
+  title:
+    type: string

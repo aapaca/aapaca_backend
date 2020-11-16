@@ -1,53 +1,89 @@
 title: Artist
 type: object
-properties:
-  ID:
-    type: integer
-  Name:
-    type: string
-  Country:
-    type: string
-  Birthday:
-    type: string
-    format: date
-  Members:
-    type: array
-    items:
-      $ref: ./Artist.v1.yaml
-  ImageURL:
-    type: string
-    format: uri
-  Description:
-    type: string
-  Links:
-    type: object
-    additionalProperties:
-      type: string
-      format: uri
 x-examples:
   Common:
-    ID: 1
-    Name: Common
-    Country: U.S.
-    Birthday: '1972-03-13'
-    Members:
-      - {}
-    ImageURL: 'http://example.com'
-    Description: 'Lonnie Rashid Lynn (born March 13, 1972), better known by his stage name Common (formerly Common Sense), is an American rapper, actor and writer.'
-    Links:
-      amazon_music: 'https://www.amazon.com/Common/e/B000AQ3K7O/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
-      itunes: 'https://music.apple.com/us/artist/common/64490'
+    id: 1
+    name: Common
+    birthday: '1972-03-13'
+    imageUrl: 'https://placehold.jp/200x200.png'
+    description: 'Lonnie Rashid Lynn (born March 13, 1972), better known by his stage name Common (formerly Common Sense), is an American rapper, actor and writer.'
+    links:
+      amazonMusic: 'https://www.amazon.com/Common/e/B000AQ3K7O/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+      appleMusic: 'https://music.apple.com/us/artist/common/64490'
       spotify: 'https://open.spotify.com/artist/2GHclqNVjqGuiE5mA7BEoc'
   Robert Glasper:
-    ID: 2
-    Name: Robert Glasper
-    Country: U.S.
-    Birthday: '1978-04-05'
-    Members:
-      - {}
-    ImageURL: 'http://example.com'
-    Description: 'Robert Andre Glasper (born April 6, 1978) is an American pianist and record producer. He has been nominated for seven Grammy Awards and has won three Grammys and one Emmy Award.'
-    Links:
-      amazon_music: 'https://www.amazon.com/Robert-Glasper/e/B00197K67U/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
-      apple music: 'https://music.apple.com/us/artist/robert-glasper/4643652'
+    id: 2
+    name: Robert Glasper
+    birthday: '1978-04-05'
+    imageUrl: 'https://placehold.jp/200x200.png'
+    description: 'Robert Andre Glasper (born April 6, 1978) is an American pianist and record producer. He has been nominated for seven Grammy Awards and has won three Grammys and one Emmy Award.'
+    links:
+      amazonMusic: 'https://www.amazon.com/Robert-Glasper/e/B00197K67U/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+      appleMusic: 'https://music.apple.com/us/artist/robert-glasper/4643652'
       spotify: 'https://open.spotify.com/artist/5cM1PvItlR21WUyBnsdMcn'
+  August Greene:
+    id: 3
+    name: August Greene
+    birthday: '2018'
+    members:
+      - id: 1
+        name: Common
+        imageUrl: 'https://placehold.jp/200x200.png'
+      - id: 2
+        name: Robert Glasper
+        imageUrl: 'https://placehold.jp/200x200.png'
+    imageUrl: 'https://placehold.jp/200x200.png'
+    description: 'August Greene is an American supergroup. The brainchild of rapper Common, and producers Robert Glasper and Karriem Riggins, it was formed in 2018 after sharing the Primetime Emmy Award for Outstanding Original Music and Lyrics for their song...'
+    links:
+      amazonMusic: 'https://www.amazon.com/August-Greene/e/B07BS2T1SC/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+      appleMusic: 'https://music.apple.com/us/artist/august-greene/1372391168'
+      spotify: 'https://open.spotify.com/artist/7KIFh8WDiqlz1Dlopd03cy'
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  birthday:
+    type: string
+    format: date
+  members:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+  alsoKnownAs:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+  imageUrl:
+    type: string
+    format: uri
+  description:
+    type: string
+  links:
+    type: object
+    properties:
+      amazonMusic:
+        type: string
+        format: uri
+      appleMusic:
+        type: string
+        format: uri
+      spotify:
+        type: string
+        format: uri

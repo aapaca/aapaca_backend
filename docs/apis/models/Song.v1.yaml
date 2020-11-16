@@ -2,104 +2,99 @@ title: Song
 type: object
 x-examples:
   Joy and Peace:
-    ID: 0
-    Name: Joy and Peace
-    PrimaryArtist:
-      ID: 0
-      Name: Common
-      Country: ''
-      Birthday: ''
-      Members:
-        - {}
-      ImageURL: 'http://example.com'
-      Description: ''
-      Links: {}
-    Credits:
-      - Artist:
-          ID: 1
-          Name: Common
-          Country: ''
-          Birthday: ''
-          Members: []
-          ImageURL: 'http://example.com'
-          Description: ''
-          Links: {}
-        Parts:
-          - ID: 0
-            Title: Exective Producer
-      - Artist:
-          ID: 2
-          Name: Robert Glasper
-          Country: ''
-          Birthday: ''
-          Members: []
-          ImageURL: 'http://example.com'
-          Description: ''
-          Links: {}
-        Parts:
-          - ID: 0
-            Title: Composer
-          - ID: 0
-            Title: Piano
-          - ID: 0
-            Title: Keyboard
-    Label: ARTium
-    Albums:
-      - ID: 0
-        Name: Black America Again
-        PrimaryArtist:
-          ID: 0
-          Name: Common
-          Country: ''
-          Birthday: ''
-          Members: []
-          ImageURL: 'http://example.com'
-          Description: ''
-          Links: {}
-        Credits: []
-        Label: ARTium
-        ReleasedDate: '2016-11-04'
-        ImageURL: 'http://example.com'
-        Description: ''
-        Links: {}
-    Genre: Hiphop
-    ReleasedDate: '2016-11-04'
-    Time: '02:40'
-    ImageURL: 'http://example.com'
-    Links:
-      amazon music: 'https://www.amazon.com/Joy-Peace-Explicit-feat-Bilal/dp/B01MF58RNV/ref=sr_1_2?dchild=1&keywords=common+joy+and+peace&qid=1603626572&sr=8-2'
-      apple music: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
+    id: 1
+    name: Joy and Peace
+    primaryArtist:
+      id: 1
+      name: Common
+      imageUrl: 'https://placehold.jp/200x200.png'
+    credits:
+      - artist:
+          id: 1
+          name: Common
+          imageUrl: 'https://placehold.jp/200x200.png'
+        parts:
+          - id: 1
+            title: Exective Producer
+      - artist:
+          id: 2
+          name: Robert Glasper
+          imageUrl: 'https://placehold.jp/200x200.png'
+        parts:
+          - id: 2
+            title: Composer
+          - id: 3
+            title: Piano
+          - id: 4
+            title: Keyboard
+    albums:
+      - id: 1
+        name: Black America Again
+        releasedDate: 'https://placehold.jp/200x200.png'
+        imageUrl: '2016-11-04'
+    genre: HipHop
+    releasedDate: '2016-11-04'
+    time: '02:40'
+    imageUrl: 'https://placehold.jp/200x200.png'
+    links:
+      amazonMusic: 'https://www.amazon.com/Joy-Peace-Explicit-feat-Bilal/dp/B01MF58RNV/ref=sr_1_2?dchild=1&keywords=common+joy+and+peace&qid=1603626572&sr=8-2'
+      appleMusic: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
       spotify: 'https://open.spotify.com/track/5VRq8bpbbSsROTLMTraLNN'
+description: ''
 properties:
-  ID:
+  id:
     type: integer
-  Name:
+  name:
     type: string
-  PrimaryArtist:
-    $ref: ./Artist.v1.yaml
-  Credits:
+  primaryArtist:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      imageUrl:
+        type: string
+        format: uri
+  credits:
     type: array
     items:
       $ref: ./Credit.v1.yaml
-  Label:
-    type: string
-  Albums:
+  albums:
     type: array
     items:
-      $ref: ./Album.v1.yaml
-  Genre:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        releasedDate:
+          type: string
+          format: uri
+        imageUrl:
+          type: string
+          format: date
+  genre:
     type: string
-  ReleasedDate:
+  releasedDate:
     type: string
     format: date
-  Time:
+  time:
     type: string
     format: time
-  ImageURL:
+  imageUrl:
     type: string
     format: uri
-  Links:
+  links:
     type: object
-    additionalProperties:
-      type: string
-      format: uri
+    properties:
+      amazonMusic:
+        type: string
+        format: uri
+      appleMusic:
+        type: string
+        format: uri
+      spotify:
+        type: string
+        format: uri

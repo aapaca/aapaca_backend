@@ -1,9 +1,17 @@
 title: Credit
 type: object
 properties:
-  Artist:
-    $ref: ./Artist.v1.yaml
-  Parts:
+  artist:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      imageUrl:
+        type: string
+        format: uri
+  parts:
     type: array
     items:
       $ref: ./Occupation.v1.yaml
