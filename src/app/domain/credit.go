@@ -1,6 +1,6 @@
 package domain
 
 type Credit struct {
-	Artist Artist
-	Parts  []Occupation
+	Artist Artist `json:"artist"`
+	Parts  []Occupation `json:"parts"`
 }
