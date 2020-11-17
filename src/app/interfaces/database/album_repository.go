@@ -19,7 +19,7 @@ func values(creditMap map[int]*domain.Credit) []domain.Credit {
 	return vs
 }
 
-func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
+func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	defaultBirthday := time.Time{}
 	defaultMembers := []domain.Artist{}
 	// load album info
@@ -84,5 +84,23 @@ func (repo *AlbumRepository) FindById(id int) (album domain.Album, err error) {
 	}
 	album.PrimaryArtist = pArtist
 	album.Credits = values(creditMap)
+	return
+}
+
+func (repo *AlbumRepository) GetAlbumsByArtistId(artistId int) (albums []domain.Album, err error) {
+	rows, err := repo.Query(`SELECT id, name, released_date, image_url FROM albums
+							WHERE primary_artist_id = ?`, artistId)
+	defer rows.Close()
+	for rows.Next() {
+		album := domain.Album{}
+		if err = rows.Scan(&album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL); err != nil {
+			return
+		}
+		albums = append(albums, album)
+	}
+	if len(albums) == 0 {
+		err = errors.New("albums not found")
+		return
+	}
 	return
 }

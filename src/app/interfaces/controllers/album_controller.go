@@ -22,13 +22,24 @@ func NewAlbumController(sqlHandler database.SqlHandler) *AlbumController {
 	}
 }
 
-func (controller *AlbumController) Show() echo.HandlerFunc {
+func (controller *AlbumController) GetAlbum() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
-		album, err := controller.Interactor.AlbumById(id)
+		album, err := controller.Interactor.GetAlbum(id)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Album Not Found"))
 		}
 		return c.JSON(http.StatusOK, album)
+	}
+}
+
+func (controller *AlbumController) GetAlbumsByArtistId() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
+		albums, err := controller.Interactor.GetAlbumsByArtistId(id)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, APIError("Albums not Found"))
+		}
+		return c.JSON(http.StatusOK, albums)
 	}
 }
