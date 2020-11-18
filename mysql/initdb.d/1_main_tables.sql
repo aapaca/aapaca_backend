@@ -5,6 +5,10 @@ CREATE TABLE aapaca.artists (
     birthday DATE,
     status INT NOT NULL,
     image_url VARCHAR(256) DEFAULT 'http://placeimg.com/200/200/any',
+    description TEXT,
+    amazon_music_url VARCHAR(256) DEFAULT '',
+    apple_music_url VARCHAR(256) DEFAULT '',
+    spotify_url VARCHAR(256) DEFAULT '',
     PRIMARY KEY (id)
 );
 
@@ -21,6 +25,10 @@ CREATE TABLE aapaca.albums (
     label VARCHAR(256),
     released_date DATE,
     image_url VARCHAR(256) DEFAULT 'http://placeimg.com/200/200/any',
+    description TEXT,
+    amazon_music_url VARCHAR(256) DEFAULT '',
+    apple_music_url VARCHAR(256) DEFAULT '',
+    spotify_url VARCHAR(256) DEFAULT '',
     PRIMARY KEY (id),
     FOREIGN KEY (primary_artist_id) REFERENCES aapaca.artists(id)
 );
@@ -31,6 +39,10 @@ CREATE TABLE aapaca.songs (
     primary_artist_id INT NOT NULL,
     label VARCHAR(256),
     genre VARCHAR(256),
+    song_len TIME,
+    amazon_music_url VARCHAR(256) DEFAULT '',
+    apple_music_url VARCHAR(256) DEFAULT '',
+    spotify_url VARCHAR(256) DEFAULT '',
     PRIMARY KEY (id),
     FOREIGN KEY (primary_artist_id) REFERENCES aapaca.artists(id)
 );

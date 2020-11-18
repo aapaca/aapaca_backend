@@ -1,6 +1,7 @@
 CREATE TABLE aapaca.contains (
     album_id INT NOT NULL,
     song_id INT NOT NULL,
+    song_order VARCHAR(256) NOT NULL,
     FOREIGN KEY (album_id) REFERENCES aapaca.albums(id),
     FOREIGN KEY (song_id) REFERENCES aapaca.songs(id)
 );
