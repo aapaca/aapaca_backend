@@ -1,0 +1,75 @@
+title: Album
+type: object
+x-examples:
+  Black America Again:
+    id: 1
+    name: Black America Again
+    primaryArtist:
+      id: 1
+      name: Common
+    credits:
+      - artist:
+          id: 1
+          name: Common
+          imageUrl: 'https://placehold.jp/200x200.png'
+        parts:
+          - id: 1
+            title: Exective Producer
+      - artist:
+          id: 2
+          name: Robert Glasper
+          imageUrl: 'https://placehold.jp/200x200.png'
+        parts:
+          - id: 2
+            title: Composer
+          - id: 3
+            title: Piano
+          - id: 4
+            title: Keyboard
+    label: ARTium
+    releasedDate: '2016-11-04'
+    imageUrl: 'https://placehold.jp/200x200.png'
+    description: 'Black America Again is the eleventh studio album by American rapper Common. It was released on November 4, 2016, by ARTium Recordings and Def Jam Recordings.'
+    links:
+      amazonMusic: 'https://www.amazon.com/Black-America-Again-Explicit-Common/dp/B01MCRSTN4'
+      appleMusic: 'https://music.apple.com/us/album/black-america-again/1440895412'
+      spotify: 'https://open.spotify.com/album/2DTbGcv40CSMW0P4yAQQBa'
+description: entity of album
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  primaryArtist:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+  credits:
+    type: array
+    items:
+      $ref: ./Credit.v1.yaml
+  label:
+    type: string
+  releasedDate:
+    type: string
+    format: date
+  imageUrl:
+    type: string
+    format: uri
+  description:
+    type: string
+  links:
+    type: object
+    properties:
+      amazonMusic:
+        type: string
+        format: uri
+      appleMusic:
+        type: string
+        format: uri
+      spotify:
+        type: string
+        format: uri

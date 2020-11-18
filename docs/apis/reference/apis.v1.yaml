@@ -1,0 +1,404 @@
+openapi: 3.0.0
+info:
+  title: aapaca apis
+  version: '1.0'
+  contact: {}
+  description: APIs for Aapaca
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/albums/{albumId}':
+    parameters:
+      - schema:
+          type: number
+        name: albumId
+        in: path
+        description: Album ID
+        required: true
+    get:
+      summary: Get an album corresponding to album ID.
+      tags:
+        - album
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Album.v1.yaml
+              examples:
+                Black America Again:
+                  value:
+                    id: 1
+                    name: Black America Again
+                    primaryArtist:
+                      id: 1
+                      name: Common
+                    credits:
+                      - artist:
+                          id: 1
+                          name: Common
+                          imageUrl: 'https://placehold.jp/200x200.png'
+                        parts:
+                          - id: 1
+                            title: Exective Producer
+                      - artist:
+                          id: 2
+                          name: Robert Glasper
+                          imageUrl: 'https://placehold.jp/200x200.png'
+                        parts:
+                          - id: 2
+                            title: Composer
+                          - id: 3
+                            title: Piano
+                          - id: 4
+                            title: Keyboard
+                    label: ARTium
+                    releasedDate: '2016-11-04'
+                    imageUrl: 'https://placehold.jp/200x200.png'
+                    description: 'Black America Again is the eleventh studio album by American rapper Common. It was released on November 4, 2016, by ARTium Recordings and Def Jam Recordings.'
+                    links:
+                      amazonMusic: 'https://www.amazon.com/Black-America-Again-Explicit-Common/dp/B01MCRSTN4'
+                      appleMusic: 'https://music.apple.com/us/album/black-america-again/1440895412'
+                      spotify: 'https://open.spotify.com/album/2DTbGcv40CSMW0P4yAQQBa'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Response:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    Response: Album Not Found
+      operationId: get-albums-albumId
+      description: Album IDに対応するアルバムの情報を取得できる。このエンドポイントは、Albumページの上部にあるアルバムについての情報と、アルバムに参加するアーティスト（Personnel）を提供する。
+  '/artists/{artistId}':
+    parameters:
+      - schema:
+          type: integer
+        name: artistId
+        in: path
+        required: true
+        description: ID of artist
+    get:
+      summary: Get an artist corresponding to artist ID
+      tags:
+        - artist
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Artist.v1.yaml
+              examples:
+                Common:
+                  value:
+                    id: 1
+                    name: Common
+                    birthday: '1972-03-13'
+                    imageUrl: 'https://placehold.jp/200x200.png'
+                    description: 'Lonnie Rashid Lynn (born March 13, 1972), better known by his stage name Common (formerly Common Sense), is an American rapper, actor and writer.'
+                    links:
+                      amazonMusic: 'https://www.amazon.com/Common/e/B000AQ3K7O/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+                      appleMusic: 'https://music.apple.com/us/artist/common/64490'
+                      spotify: 'https://open.spotify.com/artist/2GHclqNVjqGuiE5mA7BEoc'
+                Robert Glasper:
+                  value:
+                    id: 2
+                    name: Robert Glasper
+                    birthday: '1978-04-05'
+                    imageUrl: 'https://placehold.jp/200x200.png'
+                    description: 'Robert Andre Glasper (born April 6, 1978) is an American pianist and record producer. He has been nominated for seven Grammy Awards and has won three Grammys and one Emmy Award.'
+                    links:
+                      amazonMusic: 'https://www.amazon.com/Robert-Glasper/e/B00197K67U/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+                      appleMusic: 'https://music.apple.com/us/artist/robert-glasper/4643652'
+                      spotify: 'https://open.spotify.com/artist/5cM1PvItlR21WUyBnsdMcn'
+                August Greene:
+                  value:
+                    id: 3
+                    name: August Greene
+                    birthday: '2018-01-01'
+                    members:
+                      - id: 1
+                        name: Common
+                        imageUrl: 'https://placehold.jp/200x200.png'
+                      - id: 2
+                        name: Robert Glasper
+                        imageUrl: 'https://placehold.jp/200x200.png'
+                    imageUrl: 'https://placehold.jp/200x200.png'
+                    description: 'August Greene is an American supergroup. The brainchild of rapper Common, and producers Robert Glasper and Karriem Riggins, it was formed in 2018 after sharing the Primetime Emmy Award for Outstanding Original Music and Lyrics for their song...'
+                    links:
+                      amazonMusic: 'https://www.amazon.com/August-Greene/e/B07BS2T1SC/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
+                      appleMusic: 'https://music.apple.com/us/artist/august-greene/1372391168'
+                      spotify: 'https://open.spotify.com/artist/7KIFh8WDiqlz1Dlopd03cy'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Response:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    Responce: Artist Not Found
+      operationId: get-artists-artistID
+      description: Artist IDに対応するアーティストの情報を取得できる。このエンドポイントは、Artistページにおける上部のプロフィールを提供する。Artistがグループであれば、これに所属するメンバー（Members）も提供する。Artistに別名（also known as）があれば提供する。
+      parameters: []
+  '/songs/{songId}':
+    parameters:
+      - schema:
+          type: string
+        name: songId
+        in: path
+        required: true
+    get:
+      summary: Get a song corresponding to song ID
+      tags:
+        - song
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Song.v1.yaml
+              examples:
+                Joy and Peace:
+                  value:
+                    id: 1
+                    name: Joy and Peace
+                    primaryArtist:
+                      id: 1
+                      name: Common
+                      imageUrl: 'https://placehold.jp/200x200.png'
+                    credits:
+                      - artist:
+                          id: 1
+                          name: Common
+                          imageUrl: 'https://placehold.jp/200x200.png'
+                        parts:
+                          - id: 1
+                            title: Exective Producer
+                      - artist:
+                          id: 2
+                          name: Robert Glasper
+                          imageUrl: 'https://placehold.jp/200x200.png'
+                        parts:
+                          - id: 2
+                            title: Composer
+                          - id: 3
+                            title: Piano
+                          - id: 4
+                            title: Keyboard
+                    albums:
+                      - id: 1
+                        name: Black America Again
+                        releasedDate: 'https://placehold.jp/200x200.png'
+                        imageUrl: '2016-11-04'
+                    genre: HipHop
+                    releasedDate: '2016-11-04'
+                    time: '00:02:40'
+                    imageUrl: 'https://placehold.jp/200x200.png'
+                    links:
+                      amazonMusic: 'https://www.amazon.com/Joy-Peace-Explicit-feat-Bilal/dp/B01MF58RNV/ref=sr_1_2?dchild=1&keywords=common+joy+and+peace&qid=1603626572&sr=8-2'
+                      appleMusic: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
+                      spotify: 'https://open.spotify.com/track/5VRq8bpbbSsROTLMTraLNN'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Response:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    Response: Song Not Found
+      operationId: get-songs-songId
+      description: Song IDに対応する曲の情報を取得できる。このエンドポイントはsongページにある曲名やPrimary Artistのほか、参加アーティスト（Personnel）や曲を収録しているアルバム（Appears on）を提供する。
+  '/artists/{artistId}/albums':
+    parameters:
+      - schema:
+          type: string
+        name: artistId
+        in: path
+        required: true
+    get:
+      summary: Get albums that the artist released as a primary artist
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    imageUrl:
+                      type: string
+                    releasedDate:
+                      type: string
+              examples:
+                Common:
+                  value:
+                    - id: 1
+                      name: Black America Again
+                      imageUrl: 'https://placehold.jp/200x200.png'
+                      releasedDate: '2016-11-04'
+                    - id: 2
+                      name: Let Love
+                      imageUrl: 'https://placehold.jp/200x200.png'
+                      releasedDate: '2019-08-30'
+      operationId: get-artists-artistId-albums
+      description: アーティストがPrimary Artistとしてリリースしたアルバムを取得できる。このエンドポイントは、Artistページにおけるアルバム一覧（Discography）を提供する。
+      tags:
+        - artist
+  '/artists/{artistId}/songs':
+    parameters:
+      - schema:
+          type: string
+        name: artistId
+        in: path
+        required: true
+    get:
+      summary: Get songs that the artist attended
+      tags:
+        - artist
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    album:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        imageUrl:
+                          type: string
+                          format: uri
+                    releasedDate:
+                      type: string
+                      format: date
+              examples:
+                Robert Glasper:
+                  value:
+                    - id: 1
+                      name: Joy and Peace
+                      album:
+                        id: 1
+                        name: Black America Again
+                        imageUrl: 'https://placehold.jp/200x200.png'
+                      releasedDate: '2016-11-04'
+                    - id: 2
+                      name: Home
+                      album:
+                        id: 1
+                        name: Black America Again
+                        imageUrl: 'https://placehold.jp/200x200.png'
+                      releasedDate: '2016-11-04'
+                    - id: 3
+                      name: Love Something
+                      album:
+                        id: 1
+                        name: Black America Again
+                        imageUrl: 'https://placehold.jp/200x200.png'
+                      releasedDate: '2016-11-04'
+      operationId: get-artists-artistId-songs
+      description: アーティストが参加している曲を取得できる。ただし、参加楽曲のうちアーティストがPrimary Artistとして参加している曲は除く。このエンドポイントは、Artistページにおける参加楽曲一覧（Attended Songs）を提供する。
+  '/albums/{albumId}/songs':
+    parameters:
+      - schema:
+          type: string
+        name: albumId
+        in: path
+        required: true
+    get:
+      summary: Get songs contained in an album
+      tags:
+        - album
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    time:
+                      type: string
+                      format: time
+                    links:
+                      type: object
+                      properties:
+                        amazonMusic:
+                          type: string
+                          format: uri
+                        appleMusic:
+                          type: string
+                          format: uri
+                        spotify:
+                          type: string
+                          format: uri
+                    order:
+                      type: string
+              examples:
+                Black America Again:
+                  value:
+                    - id: 1
+                      name: Joy and Peace
+                      time: '00:02:40'
+                      links:
+                        amazonMusic: 'https://www.amazon.com/dp/B01MF58RNV/ref=dm_ws_tlw_trk1'
+                        appleMusic: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
+                        spotify: 'https://open.spotify.com/track/5VRq8bpbbSsROTLMTraLNN'
+                      order: '1'
+                    - id: 2
+                      name: Home
+                      time: '00:03:31'
+                      links:
+                        amazon music: 'https://www.amazon.com/dp/B01MAUS0UK/ref=dm_ws_tlw_trk2'
+                        apple music: 'https://music.apple.com/jp/album/home-feat-bilal/1440895412?i=1163889626'
+                        spotify: 'https://open.spotify.com/track/0Ngv6ohi19LTwiLIlmiFEf'
+                      order: '2'
+      operationId: get-albums-albumId-songs
+      description: Album Idに対応するアルバムに収録されている曲を提供する。このエンドポイントは、Albumページの下部にある収録曲（Songs）を曲順と合わせて提供する。
+components:
+  schemas: {}
+tags:
+  - name: album
+  - name: artist
+  - name: song
