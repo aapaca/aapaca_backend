@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"domain"
 	"errors"
-	"time"
 )
 
 type AlbumRepository struct {
@@ -20,15 +19,12 @@ func values(creditMap map[int]*domain.Credit) []domain.Credit {
 }
 
 func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
-	defaultBirthday := time.Time{}
-	defaultMembers := []domain.Artist{}
 	// load album info
-	pArtist := domain.Artist{
-		Birthday: &defaultBirthday,
-		Members:  defaultMembers,
-	}
+	pArtist := domain.Artist{}
 	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title,
-								albums.id, albums.name, albums.released_date, albums.image_url, p_art.id, p_art.name, p_art.image_url
+								albums.id, albums.name, albums.released_date, albums.image_url, albums.description,
+								albums.amazon_music_url, albums.apple_music_url, albums.spotify_url,
+								p_art.id, p_art.name, p_art.image_url
 							FROM albums
 							INNER JOIN artists as p_art
 								ON albums.primary_artist_id = p_art.id
@@ -46,13 +42,16 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 							`, id)
 	defer rows.Close()
 	creditMap := map[int]*domain.Credit{}
+	var amazon string
+	var apple string
+	var spotify string
 	for rows.Next() {
 		var nullableArtistID sql.NullInt64
 		var artistName sql.NullString
 		var artistImgURL sql.NullString
 		var partID sql.NullInt64
 		var partTitle sql.NullString
-		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
+		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL, &album.Description, &amazon, &apple, &spotify, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
 			return
 		}
 		if !nullableArtistID.Valid { // credit is empty
@@ -64,8 +63,6 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 				Artist: domain.Artist{
 					ID:       int(artistID),
 					Name:     artistName.String,
-					Birthday: &defaultBirthday,
-					Members:  defaultMembers,
 					ImageURL: artistImgURL.String,
 				},
 				Parts: []domain.Occupation{},
@@ -83,6 +80,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 		return
 	}
 	album.PrimaryArtist = pArtist
+	album.Links = map[string]string{"amazonMusic": amazon, "appleMusic": apple, "spotify": spotify}
 	album.Credits = values(creditMap)
 	return
 }
