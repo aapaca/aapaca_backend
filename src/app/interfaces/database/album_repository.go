@@ -91,6 +91,9 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	if len(spotify) > 0 {
 		links["spotify"] = spotify
 	}
+	if len(links) > 0 {
+		album.Links = links
+	}
 	if description.Valid {
 		album.Description = description.String
 	}
