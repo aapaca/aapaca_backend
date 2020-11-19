@@ -3,7 +3,7 @@ CREATE TABLE aapaca.artists (
     name VARCHAR(256) NOT NULL,
     country VARCHAR(256),
     birthday DATE,
-    status INT NOT NULL,
+    status INT NOT NULL, # 0 -> individual, 1 -> group
     image_url VARCHAR(256) DEFAULT 'http://placeimg.com/200/200/any',
     description TEXT,
     amazon_music_url VARCHAR(256) DEFAULT '',
