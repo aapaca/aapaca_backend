@@ -55,7 +55,7 @@ INSERT INTO aapaca.songs (name, primary_artist_id) VALUES ('Tsumi to Batsu', 5);
 
 INSERT INTO aapaca.albums (name, primary_artist_id, released_date) VALUES ('Shouso Strip', 5, '2000-03-31');
 INSERT INTO aapaca.albums (name, primary_artist_id, released_date) VALUES ('Adult', 6, '2006-01-25');
-INSERT INTO aapaca.albums (name, primary_artist_id, released_date) VALUES ('Rekitsu', 8, '2011-03-16');
+INSERT INTO aapaca.albums (name, primary_artist_id, released_date, apple_music_url, spotify_url) VALUES ('Rekitsu', 8, '2011-03-16', 'https://music.apple.com/album/423534193', 'https://open.spotify.com/album/7l9bxNPPXK8458ScKSUXv6');
 INSERT INTO aapaca.albums (name, primary_artist_id, released_date) VALUES ('Honnou', 5, '1999-10-27');
 INSERT INTO aapaca.albums (name, primary_artist_id, released_date) VALUES ('Kouhukuron', 5, '1998-05-27');
 
@@ -87,5 +87,5 @@ INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (8, 6, 3)
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 7, 3);
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 4, 4);
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 5, 4);
-INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (9, 6, 4);
+INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (8, 6, 4);
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 7, 4);
