@@ -45,13 +45,14 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	var amazon string
 	var apple string
 	var spotify string
+	var description sql.NullString
 	for rows.Next() {
 		var nullableArtistID sql.NullInt64
 		var artistName sql.NullString
 		var artistImgURL sql.NullString
 		var partID sql.NullInt64
 		var partTitle sql.NullString
-		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL, &album.Description, &amazon, &apple, &spotify, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
+		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL, &description, &amazon, &apple, &spotify, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
 			return
 		}
 		if !nullableArtistID.Valid { // credit is empty
@@ -80,7 +81,22 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 		return
 	}
 	album.PrimaryArtist = pArtist
-	album.Links = map[string]string{"amazonMusic": amazon, "appleMusic": apple, "spotify": spotify}
+	links := map[string]string{}
+	if len(amazon) > 0 {
+		links["amazonMusic"] = amazon
+	}
+	if len(apple) > 0 {
+		links["appleMusic"] = apple
+	}
+	if len(spotify) > 0 {
+		links["spotify"] = spotify
+	}
+	if len(links) > 0 {
+		album.Links = links
+	}
+	if description.Valid {
+		album.Description = description.String
+	}
 	album.Credits = values(creditMap)
 	return
 }
