@@ -42,17 +42,13 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 							`, id)
 	defer rows.Close()
 	creditMap := map[int]*domain.Credit{}
-	var amazon string
-	var apple string
-	var spotify string
+	var amazon, apple, spotify string
 	var description sql.NullString
+	var releasedDate sql.NullTime
 	for rows.Next() {
-		var nullableArtistID sql.NullInt64
-		var artistName sql.NullString
-		var artistImgURL sql.NullString
-		var partID sql.NullInt64
-		var partTitle sql.NullString
-		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL, &description, &amazon, &apple, &spotify, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
+		var nullableArtistID, partID sql.NullInt64
+		var artistName, artistImgURL, partTitle sql.NullString
+		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &releasedDate, &album.ImageURL, &description, &amazon, &apple, &spotify, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
 			return
 		}
 		if !nullableArtistID.Valid { // credit is empty
@@ -94,6 +90,9 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	if len(links) > 0 {
 		album.Links = links
 	}
+	if releasedDate.Valid {
+		album.ReleasedDate = &releasedDate.Time
+	}
 	if description.Valid {
 		album.Description = description.String
 	}
@@ -107,8 +106,12 @@ func (repo *AlbumRepository) GetAlbumsByArtistId(artistId int) (albums []domain.
 	defer rows.Close()
 	for rows.Next() {
 		album := domain.Album{}
-		if err = rows.Scan(&album.ID, &album.Name, &album.ReleasedDate, &album.ImageURL); err != nil {
+		var releasedDate sql.NullTime
+		if err = rows.Scan(&album.ID, &album.Name, &releasedDate, &album.ImageURL); err != nil {
 			return
+		}
+		if releasedDate.Valid {
+			album.ReleasedDate = &releasedDate.Time
 		}
 		albums = append(albums, album)
 	}
