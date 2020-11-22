@@ -3,6 +3,7 @@ package controllers
 import (
 	"interfaces/database"
 	"net/http"
+	"strconv"
 	"usecase"
 
 	"github.com/labstack/echo"
@@ -24,7 +25,7 @@ func NewSongController(sqlHandler database.SqlHandler) *SongController {
 
 func (controller *SongController) GetSong() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strConv.Atoi(c.Param("id"))
+		id, _ := strconv.Atoi(c.Param("id"))
 		song, err := controller.Interactor.GetSong(id)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Song Not Found"))
@@ -35,7 +36,7 @@ func (controller *SongController) GetSong() echo.HandlerFunc {
 
 func (controller *SongController) GetAttendedSongs() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strConv.Atoi(c.Param("id"))
+		id, _ := strconv.Atoi(c.Param("id"))
 		songs, err := controller.Interactor.GetAttendedSongs(id)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Songs Not Found"))
@@ -46,7 +47,7 @@ func (controller *SongController) GetAttendedSongs() echo.HandlerFunc {
 
 func (controller *SongController) GetSongsInAlbum() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strConv.Atoi(c.Param("id"))
+		id, _ := strconv.Atoi(c.Param("id"))
 		songs, err := controller.Interactor.GetSongsInAlbum(id)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Songs Not Found"))
