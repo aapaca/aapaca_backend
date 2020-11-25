@@ -23,7 +23,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	pArtist := domain.Artist{}
 	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title,
 								albums.id, albums.name, albums.released_date, albums.image_url, albums.description,
-								albums.amazon_music_url, albums.apple_music_url, albums.spotify_url,
+								albums.amazon_music_id, albums.apple_music_id, albums.spotify_id,
 								p_art.id, p_art.name, p_art.image_url
 							FROM albums
 							INNER JOIN artists as p_art
@@ -79,13 +79,13 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	album.PrimaryArtist = pArtist
 	links := map[string]string{}
 	if len(amazon) > 0 {
-		links["amazonMusic"] = amazon
+		links["amazonMusic"] = "https://www.amazon.com/dp/" + amazon
 	}
 	if len(apple) > 0 {
-		links["appleMusic"] = apple
+		links["appleMusic"] = "https://music.apple.com/album/" + apple
 	}
 	if len(spotify) > 0 {
-		links["spotify"] = spotify
+		links["spotify"] = "https://open.spotify.com/album/" + spotify
 	}
 	if len(links) > 0 {
 		album.Links = links
