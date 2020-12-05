@@ -28,16 +28,12 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 							INNER JOIN artists as p_art
 								ON albums.primary_artist_id = p_art.id
 								AND albums.id = ?
-							LEFT OUTER JOIN contains
-								ON albums.id = contains.album_id
-							LEFT OUTER JOIN songs
-								ON contains.song_id = songs.id
-							LEFT OUTER JOIN performs
-								ON songs.id = performs.song_id
+							LEFT OUTER JOIN participates
+								ON albums.id = participates.album_id
 							LEFT OUTER JOIN artists
-								ON performs.artist_id = artists.id
+								ON participates.artist_id = artists.id
 							LEFT OUTER JOIN occupations as oc
-								ON performs.occupation_id = oc.id
+								ON participates.occupation_id = oc.id
 							`, id)
 	defer rows.Close()
 	creditMap := map[int]*domain.Credit{}
