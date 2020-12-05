@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"domain"
-	"errors"
 )
 
 type AlbumRepository struct {
@@ -71,9 +70,8 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 		}
 		creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
 	}
-	// if rows have no columns, return err
-	if album.ID != id {
-		err = errors.New("album not found")
+	// if rows have no columns, album.ID should be 0 and is different from id
+	if album.Name == "" {
 		return
 	}
 	album.PrimaryArtist = pArtist
@@ -114,10 +112,6 @@ func (repo *AlbumRepository) GetAlbumsByArtistId(artistId int) (albums []domain.
 			album.ReleasedDate = &releasedDate.Time
 		}
 		albums = append(albums, album)
-	}
-	if len(albums) == 0 {
-		err = errors.New("albums not found")
-		return
 	}
 	return
 }
