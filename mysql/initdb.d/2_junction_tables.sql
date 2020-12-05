@@ -31,3 +31,12 @@ CREATE TABLE aapaca.performs (
     FOREIGN KEY (song_id) REFERENCES aapaca.songs(id),
     FOREIGN KEY (occupation_id) REFERENCES aapaca.occupations(id)
 );
+
+CREATE TABLE aapaca.participates (
+    artist_id INT NOT NULL,
+    album_id INT NOT NULL,
+    occupation_id INT NOT NULL,
+    FOREIGN KEY (artist_id) REFERENCES aapaca.artists(id),
+    FOREIGN KEY (album_id) REFERENCES aapaca.albums(id),
+    FOREIGN KEY (occupation_id) REFERENCES aapaca.occupations(id)
+);

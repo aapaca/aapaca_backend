@@ -41,6 +41,15 @@ INSERT INTO aapaca.performs(artist_id, song_id, occupation_id) VALUES(3, 2, 9);
 INSERT INTO aapaca.performs(artist_id, song_id, occupation_id) VALUES(3, 2, 10);
 INSERT INTO aapaca.performs(artist_id, song_id, occupation_id) VALUES(3, 3, 8);
 
+INSERT INTO aapaca.participates(artist_id, album_id, occupation_id) VALUES(1, 1, 5);
+INSERT INTO aapaca.participates(artist_id, album_id, occupation_id) VALUES(2, 1, 3);
+INSERT INTO aapaca.participates(artist_id, album_id, occupation_id) VALUES(2, 1, 6);
+INSERT INTO aapaca.participates(artist_id, album_id, occupation_id) VALUES(2, 1, 10);
+INSERT INTO aapaca.participates(artist_id, album_id, occupation_id) VALUES(3, 1, 10);
+INSERT INTO aapaca.participates(artist_id, album_id, occupation_id) VALUES(3, 1, 8);
+INSERT INTO aapaca.participates(artist_id, album_id, occupation_id) VALUES(3, 1, 9);
+INSERT INTO aapaca.participates(artist_id, album_id, occupation_id) VALUES(3, 1, 10);
+
 INSERT INTO aapaca.artists (name, country, birthday, status) VALUES ('Sheena Ringo', 'Japan', '1978-11-25', 0);
 INSERT INTO aapaca.artists (name, country, birthday, status) VALUES ('Tokyo Incidents', 'Japan', '2004-09-08', 1);
 INSERT INTO aapaca.artists (name, country, birthday, status) VALUES ('Deyonna', 'Japan', '1978-11-25', 0);
@@ -89,3 +98,19 @@ INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 4, 4)
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 5, 4);
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (8, 6, 4);
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 7, 4);
+
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (5, 4, 1);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (5, 4, 3);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (5, 4, 4);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (5, 5, 1);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (5, 5, 4);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (5, 7, 1);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (5, 7, 3);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (5, 7, 4);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (7, 6, 1);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (8, 6, 1);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (8, 6, 3);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (8, 6, 4);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (9, 4, 2);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (9, 7, 2);
+INSERT INTO aapaca.participates (artist_id, album_id, occupation_id) VALUES (10, 4, 2);
