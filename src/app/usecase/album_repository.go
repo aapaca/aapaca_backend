@@ -3,5 +3,6 @@ package usecase
 import "domain"
 
 type AlbumRepository interface {
-	FindById(int) (domain.Album, error)
+	GetAlbum(int) (domain.Album, error)
+	GetAlbumsByArtistId(int) ([]domain.Album, error)
 }

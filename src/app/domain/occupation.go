@@ -1,6 +1,6 @@
 package domain
 
 type Occupation struct {
-	ID    int
-	Title string
+	ID    int `json:"id"`
+	Title string `json:"title"`
 }
