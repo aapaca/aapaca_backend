@@ -26,9 +26,9 @@ INSERT INTO aapaca.contains (album_id, song_id, song_order, amazon_music_id, app
 INSERT INTO aapaca.contains (album_id, song_id, song_order) VALUES(1, 2, 2);
 INSERT INTO aapaca.contains (album_id, song_id, song_order) VALUES(1, 3, 3);
 
-INSERT INTO aapaca.is_a_member_of (member_id, group_id) VALUES(1, 4);
-INSERT INTO aapaca.is_a_member_of (member_id, group_id) VALUES(2, 4);
-INSERT INTO aapaca.is_a_member_of (member_id, group_id) VALUES(3, 4);
+INSERT INTO aapaca.memberships (member_id, group_id) VALUES(1, 4);
+INSERT INTO aapaca.memberships (member_id, group_id) VALUES(2, 4);
+INSERT INTO aapaca.memberships (member_id, group_id) VALUES(3, 4);
 
 INSERT INTO aapaca.performs(artist_id, song_id, occupation_id) VALUES(1, 1, 5);
 INSERT INTO aapaca.performs(artist_id, song_id, occupation_id) VALUES(1, 2, 5);
@@ -79,10 +79,10 @@ INSERT INTO aapaca.contains (album_id, song_id, song_order) VALUES (6, 6, 2);
 INSERT INTO aapaca.contains (album_id, song_id, song_order) VALUES (4, 7, 7);
 INSERT INTO aapaca.contains (album_id, song_id, song_order) VALUES (7, 4, 1);
 
-INSERT INTO aapaca.is_also_known_as (artist_id, alias_artist_id) VALUES (5, 7);
-INSERT INTO aapaca.is_also_known_as (artist_id, alias_artist_id) VALUES (7, 5);
+INSERT INTO aapaca.aliases (artist_id, alias_artist_id) VALUES (5, 7);
+INSERT INTO aapaca.aliases (artist_id, alias_artist_id) VALUES (7, 5);
 
-INSERT INTO aapaca.is_a_member_of (member_id, group_id) VALUES (5, 6);
+INSERT INTO aapaca.memberships (member_id, group_id) VALUES (5, 6);
 
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 4, 1);
 INSERT INTO aapaca.performs (artist_id, song_id, occupation_id) VALUES (5, 5, 1);

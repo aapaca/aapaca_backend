@@ -9,14 +9,14 @@ CREATE TABLE aapaca.contains (
     FOREIGN KEY (song_id) REFERENCES aapaca.songs(id)
 );
 
-CREATE TABLE aapaca.is_a_member_of (
+CREATE TABLE aapaca.memberships (
     member_id INT NOT NULL,
     group_id INT NOT NULL,
     FOREIGN KEY (member_id) REFERENCES aapaca.artists(id),
     FOREIGN KEY (group_id) REFERENCES aapaca.artists(id)
 );
 
-CREATE TABLE aapaca.is_also_known_as (
+CREATE TABLE aapaca.aliases (
     artist_id INT NOT NULL,
     alias_artist_id INT NOT NULL,
     FOREIGN KEY (artist_id) REFERENCES aapaca.artists(id),
