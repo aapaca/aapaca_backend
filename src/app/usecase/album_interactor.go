@@ -1,6 +1,9 @@
 package usecase
 
-import "domain"
+import (
+	"domain"
+	"errors"
+)
 
 type AlbumInteractor struct {
 	AlbumRepository AlbumRepository
@@ -8,10 +11,22 @@ type AlbumInteractor struct {
 
 func (interactor *AlbumInteractor) GetAlbum(albumId int) (album domain.Album, err error) {
 	album, err = interactor.AlbumRepository.GetAlbum(albumId)
+	if err != nil {
+		return
+	}
+	if album.Name == "" {
+		err = errors.New("album not found")
+	}
 	return
 }
 
 func (interactor *AlbumInteractor) GetAlbumsByArtistId(artistId int) (albums []domain.Album, err error) {
 	albums, err = interactor.AlbumRepository.GetAlbumsByArtistId(artistId)
+	if err != nil {
+		return
+	}
+	if len(albums) == 0 {
+		err = errors.New("albums not found")
+	}
 	return
 }
