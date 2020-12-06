@@ -9,14 +9,6 @@ type AlbumRepository struct {
 	SqlHandler
 }
 
-func values(creditMap map[int]*domain.Credit) []domain.Credit {
-	vs := []domain.Credit{}
-	for _, v := range creditMap {
-		vs = append(vs, *v)
-	}
-	return vs
-}
-
 func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	// load album info
 	pArtist := domain.Artist{}
@@ -90,7 +82,9 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	if description.Valid {
 		album.Description = description.String
 	}
-	album.Credits = values(creditMap)
+	for _, v := range creditMap {
+		album.Credits = append(album.Credits, *v)
+	}
 	return
 }
 
