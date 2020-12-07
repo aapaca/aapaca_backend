@@ -1,4 +1,4 @@
-CREATE TABLE aapaca.contains (
+CREATE TABLE aapaca.contents (
     album_id INT NOT NULL,
     song_id INT NOT NULL,
     song_order VARCHAR(256) NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE aapaca.aliases (
     FOREIGN KEY (alias_artist_id) REFERENCES aapaca.artists(id)
 );
 
-CREATE TABLE aapaca.performs (
+CREATE TABLE aapaca.performances (
     artist_id INT NOT NULL,
     song_id INT NOT NULL,
     occupation_id INT NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE aapaca.performs (
     FOREIGN KEY (occupation_id) REFERENCES aapaca.occupations(id)
 );
 
-CREATE TABLE aapaca.participates (
+CREATE TABLE aapaca.participations (
     artist_id INT NOT NULL,
     album_id INT NOT NULL,
     occupation_id INT NOT NULL,
