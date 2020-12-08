@@ -9,14 +9,6 @@ type AlbumRepository struct {
 	SqlHandler
 }
 
-func values(creditMap map[int]*domain.Credit) []domain.Credit {
-	vs := []domain.Credit{}
-	for _, v := range creditMap {
-		vs = append(vs, *v)
-	}
-	return vs
-}
-
 func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	// load album info
 	pArtist := domain.Artist{}
@@ -28,12 +20,12 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 							INNER JOIN artists as p_art
 								ON albums.primary_artist_id = p_art.id
 								AND albums.id = ?
-							LEFT OUTER JOIN participates
-								ON albums.id = participates.album_id
+							LEFT OUTER JOIN participations
+								ON albums.id = participations.album_id
 							LEFT OUTER JOIN artists
-								ON participates.artist_id = artists.id
+								ON participations.artist_id = artists.id
 							LEFT OUTER JOIN occupations as oc
-								ON participates.occupation_id = oc.id
+								ON participations.occupation_id = oc.id
 							`, id)
 	defer rows.Close()
 	creditMap := map[int]*domain.Credit{}
@@ -90,7 +82,9 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	if description.Valid {
 		album.Description = description.String
 	}
-	album.Credits = values(creditMap)
+	for _, v := range creditMap {
+		album.Credits = append(album.Credits, *v)
+	}
 	return
 }
 
