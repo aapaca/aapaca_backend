@@ -46,12 +46,12 @@ func TestGetSong(t *testing.T) {
 		}
 		assert.Equal(t, testSong, got, "Error")
 	})
-	t.Run("Error Case (Song does not exist", func(t *testing.T) {
+	t.Run("Error Case (Song does not exist)", func(t *testing.T) {
 		_, err := songInteractor.GetSong(0)
 		expectedError := errors.New("song not found")
 		assert.Equal(t, expectedError, err, "Error")
 	})
-	t.Run("Error Case (Repository returns error", func(t *testing.T) {
+	t.Run("Error Case (Repository returns error)", func(t *testing.T) {
 		_, err := songInteractor.GetSong(-1)
 		assert.Equal(t, dbError, err, "Error")
 	})
@@ -59,8 +59,9 @@ func TestGetSong(t *testing.T) {
 
 func TestGetAttendedSongs(t *testing.T) {
 	testArtist := domain.Artist{ID: 100}
-	testSong1 := domain.Song{ID: 1, Name: "Song1"}
-	testSong2 := domain.Song{ID: 2, Name: "Song2"}
+	credit := domain.Credit{Artist: testArtist}
+	testSong1 := domain.Song{ID: 1, Name: "Song1", Credits: []domain.Credit{credit}}
+	testSong2 := domain.Song{ID: 2, Name: "Song2", Credits: []domain.Credit{credit}}
 	testSongs := []domain.Song{testSong1, testSong2}
 	emptySongs := []domain.Song{}
 	dbError := errors.New("DB error")
@@ -78,12 +79,12 @@ func TestGetAttendedSongs(t *testing.T) {
 		}
 		assert.ElementsMatch(t, testSongs, got, "Error")
 	})
-	t.Run("Error Case (Song does not exist", func(t *testing.T) {
+	t.Run("Error Case (Song does not exist)", func(t *testing.T) {
 		_, err := songInteractor.GetAttendedSongs(0)
 		expectedError := errors.New("songs not found")
 		assert.Equal(t, expectedError, err, "Error")
 	})
-	t.Run("Error Case (Repository returns error", func(t *testing.T) {
+	t.Run("Error Case (Repository returns error)", func(t *testing.T) {
 		_, err := songInteractor.GetAttendedSongs(-1)
 		assert.Equal(t, dbError, err, "Error")
 	})
@@ -110,12 +111,12 @@ func TestGetSongsInAlbum(t *testing.T) {
 		}
 		assert.ElementsMatch(t, testSongs, got, "Error")
 	})
-	t.Run("Error Case (Song does not exist", func(t *testing.T) {
+	t.Run("Error Case (Song does not exist)", func(t *testing.T) {
 		_, err := songInteractor.GetSongsInAlbum(0)
 		expectedError := errors.New("songs not found")
 		assert.Equal(t, expectedError, err, "Error")
 	})
-	t.Run("Error Case (Repository returns error", func(t *testing.T) {
+	t.Run("Error Case (Repository returns error)", func(t *testing.T) {
 		_, err := songInteractor.GetSongsInAlbum(-1)
 		assert.Equal(t, dbError, err, "Error")
 	})
