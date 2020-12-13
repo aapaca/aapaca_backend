@@ -32,12 +32,12 @@ func TestGetSong(t *testing.T) {
 	testSong := domain.Song{ID: 1, Name: "Song1"}
 	emptySong := domain.Song{}
 	dbError := errors.New("DB error")
-	SongRepositoryMock := new(SongRepositoryMock)
-	SongRepositoryMock.On("GetSong", testSong.ID).Return(testSong, nil).Once()
-	SongRepositoryMock.On("GetSong", 0).Return(emptySong, nil).Once()
-	SongRepositoryMock.On("GetSong", -1).Return(emptySong, dbError).Once()
+	songRepositoryMock := new(SongRepositoryMock)
+	songRepositoryMock.On("GetSong", testSong.ID).Return(testSong, nil).Once()
+	songRepositoryMock.On("GetSong", 0).Return(emptySong, nil).Once()
+	songRepositoryMock.On("GetSong", -1).Return(emptySong, dbError).Once()
 	songInteractor := &SongInteractor{
-		SongRepository: SongRepositoryMock,
+		SongRepository: songRepositoryMock,
 	}
 	t.Run("Normal Case", func(t *testing.T) {
 		got, err := songInteractor.GetSong(1)
@@ -65,12 +65,12 @@ func TestGetAttendedSongs(t *testing.T) {
 	testSongs := []domain.Song{testSong1, testSong2}
 	emptySongs := []domain.Song{}
 	dbError := errors.New("DB error")
-	SongRepositoryMock := new(SongRepositoryMock)
-	SongRepositoryMock.On("GetAttendedSongs", testArtist.ID).Return(testSongs, nil).Once()
-	SongRepositoryMock.On("GetAttendedSongs", 0).Return(emptySongs, nil).Once()
-	SongRepositoryMock.On("GetAttendedSongs", -1).Return(emptySongs, dbError).Once()
+	songRepositoryMock := new(SongRepositoryMock)
+	songRepositoryMock.On("GetAttendedSongs", testArtist.ID).Return(testSongs, nil).Once()
+	songRepositoryMock.On("GetAttendedSongs", 0).Return(emptySongs, nil).Once()
+	songRepositoryMock.On("GetAttendedSongs", -1).Return(emptySongs, dbError).Once()
 	songInteractor := &SongInteractor{
-		SongRepository: SongRepositoryMock,
+		SongRepository: songRepositoryMock,
 	}
 	t.Run("Normal Case", func(t *testing.T) {
 		got, err := songInteractor.GetAttendedSongs(testArtist.ID)
@@ -97,12 +97,12 @@ func TestGetSongsInAlbum(t *testing.T) {
 	testSongs := []domain.Song{testSong1, testSong2}
 	emptySong := []domain.Song{}
 	dbError := errors.New("DB error")
-	SongRepositoryMock := new(SongRepositoryMock)
-	SongRepositoryMock.On("GetSongsInAlbum", testAlbum.ID).Return(testSongs, nil).Once()
-	SongRepositoryMock.On("GetSongsInAlbum", 0).Return(emptySong, nil).Once()
-	SongRepositoryMock.On("GetSongsInAlbum", -1).Return(emptySong, dbError).Once()
+	songRepositoryMock := new(SongRepositoryMock)
+	songRepositoryMock.On("GetSongsInAlbum", testAlbum.ID).Return(testSongs, nil).Once()
+	songRepositoryMock.On("GetSongsInAlbum", 0).Return(emptySong, nil).Once()
+	songRepositoryMock.On("GetSongsInAlbum", -1).Return(emptySong, dbError).Once()
 	songInteractor := &SongInteractor{
-		SongRepository: SongRepositoryMock,
+		SongRepository: songRepositoryMock,
 	}
 	t.Run("Normal Case", func(t *testing.T) {
 		got, err := songInteractor.GetSongsInAlbum(testAlbum.ID)
