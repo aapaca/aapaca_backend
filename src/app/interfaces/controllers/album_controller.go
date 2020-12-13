@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"github.com/labstack/echo"
 	"interfaces/database"
 	"net/http"
 	"strconv"
 	"usecase"
+
+	"github.com/labstack/echo"
 )
 
 type AlbumController struct {
@@ -24,7 +25,10 @@ func NewAlbumController(sqlHandler database.SqlHandler) *AlbumController {
 
 func (controller *AlbumController) GetAlbum() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strconv.Atoi(c.Param("id"))
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
+		}
 		album, err := controller.Interactor.GetAlbum(id)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Album Not Found"))
@@ -35,7 +39,10 @@ func (controller *AlbumController) GetAlbum() echo.HandlerFunc {
 
 func (controller *AlbumController) GetAlbumsByArtistId() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strconv.Atoi(c.Param("id"))
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
+		}
 		albums, err := controller.Interactor.GetAlbumsByArtistId(id)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Albums not Found"))

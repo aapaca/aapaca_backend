@@ -198,15 +198,13 @@ paths:
                             title: Piano
                           - id: 4
                             title: Keyboard
-                    albums:
-                      - id: 1
-                        name: Black America Again
-                        releasedDate: 'https://placehold.jp/200x200.png'
-                        imageUrl: '2016-11-04'
+                    album:
+                      id: 1
+                      name: Black America Again
+                      releasedDate: '2016-11-04'
+                      imageUrl: 'https://placehold.jp/200x200.png'
                     genre: HipHop
-                    releasedDate: '2016-11-04'
-                    time: '00:02:40'
-                    imageUrl: 'https://placehold.jp/200x200.png'
+                    length: '2:40'
                     links:
                       amazonMusic: 'https://www.amazon.com/Joy-Peace-Explicit-feat-Bilal/dp/B01MF58RNV/ref=sr_1_2?dchild=1&keywords=common+joy+and+peace&qid=1603626572&sr=8-2'
                       appleMusic: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
@@ -303,9 +301,9 @@ paths:
                         imageUrl:
                           type: string
                           format: uri
-                    releasedDate:
-                      type: string
-                      format: date
+                        releasedDate:
+                          type: string
+                          format: date
               examples:
                 Robert Glasper:
                   value:
@@ -315,21 +313,21 @@ paths:
                         id: 1
                         name: Black America Again
                         imageUrl: 'https://placehold.jp/200x200.png'
-                      releasedDate: '2016-11-04'
+                        releasedDate: '2016-11-04'
                     - id: 2
                       name: Home
                       album:
                         id: 1
                         name: Black America Again
                         imageUrl: 'https://placehold.jp/200x200.png'
-                      releasedDate: '2016-11-04'
+                        releasedDate: '2016-11-04'
                     - id: 3
                       name: Love Something
                       album:
                         id: 1
                         name: Black America Again
                         imageUrl: 'https://placehold.jp/200x200.png'
-                      releasedDate: '2016-11-04'
+                        releasedDate: '2016-11-04'
       operationId: get-artists-artistId-songs
       description: アーティストが参加している曲を取得できる。ただし、参加楽曲のうちアーティストがPrimary Artistとして参加している曲は除く。このエンドポイントは、Artistページにおける参加楽曲一覧（Attended Songs）を提供する。
   '/albums/{albumId}/songs':
@@ -358,7 +356,7 @@ paths:
                       type: integer
                     name:
                       type: string
-                    time:
+                    length:
                       type: string
                       format: time
                     links:
@@ -380,7 +378,7 @@ paths:
                   value:
                     - id: 1
                       name: Joy and Peace
-                      time: '00:02:40'
+                      length: '00:02:40'
                       links:
                         amazonMusic: 'https://www.amazon.com/dp/B01MF58RNV/ref=dm_ws_tlw_trk1'
                         appleMusic: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
@@ -388,7 +386,7 @@ paths:
                       order: '1'
                     - id: 2
                       name: Home
-                      time: '00:03:31'
+                      length: '00:03:31'
                       links:
                         amazon music: 'https://www.amazon.com/dp/B01MAUS0UK/ref=dm_ws_tlw_trk2'
                         apple music: 'https://music.apple.com/jp/album/home-feat-bilal/1440895412?i=1163889626'

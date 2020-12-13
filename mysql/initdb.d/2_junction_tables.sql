@@ -2,9 +2,6 @@ CREATE TABLE aapaca.contents (
     album_id INT NOT NULL,
     song_id INT NOT NULL,
     song_order VARCHAR(256) NOT NULL,
-    amazon_music_id VARCHAR(256) DEFAULT '' NOT NULL,
-    apple_music_id VARCHAR(256) DEFAULT '' NOT NULL,
-    spotify_id VARCHAR(256) DEFAULT '' NOT NULL,
     FOREIGN KEY (album_id) REFERENCES aapaca.albums(id),
     FOREIGN KEY (song_id) REFERENCES aapaca.songs(id)
 );

@@ -9,6 +9,20 @@ type AlbumRepository struct {
 	SqlHandler
 }
 
+func generateAlbumLinks(amazon string, apple string, spotify string) map[string]string {
+	links := map[string]string{}
+	if len(amazon) > 0 {
+		links["amazonMusic"] = "https://www.amazon.com/dp/" + amazon
+	}
+	if len(apple) > 0 {
+		links["appleMusic"] = "https://music.apple.com/album/" + apple
+	}
+	if len(spotify) > 0 {
+		links["spotify"] = "https://open.spotify.com/album/" + spotify
+	}
+	return links
+}
+
 func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	// load album info
 	pArtist := domain.Artist{}
@@ -63,16 +77,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 		return
 	}
 	album.PrimaryArtist = pArtist
-	links := map[string]string{}
-	if len(amazon) > 0 {
-		links["amazonMusic"] = "https://www.amazon.com/dp/" + amazon
-	}
-	if len(apple) > 0 {
-		links["appleMusic"] = "https://music.apple.com/album/" + apple
-	}
-	if len(spotify) > 0 {
-		links["spotify"] = "https://open.spotify.com/album/" + spotify
-	}
+	links := generateAlbumLinks(amazon, apple, spotify)
 	if len(links) > 0 {
 		album.Links = links
 	}

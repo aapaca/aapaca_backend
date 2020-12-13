@@ -9,7 +9,7 @@ type Album struct {
 	Credits       []Credit          `json:"credits,omitempty"`
 	Label         string            `json:"label,omitempty"` // レーベルも構造体にすべきかもしれない
 	ReleasedDate  *time.Time        `json:"releasedDate,omitempty"`
-	ImageURL      string            `json:"imageUrl"`
+	ImageURL      string            `json:"imageUrl,omitempty"`
 	Description   string            `json:"description,omitempty"`
 	Links         map[string]string `json:"links,omitempty"`
 }
