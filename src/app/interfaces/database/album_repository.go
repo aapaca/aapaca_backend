@@ -24,8 +24,6 @@ func generateAlbumLinks(amazon string, apple string, spotify string) map[string]
 }
 
 func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
-	// load album info
-	pArtist := domain.Artist{}
 	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title,
 								albums.id, albums.name, albums.released_date, albums.image_url, albums.description,
 								albums.amazon_music_id, albums.apple_music_id, albums.spotify_id,
@@ -42,6 +40,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 								ON participations.occupation_id = oc.id
 							`, id)
 	defer rows.Close()
+	pArtist := domain.Artist{}
 	creditMap := map[int]*domain.Credit{}
 	var amazon, apple, spotify string
 	var description sql.NullString

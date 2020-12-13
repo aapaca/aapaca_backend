@@ -103,7 +103,10 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 		album.ReleasedDate = &releasedDate.Time
 	}
 	song.Album = album
-	song.Links = generateSongLinks(amazon, apple, spotify)
+	links := generateSongLinks(amazon, apple, spotify)
+	if len(links) > 0 {
+		song.Links = links
+	}
 	song.PrimaryArtist = pArtist
 	return
 }
