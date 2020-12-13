@@ -100,7 +100,6 @@ paths:
                   value:
                     id: 1
                     name: Common
-                    birthday: '1972-03-13'
                     imageUrl: 'https://placehold.jp/200x200.png'
                     description: 'Lonnie Rashid Lynn (born March 13, 1972), better known by his stage name Common (formerly Common Sense), is an American rapper, actor and writer.'
                     links:
@@ -111,7 +110,6 @@ paths:
                   value:
                     id: 2
                     name: Robert Glasper
-                    birthday: '1978-04-05'
                     imageUrl: 'https://placehold.jp/200x200.png'
                     description: 'Robert Andre Glasper (born April 6, 1978) is an American pianist and record producer. He has been nominated for seven Grammy Awards and has won three Grammys and one Emmy Award.'
                     links:
@@ -122,7 +120,6 @@ paths:
                   value:
                     id: 3
                     name: August Greene
-                    birthday: '2018-01-01'
                     members:
                       - id: 1
                         name: Common
