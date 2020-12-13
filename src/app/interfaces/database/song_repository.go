@@ -38,7 +38,7 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 								p_artist.id, p_artist.name, p_artist.image_url,
 								albums.id, albums.name, albums.image_url, albums.released_date,
 								artists.id, artists.name, artists.image_url, oc.id, oc.title,
-								contents.amazon_music_id, contents.apple_music_id, contents.spotify_id
+								songs.amazon_music_id, songs.apple_music_id, songs.spotify_id
 							FROM songs
 							INNER JOIN artists as p_artist
 								ON songs.primary_artist_id = p_artist.id
@@ -56,39 +56,16 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 							`, id)
 	defer rows.Close()
 	var genre, songLen sql.NullString // mysqlのTIME型はgoのtime.Timeで受け取れない
+	var amazon, apple, spotify string
+	var releasedDate sql.NullTime
 	pArtist := domain.Artist{}
-	albumMap := map[int]domain.Album{}
+	album := domain.Album{}
 	creditMap := map[int]*domain.Credit{}
-	links := map[string]string{}
 	for rows.Next() {
-		album := domain.Album{}
 		var aID, pID sql.NullInt64
 		var aName, aImgURL, pTitle sql.NullString
-		var amazon, apple, spotify string
-		var releasedDate sql.NullTime
 		if err = rows.Scan(&song.ID, &song.Name, &genre, &songLen, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL, &album.ID, &album.Name, &album.ImageURL, &releasedDate, &aID, &aName, &aImgURL, &pID, &pTitle, &amazon, &apple, &spotify); err != nil {
 			return
-		}
-		if _, ok := albumMap[album.ID]; !ok {
-			if releasedDate.Valid {
-				album.ReleasedDate = &releasedDate.Time
-				// 最古のalbumのリリース日をsongのリリース日と定める
-				if song.ReleasedDate == nil || album.ReleasedDate.Before(*song.ReleasedDate) {
-					song.ReleasedDate = album.ReleasedDate
-				}
-			}
-			albumMap[album.ID] = album
-			// songs.linksに入れるリンクは、リンク数が多いアルバムを採用
-			// 採用されたアルバムに対応するimageURLをsong.ImageURLに代入
-			ls := generateSongLinks(amazon, apple, spotify)
-			if len(links) < len(ls) {
-				links = ls
-				song.ImageURL = album.ImageURL
-			}
-			// song.ImageURLがnilになるのを防ぐ
-			if len(song.ImageURL) == 0 && len(album.ImageURL) > 0 {
-				song.ImageURL = album.ImageURL
-			}
 		}
 		if !aID.Valid { // no credit information
 			continue
@@ -119,15 +96,14 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 	if songLen.Valid {
 		song.SongLen = shortenSongLen(songLen.String)
 	}
-	if len(links) > 0 {
-		song.Links = links
-	}
-	for _, v := range albumMap {
-		song.Albums = append(song.Albums, v)
-	}
 	for _, v := range creditMap {
 		song.Credits = append(song.Credits, *v)
 	}
+	if releasedDate.Valid {
+		album.ReleasedDate = &releasedDate.Time
+	}
+	song.Album = album
+	song.Links = generateSongLinks(amazon, apple, spotify)
 	song.PrimaryArtist = pArtist
 	return
 }
@@ -155,7 +131,7 @@ func (repo *SongRepository) GetAttendedSongs(artistId int) (songs []domain.Song,
 		if releasedDate.Valid {
 			album.ReleasedDate = &releasedDate.Time
 		}
-		song.Albums = append(song.Albums, album)
+		song.Album = album
 		songs = append(songs, song)
 	}
 	return
@@ -164,7 +140,7 @@ func (repo *SongRepository) GetAttendedSongs(artistId int) (songs []domain.Song,
 func (repo *SongRepository) GetSongsInAlbum(albumId int) (songs []domain.Song, err error) {
 	// TODO: add song length (time)
 	rows, err := repo.Query(`SELECT songs.id, songs.name, songs.song_len,
-								contents.amazon_music_id, contents.apple_music_id, contents.spotify_id, contents.song_order
+								songs.amazon_music_id, songs.apple_music_id, songs.spotify_id, contents.song_order
 							FROM songs
 							INNER JOIN contents
 								ON contents.album_id = ?

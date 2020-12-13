@@ -3,7 +3,7 @@ INSERT INTO aapaca.artists (name, birthday, status, description, amazon_music_id
 INSERT INTO aapaca.artists (name, birthday, status, description, amazon_music_id, apple_music_id, spotify_id) VALUES ('Karriem Riggins', '1975-08-25', 0, 'Karriem Riggins is an American jazz drummer, hip hop producer, DJ and rapper.', 'Karriem-Riggins/e/B0097A4F46', '5421197', '6e7BQ0gM6o8ecMXRZkXxlZ');
 INSERT INTO aapaca.artists (name, birthday, status, description, amazon_music_id, apple_music_id, spotify_id) VALUES ('August Greene', '2018-01-01', 1, 'August Greene is an American supergroup. The brainchild of rapper Common, and producers Robert Glasper and Karriem Riggins, it was formed in 2018 after sharing the Primetime Emmy Award for Outstanding Original Music and Lyrics for their song...', 'August-Greene/e/B07BS2T1SC', '1372391168', '7KIFh8WDiqlz1Dlopd03cy');
 
-INSERT INTO aapaca.songs (name, primary_artist_id, genre, song_len) VALUES ('Joy and Peace', 1, 'Hip hop', '00:02:40');
+INSERT INTO aapaca.songs (name, primary_artist_id, genre, song_len, amazon_music_id, apple_music_id, spotify_id) VALUES ('Joy and Peace', 1, 'Hip hop', '00:02:40', 'B01MF58RNV', '1440895412?i=1440895418', '5VRq8bpbbSsROTLMTraLNN');
 INSERT INTO aapaca.songs (name, primary_artist_id, genre, song_len) VALUES ('Home', 1, 'Hip hop', '00:03:31');
 INSERT INTO aapaca.songs (name, primary_artist_id, genre, song_len) VALUES ('Word From Moe Luv Interlude', 1, 'Hip hop', '00:00:40');
 
@@ -22,7 +22,7 @@ INSERT INTO aapaca.occupations (title) VALUES ('Bass');
 INSERT INTO aapaca.occupations (title) VALUES ('Drums');
 INSERT INTO aapaca.occupations (title) VALUES ('Producer');
 
-INSERT INTO aapaca.contents (album_id, song_id, song_order, amazon_music_id, apple_music_id, spotify_id) VALUES(1, 1, 1, 'B01MF58RNV', '1440895412?i=1440895418', '5VRq8bpbbSsROTLMTraLNN');
+INSERT INTO aapaca.contents (album_id, song_id, song_order) VALUES(1, 1, 1);
 INSERT INTO aapaca.contents (album_id, song_id, song_order) VALUES(1, 2, 2);
 INSERT INTO aapaca.contents (album_id, song_id, song_order) VALUES(1, 3, 3);
 

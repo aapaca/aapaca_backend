@@ -27,15 +27,13 @@ x-examples:
             title: Piano
           - id: 4
             title: Keyboard
-    albums:
-      - id: 1
-        name: Black America Again
-        releasedDate: 'https://placehold.jp/200x200.png'
-        imageUrl: '2016-11-04'
+    album:
+      id: 1
+      name: Black America Again
+      releasedDate: '2016-11-04'
+      imageUrl: 'https://placehold.jp/200x200.png'
     genre: HipHop
-    releasedDate: '2016-11-04'
-    time: '02:40'
-    imageUrl: 'https://placehold.jp/200x200.png'
+    length: '2:40'
     links:
       amazonMusic: 'https://www.amazon.com/Joy-Peace-Explicit-feat-Bilal/dp/B01MF58RNV/ref=sr_1_2?dchild=1&keywords=common+joy+and+peace&qid=1603626572&sr=8-2'
       appleMusic: 'https://music.apple.com/album/joy-and-peace-feat-bilal/1440895412?i=1440895418'
@@ -60,32 +58,23 @@ properties:
     type: array
     items:
       $ref: ./Credit.v1.yaml
-  albums:
-    type: array
-    items:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        releasedDate:
-          type: string
-          format: uri
-        imageUrl:
-          type: string
-          format: date
+  album:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      releasedDate:
+        type: string
+        format: date
+      imageUrl:
+        type: string
+        format: uri
   genre:
     type: string
-  releasedDate:
+  length:
     type: string
-    format: date
-  time:
-    type: string
-    format: time
-  imageUrl:
-    type: string
-    format: uri
   links:
     type: object
     properties:

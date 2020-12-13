@@ -40,6 +40,9 @@ CREATE TABLE aapaca.songs (
     label VARCHAR(256) DEFAULT '' NOT NULL,
     genre VARCHAR(256) DEFAULT '' NOT NULL,
     song_len TIME,
+    amazon_music_id VARCHAR(256) DEFAULT '' NOT NULL,
+    apple_music_id VARCHAR(256) DEFAULT '' NOT NULL,
+    spotify_id VARCHAR(256) DEFAULT '' NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (primary_artist_id) REFERENCES aapaca.artists(id)
 );
