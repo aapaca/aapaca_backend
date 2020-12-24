@@ -19,5 +19,8 @@ func Init() {
 	e.GET("/artists/:id/songs", songController.GetAttendedSongs())
 	e.GET("/albums/:id/songs", songController.GetSongsInAlbum())
 
+	artistController := controllers.NewArtistController(sqlHandler)
+	e.GET("/artists/:id", artistController.GetArtist())
+
 	e.Logger.Fatal(e.Start(":1323"))
 }

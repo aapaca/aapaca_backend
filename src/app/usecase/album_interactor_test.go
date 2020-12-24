@@ -37,9 +37,6 @@ func TestGetAlbum(t *testing.T) {
 		AlbumRepository: albumRepositoryMock,
 	}
 	t.Run("Normal Case", func(t *testing.T) {
-		albumInteractor := &AlbumInteractor{
-			AlbumRepository: albumRepositoryMock,
-		}
 		got, err := albumInteractor.GetAlbum(1)
 		if err != nil {
 			t.Error(err)
