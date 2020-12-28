@@ -72,37 +72,27 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 		if err = rows.Scan(&song.ID, &song.Name, &genre, &songLen, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL, &album.ID, &album.Name, &album.ImageURL, &releasedDate, &aID, &aName, &aImgURL, &pID, &pTitle, &extID, &extSName); err != nil {
 			return
 		}
+		if extID.Valid {
+			c, l, e := generateSongLink(extID.String, extSName.String)
+			if err = e; err != nil {
+				return
+			}
+			links[c] = l
+		}
 		if !aID.Valid { // no credit information
 			continue
 		}
 		artistID := int(aID.Int64)
 		if _, ok := creditMap[artistID]; !ok {
 			artist := domain.Artist{ID: artistID, Name: aName.String, ImageURL: aImgURL.String}
-			part := domain.Occupation{ID: int(pID.Int64), Title: pTitle.String}
-			creditMap[artistID] = &domain.Credit{Artist: artist, Parts: []domain.Occupation{part}}
-		} else {
-			partID := int(pID.Int64)
-			exist := false
-			for _, p := range creditMap[artistID].Parts {
-				if p.ID == partID {
-					exist = true
-					break
-				}
-			}
-			if !exist {
-				part := domain.Occupation{ID: partID, Title: pTitle.String}
-				creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
-			}
+			creditMap[artistID] = &domain.Credit{Artist: artist, Parts: []domain.Occupation{}}
 		}
-		if !extID.Valid {
+		partID := int(pID.Int64)
+		if partExists(creditMap[artistID].Parts, partID) {
 			continue
 		}
-		c, l, e := generateSongLink(extID.String, extSName.String)
-		if err = e; err != nil {
-			return
-		}
-		links[c] = l
-
+		part := domain.Occupation{ID: partID, Title: pTitle.String}
+		creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
 	}
 	if genre.Valid {
 		song.Genre = genre.String
@@ -154,7 +144,6 @@ func (repo *SongRepository) GetAttendedSongs(artistId int) (songs []domain.Song,
 }
 
 func (repo *SongRepository) GetSongsInAlbum(albumId int) (songs []domain.Song, err error) {
-	// TODO: add song length (time)
 	rows, err := repo.Query(`SELECT songs.id, songs.name, songs.song_len,
 								external_ids.external_id, external_services.name, contents.song_order
 							FROM songs
@@ -184,15 +173,15 @@ func (repo *SongRepository) GetSongsInAlbum(albumId int) (songs []domain.Song, e
 		if !extID.Valid {
 			continue
 		}
-		camelSName, link, e := generateSongLink(extID.String, extSName.String)
-		if err = e; err != nil {
-			return
-		}
 		if songMap[song.ID].Links == nil {
 			links := map[string]string{}
 			songMap[song.ID].Links = links
 		}
-		songMap[song.ID].Links[camelSName] = link
+		c, l, e := generateSongLink(extID.String, extSName.String)
+		if err = e; err != nil {
+			return
+		}
+		songMap[song.ID].Links[c] = l
 	}
 	for _, v := range songMap {
 		songs = append(songs, *v)
