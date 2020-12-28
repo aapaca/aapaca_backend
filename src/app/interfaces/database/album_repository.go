@@ -3,30 +3,39 @@ package database
 import (
 	"database/sql"
 	"domain"
+	"errors"
 )
 
 type AlbumRepository struct {
 	SqlHandler
 }
 
-func generateAlbumLinks(amazon string, apple string, spotify string) map[string]string {
-	links := map[string]string{}
-	if len(amazon) > 0 {
-		links["amazonMusic"] = "https://www.amazon.com/dp/" + amazon
+func generateAlbumLink(id string, serviceName string) (string, string, error) {
+	if serviceName == "amazon_music" {
+		return "amazonMusic", "https://www.amazon.com/dp/" + id, nil
 	}
-	if len(apple) > 0 {
-		links["appleMusic"] = "https://music.apple.com/album/" + apple
+	if serviceName == "apple_music" {
+		return "appleMusic", "https://music.apple.com/album/" + id, nil
 	}
-	if len(spotify) > 0 {
-		links["spotify"] = "https://open.spotify.com/album/" + spotify
+	if serviceName == "spotify" {
+		return "spotify", "https://open.spotify.com/album/" + id, nil
 	}
-	return links
+	return "", "", errors.New("invalid service name")
+}
+
+func partExists(partList []domain.Occupation, partID int) bool {
+	for _, p := range partList {
+		if p.ID == partID {
+			return true
+		}
+	}
+	return false
 }
 
 func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title,
 								albums.id, albums.name, albums.released_date, albums.image_url, albums.description,
-								albums.amazon_music_id, albums.apple_music_id, albums.spotify_id,
+								external_ids.external_id, external_services.name,
 								p_art.id, p_art.name, p_art.image_url
 							FROM albums
 							INNER JOIN artists as p_art
@@ -38,21 +47,33 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 								ON participations.artist_id = artists.id
 							LEFT OUTER JOIN occupations as oc
 								ON participations.occupation_id = oc.id
+							LEFT OUTER JOIN external_ids
+								ON external_ids.record_id = albums.id
+								AND external_ids.record_type = 2
+							LEFT OUTER JOIN external_services
+								ON external_ids.service_id = external_services.id
 							`, id)
 	defer rows.Close()
 	pArtist := domain.Artist{}
 	creditMap := map[int]*domain.Credit{}
-	var amazon, apple, spotify string
 	var description sql.NullString
 	var releasedDate sql.NullTime
+	links := map[string]string{}
 	for rows.Next() {
 		var nullableArtistID, partID sql.NullInt64
-		var artistName, artistImgURL, partTitle sql.NullString
-		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &releasedDate, &album.ImageURL, &description, &amazon, &apple, &spotify, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
+		var artistName, artistImgURL, partTitle, extID, extSName sql.NullString
+		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &releasedDate, &album.ImageURL, &description, &extID, &extSName, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
 			return
 		}
+		if extID.Valid {
+			c, l, e := generateAlbumLink(extID.String, extSName.String)
+			if err = e; err != nil {
+				return
+			}
+			links[c] = l
+		}
 		if !nullableArtistID.Valid { // credit is empty
-			break
+			continue
 		}
 		artistID := int(nullableArtistID.Int64)
 		if _, ok := creditMap[artistID]; !ok {
@@ -65,18 +86,20 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 				Parts: []domain.Occupation{},
 			}
 		}
+		if partExists(creditMap[artistID].Parts, int(partID.Int64)) {
+			continue
+		}
 		part := domain.Occupation{
 			ID:    int(partID.Int64),
 			Title: partTitle.String,
 		}
 		creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
 	}
-	// if rows have no columns, album.ID should be 0 and is different from id
+	// if rows have no columns, album.Name is empty string.
 	if album.Name == "" {
 		return
 	}
 	album.PrimaryArtist = pArtist
-	links := generateAlbumLinks(amazon, apple, spotify)
 	if len(links) > 0 {
 		album.Links = links
 	}
