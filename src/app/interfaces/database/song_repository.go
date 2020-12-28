@@ -3,24 +3,24 @@ package database
 import (
 	"database/sql"
 	"domain"
+	"errors"
 )
 
 type SongRepository struct {
 	SqlHandler
 }
 
-func generateSongLinks(amazon string, apple string, spotify string) map[string]string {
-	links := map[string]string{}
-	if len(amazon) > 0 {
-		links["amazonMusic"] = "https://www.amazon.com/dp/" + amazon
+func generateSongLink(id string, serviceName string) (string, string, error) {
+	if serviceName == "amazon_music" {
+		return "amazonMusic", "https://www.amazon.com/dp/" + id, nil
 	}
-	if len(apple) > 0 {
-		links["appleMusic"] = "https://music.apple.com/album/" + apple
+	if serviceName == "apple_music" {
+		return "appleMusic", "https://music.apple.com/album/" + id, nil
 	}
-	if len(spotify) > 0 {
-		links["spotify"] = "https://open.spotify.com/track/" + spotify
+	if serviceName == "spotify" {
+		return "spotify", "https://open.spotify.com/track/" + id, nil
 	}
-	return links
+	return "", "", errors.New("invalid service name")
 }
 
 func shortenSongLen(songLen string) string {
@@ -38,7 +38,7 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 								p_artist.id, p_artist.name, p_artist.image_url,
 								albums.id, albums.name, albums.image_url, albums.released_date,
 								artists.id, artists.name, artists.image_url, oc.id, oc.title,
-								songs.amazon_music_id, songs.apple_music_id, songs.spotify_id
+								external_ids.external_id, external_services.name
 							FROM songs
 							INNER JOIN artists as p_artist
 								ON songs.primary_artist_id = p_artist.id
@@ -53,18 +53,23 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 								ON oc.id = performances.occupation_id
 							LEFT OUTER JOIN artists
 								ON artists.id = performances.artist_id
+							LEFT OUTER JOIN external_ids
+								ON external_ids.record_id = songs.id
+								AND external_ids.record_type = 3
+							LEFT OUTER JOIN external_services
+								ON external_ids.service_id = external_services.id
 							`, id)
 	defer rows.Close()
 	var genre, songLen sql.NullString // mysqlのTIME型はgoのtime.Timeで受け取れない
-	var amazon, apple, spotify string
 	var releasedDate sql.NullTime
 	pArtist := domain.Artist{}
 	album := domain.Album{}
 	creditMap := map[int]*domain.Credit{}
+	links := map[string]string{}
 	for rows.Next() {
 		var aID, pID sql.NullInt64
-		var aName, aImgURL, pTitle sql.NullString
-		if err = rows.Scan(&song.ID, &song.Name, &genre, &songLen, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL, &album.ID, &album.Name, &album.ImageURL, &releasedDate, &aID, &aName, &aImgURL, &pID, &pTitle, &amazon, &apple, &spotify); err != nil {
+		var aName, aImgURL, pTitle, extID, extSName sql.NullString
+		if err = rows.Scan(&song.ID, &song.Name, &genre, &songLen, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL, &album.ID, &album.Name, &album.ImageURL, &releasedDate, &aID, &aName, &aImgURL, &pID, &pTitle, &extID, &extSName); err != nil {
 			return
 		}
 		if !aID.Valid { // no credit information
@@ -89,6 +94,15 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 				creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
 			}
 		}
+		if !extID.Valid {
+			continue
+		}
+		c, l, e := generateSongLink(extID.String, extSName.String)
+		if err = e; err != nil {
+			return
+		}
+		links[c] = l
+
 	}
 	if genre.Valid {
 		song.Genre = genre.String
@@ -103,7 +117,6 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 		album.ReleasedDate = &releasedDate.Time
 	}
 	song.Album = album
-	links := generateSongLinks(amazon, apple, spotify)
 	if len(links) > 0 {
 		song.Links = links
 	}
@@ -143,28 +156,46 @@ func (repo *SongRepository) GetAttendedSongs(artistId int) (songs []domain.Song,
 func (repo *SongRepository) GetSongsInAlbum(albumId int) (songs []domain.Song, err error) {
 	// TODO: add song length (time)
 	rows, err := repo.Query(`SELECT songs.id, songs.name, songs.song_len,
-								songs.amazon_music_id, songs.apple_music_id, songs.spotify_id, contents.song_order
+								external_ids.external_id, external_services.name, contents.song_order
 							FROM songs
 							INNER JOIN contents
 								ON contents.album_id = ?
 								AND songs.id = contents.song_id
+							LEFT OUTER JOIN external_ids
+								ON external_ids.record_id = songs.id
+								AND external_ids.record_type = 3
+							LEFT OUTER JOIN external_services
+								ON external_ids.service_id = external_services.id
 							`, albumId)
 	defer rows.Close()
+	songMap := map[int]*domain.Song{}
 	for rows.Next() {
 		song := domain.Song{}
-		var amazon, apple, spotify string
-		var songLen sql.NullString
-		if err = rows.Scan(&song.ID, &song.Name, &songLen, &amazon, &apple, &spotify, &song.Order); err != nil {
+		var songLen, extID, extSName sql.NullString
+		if err = rows.Scan(&song.ID, &song.Name, &songLen, &extID, &extSName, &song.Order); err != nil {
 			return
 		}
-		if songLen.Valid {
-			song.SongLen = shortenSongLen(songLen.String)
+		if _, ok := songMap[song.ID]; !ok {
+			if songLen.Valid {
+				song.SongLen = shortenSongLen(songLen.String)
+			}
+			songMap[song.ID] = &song
 		}
-		links := generateSongLinks(amazon, apple, spotify)
-		if len(links) > 0 {
-			song.Links = links
+		if !extID.Valid {
+			continue
 		}
-		songs = append(songs, song)
+		camelSName, link, e := generateSongLink(extID.String, extSName.String)
+		if err = e; err != nil {
+			return
+		}
+		if songMap[song.ID].Links == nil {
+			links := map[string]string{}
+			songMap[song.ID].Links = links
+		}
+		songMap[song.ID].Links[camelSName] = link
+	}
+	for _, v := range songMap {
+		songs = append(songs, *v)
 	}
 	return
 }
