@@ -42,7 +42,7 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 								ON connections.id = c_art.id
 							LEFT OUTER JOIN external_ids
 								ON external_ids.record_id = artists.id
-								AND external_ids.record_type = 1
+								AND external_ids.record_type = 'artist'
 							LEFT OUTER JOIN external_services
 								ON external_ids.service_id = external_services.id
 							WHERE artists.id = ?

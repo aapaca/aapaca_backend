@@ -47,7 +47,7 @@ CREATE TABLE aapaca.external_services (
 
 CREATE TABLE aapaca.external_ids (
     record_id INT NOT NULL,
-    record_type INT NOT NULL, # record_type: artist -> 1, album -> 2, song -> 3
+    record_type ENUM('artist', 'album', 'song') NOT NULL,
     external_id VARCHAR(256) NOT NULL,
     service_id INT NOT NULL,
     FOREIGN KEY (service_id) REFERENCES aapaca.external_services(id)

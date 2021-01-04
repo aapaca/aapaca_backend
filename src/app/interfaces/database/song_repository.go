@@ -55,7 +55,7 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 								ON artists.id = performances.artist_id
 							LEFT OUTER JOIN external_ids
 								ON external_ids.record_id = songs.id
-								AND external_ids.record_type = 3
+								AND external_ids.record_type = 'song'
 							LEFT OUTER JOIN external_services
 								ON external_ids.service_id = external_services.id
 							`, id)
@@ -152,7 +152,7 @@ func (repo *SongRepository) GetSongsInAlbum(albumId int) (songs []domain.Song, e
 								AND songs.id = contents.song_id
 							LEFT OUTER JOIN external_ids
 								ON external_ids.record_id = songs.id
-								AND external_ids.record_type = 3
+								AND external_ids.record_type = 'song'
 							LEFT OUTER JOIN external_services
 								ON external_ids.service_id = external_services.id
 							`, albumId)

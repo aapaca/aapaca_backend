@@ -7,37 +7,37 @@ INSERT INTO aapaca.artists (name, birthday, status, description) VALUES ('Robert
 INSERT INTO aapaca.artists (name, birthday, status, description) VALUES ('Karriem Riggins', '1975-08-25', 0, 'Karriem Riggins is an American jazz drummer, hip hop producer, DJ and rapper.');
 INSERT INTO aapaca.artists (name, birthday, status, description) VALUES ('August Greene', '2018-01-01', 1, 'August Greene is an American supergroup. The brainchild of rapper Common, and producers Robert Glasper and Karriem Riggins, it was formed in 2018 after sharing the Primetime Emmy Award for Outstanding Original Music and Lyrics for their song...');
 
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 1, 'Common/e/B000AQ3K7O', 1);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 1, '64490', 2);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 1, '2GHclqNVjqGuiE5mA7BEoc', 3);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 1, 'Robert-Glasper/e/B00197K67U', 1);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 1, '4643652', 2);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 1, '5cM1PvItlR21WUyBnsdMcn', 3);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (3, 1, 'Karriem-Riggins/e/B0097A4F46', 1);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (3, 1, '5421197', 2);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (3, 1, '6e7BQ0gM6o8ecMXRZkXxlZ', 3);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (4, 1, 'August-Greene/e/B07BS2T1SC', 1);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (4, 1, '1372391168', 2);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (4, 1, '7KIFh8WDiqlz1Dlopd03cy', 3);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'artist', 'Common/e/B000AQ3K7O', 1);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'artist', '64490', 2);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'artist', '2GHclqNVjqGuiE5mA7BEoc', 3);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 'artist', 'Robert-Glasper/e/B00197K67U', 1);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 'artist', '4643652', 2);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 'artist', '5cM1PvItlR21WUyBnsdMcn', 3);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (3, 'artist', 'Karriem-Riggins/e/B0097A4F46', 1);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (3, 'artist', '5421197', 2);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (3, 'artist', '6e7BQ0gM6o8ecMXRZkXxlZ', 3);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (4, 'artist', 'August-Greene/e/B07BS2T1SC', 1);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (4, 'artist', '1372391168', 2);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (4, 'artist', '7KIFh8WDiqlz1Dlopd03cy', 3);
 
 INSERT INTO aapaca.songs (name, primary_artist_id, genre, song_len) VALUES ('Joy and Peace', 1, 'Hip hop', '00:02:40');
 INSERT INTO aapaca.songs (name, primary_artist_id, genre, song_len) VALUES ('Home', 1, 'Hip hop', '00:03:31');
 INSERT INTO aapaca.songs (name, primary_artist_id, genre, song_len) VALUES ('Word From Moe Luv Interlude', 1, 'Hip hop', '00:00:40');
 
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 3, 'B01MF58RNV', 1);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 3, '1440895412?i=1440895418', 2);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 3, '5VRq8bpbbSsROTLMTraLNN', 3);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'song', 'B01MF58RNV', 1);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'song', '1440895412?i=1440895418', 2);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'song', '5VRq8bpbbSsROTLMTraLNN', 3);
 
 INSERT INTO aapaca.albums (name, primary_artist_id, label, released_date, description) VALUES ('Black America Again', 1, 'ARTium', '2016-11-04', 'Black America Again is the eleventh studio album by American rapper Common. It was released on November 4, 2016, by ARTium Recordings and Def Jam Recordings.');
 INSERT INTO aapaca.albums (name, primary_artist_id, label, released_date, description) VALUES ('August Greene', 4, 'August Greene LLC', '2018-05-04', '');
 INSERT INTO aapaca.albums (name, primary_artist_id, label, released_date) VALUES ('Let Love', 1, 'Loma Vista', '2019-08-30');
 
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 2, 'B01MCRSTN4', 1);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 2, '1440895412', 2);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 2, '2DTbGcv40CSMW0P4yAQQBa', 3);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 2, 'B07B6HZ13D', 1);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 2, '1372391030', 2);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 2, '04o9bBHEVUGabrMRo3vzuy', 3);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'album', 'B01MCRSTN4', 1);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'album', '1440895412', 2);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'album', '2DTbGcv40CSMW0P4yAQQBa', 3);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 'album', 'B07B6HZ13D', 1);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 'album', '1372391030', 2);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (2, 'album', '04o9bBHEVUGabrMRo3vzuy', 3);
 
 INSERT INTO aapaca.occupations (title) VALUES ('Vocal');
 INSERT INTO aapaca.occupations (title) VALUES ('Guitar');
@@ -96,8 +96,8 @@ INSERT INTO aapaca.albums (name, primary_artist_id, released_date) VALUES ('Reki
 INSERT INTO aapaca.albums (name, primary_artist_id, released_date) VALUES ('Honnou', 5, '1999-10-27');
 INSERT INTO aapaca.albums (name, primary_artist_id, released_date) VALUES ('Kouhukuron', 5, '1998-05-27');
 
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (6, 2, '423534193', 2);
-INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (6, 2, '7l9bxNPPXK8458ScKSUXv6', 3);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (6, 'album', '423534193', 2);
+INSERT INTO aapaca.external_ids (record_id, record_type, external_id, service_id) VALUES (6, 'album', '7l9bxNPPXK8458ScKSUXv6', 3);
 
 INSERT INTO aapaca.occupations (title) VALUES ('Vocal');
 INSERT INTO aapaca.occupations (title) VALUES ('Guitar');

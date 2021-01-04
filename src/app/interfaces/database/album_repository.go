@@ -49,7 +49,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 								ON participations.occupation_id = oc.id
 							LEFT OUTER JOIN external_ids
 								ON external_ids.record_id = albums.id
-								AND external_ids.record_type = 2
+								AND external_ids.record_type = 'album'
 							LEFT OUTER JOIN external_services
 								ON external_ids.service_id = external_services.id
 							`, id)
