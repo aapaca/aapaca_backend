@@ -42,11 +42,11 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 								ON connections.id = c_art.id
 							LEFT OUTER JOIN external_ids
 								ON external_ids.record_id = artists.id
-								AND external_ids.record_type = 'artist'
+								AND external_ids.record_type = ?
 							LEFT OUTER JOIN external_services
 								ON external_ids.service_id = external_services.id
 							WHERE artists.id = ?
-							`, id, id, id)
+							`, id, id, domain.RecordType.Artist, id)
 	defer rows.Close()
 	memberMap := map[int]domain.Artist{}
 	aliasMap := map[int]domain.Artist{}
