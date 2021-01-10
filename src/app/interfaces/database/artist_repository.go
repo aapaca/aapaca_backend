@@ -3,29 +3,29 @@ package database
 import (
 	"database/sql"
 	"domain"
+	"errors"
 )
 
 type ArtistRepository struct {
 	SqlHandler
 }
 
-func generateArtistLinks(amazon string, apple string, spotify string) map[string]string {
-	links := map[string]string{}
-	if len(amazon) > 0 {
-		links["amazonMusic"] = "https://www.amazon.com/" + amazon
+func generateArtistLink(id string, serviceName string) (string, string, error) {
+	if serviceName == "amazon_music" {
+		return "amazonMusic", "https://www.amazon.com/" + id, nil
 	}
-	if len(apple) > 0 {
-		links["appleMusic"] = "https://music.apple.com/artist/" + apple
+	if serviceName == "apple_music" {
+		return "appleMusic", "https://music.apple.com/artist/" + id, nil
 	}
-	if len(spotify) > 0 {
-		links["spotify"] = "https://open.spotify.com/artist/" + spotify
+	if serviceName == "spotify" {
+		return "spotify", "https://open.spotify.com/artist/" + id, nil
 	}
-	return links
+	return "", "", errors.New("invalid service name")
 }
 
 func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error) {
 	rows, err := repo.Query(`SELECT artists.id, artists.name, artists.image_url, artists.description,
-							artists.amazon_music_id, artists.apple_music_id, artists.spotify_id,
+							external_ids.external_id, external_services.name,
 							connections.type, c_art.id, c_art.name, c_art.image_url
 							FROM artists
 							LEFT OUTER JOIN (
@@ -40,43 +40,63 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 								ON artists.id = connections.artist_id
 							LEFT OUTER JOIN artists as c_art
 								ON connections.id = c_art.id
+							LEFT OUTER JOIN external_ids
+								ON external_ids.record_id = artists.id
+								AND external_ids.record_type = ?
+							LEFT OUTER JOIN external_services
+								ON external_ids.service_id = external_services.id
 							WHERE artists.id = ?
-							`, id, id, id)
+							`, id, id, domain.RecordType.Artist, id)
 	defer rows.Close()
-	var members, aliases []domain.Artist
+	memberMap := map[int]domain.Artist{}
+	aliasMap := map[int]domain.Artist{}
 	var description sql.NullString
-	var amazon, apple, spotify string
+	links := map[string]string{}
 	for rows.Next() {
 		var cartID sql.NullInt64
-		var t, cartName, cartImgURL sql.NullString
-		if err = rows.Scan(&artist.ID, &artist.Name, &artist.ImageURL, &description, &amazon, &apple, &spotify, &t, &cartID, &cartName, &cartImgURL); err != nil {
+		var t, cartName, cartImgURL, extID, extSName sql.NullString
+		if err = rows.Scan(&artist.ID, &artist.Name, &artist.ImageURL, &description, &extID, &extSName, &t, &cartID, &cartName, &cartImgURL); err != nil {
 			return
 		}
-		if !cartID.Valid { // no aliases and members
-			break
+		if extID.Valid {
+			c, l, e := generateArtistLink(extID.String, extSName.String)
+			if err = e; err != nil {
+				return
+			}
+			links[c] = l
 		}
-		artist := domain.Artist{
+		if !cartID.Valid { // no aliases and members
+			continue
+		}
+		cart := domain.Artist{
 			ID:       int(cartID.Int64),
 			Name:     cartName.String,
 			ImageURL: cartImgURL.String,
 		}
 		if t.String == "alias" {
-			aliases = append(aliases, artist)
+			aliasMap[cart.ID] = cart
 		} else { // type is "member"
-			members = append(members, artist)
+			memberMap[cart.ID] = cart
 		}
 	}
 	if description.Valid {
 		artist.Description = description.String
 	}
-	links := generateArtistLinks(amazon, apple, spotify)
 	if len(links) > 0 {
 		artist.Links = links
 	}
-	if len(aliases) > 0 {
+	if len(aliasMap) > 0 {
+		aliases := []domain.Artist{}
+		for _, v := range aliasMap {
+			aliases = append(aliases, v)
+		}
 		artist.Aliases = aliases
 	}
-	if len(members) > 0 {
+	if len(memberMap) > 0 {
+		members := []domain.Artist{}
+		for _, v := range memberMap {
+			members = append(members, v)
+		}
 		artist.Members = members
 	}
 	return
