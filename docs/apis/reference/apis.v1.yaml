@@ -121,18 +121,45 @@ paths:
                     id: 3
                     name: August Greene
                     members:
-                      - id: 1
-                        name: Common
-                        imageUrl: 'https://placehold.jp/200x200.png'
-                      - id: 2
-                        name: Robert Glasper
-                        imageUrl: 'https://placehold.jp/200x200.png'
+                      - artist:
+                          id: 1
+                          name: Common
+                          imageUrl: 'https://placehold.jp/200x200.png'
+                        parts:
+                          - id: 1
+                            title: Exective Producer
+                      - artist:
+                          id: 2
+                          name: Robert Glasper
+                          imageUrl: 'https://placehold.jp/200x200.png'
+                        parts:
+                          - id: 2
+                            title: Composer
+                          - id: 3
+                            title: Piano
+                          - id: 4
+                            title: Keyboard
                     imageUrl: 'https://placehold.jp/200x200.png'
                     description: 'August Greene is an American supergroup. The brainchild of rapper Common, and producers Robert Glasper and Karriem Riggins, it was formed in 2018 after sharing the Primetime Emmy Award for Outstanding Original Music and Lyrics for their song...'
                     links:
                       amazonMusic: 'https://www.amazon.com/August-Greene/e/B07BS2T1SC/digital/ref=ntt_mp3_rdr?_encoding=UTF8&sn=d'
                       appleMusic: 'https://music.apple.com/us/artist/august-greene/1372391168'
                       spotify: 'https://open.spotify.com/artist/7KIFh8WDiqlz1Dlopd03cy'
+                Yuming:
+                  value:
+                    id: 4
+                    name: Matsutoya Yumi
+                    aliases:
+                      - artist:
+                          id: 5
+                          name: Kureta Karuho
+                          imageUrl: 'http://example.com'
+                        parts:
+                          - id: 2
+                            title: Composer
+                          - id: 5
+                            title: Lyricist
+                    imageUrl: 'http://example.com'
         '404':
           description: Not Found
           content:
@@ -147,7 +174,7 @@ paths:
                   value:
                     Responce: Artist Not Found
       operationId: get-artists-artistID
-      description: Artist IDに対応するアーティストの情報を取得できる。このエンドポイントは、Artistページにおける上部のプロフィールを提供する。Artistがグループであれば、これに所属するメンバー（Members）も提供する。Artistに別名（also known as）があれば提供する。
+      description: Artist IDに対応するアーティストの情報を取得できる。このエンドポイントは、Artistページにおける上部のプロフィールを提供する。Artistがグループであれば、これに所属するメンバー（Members）も提供する。Artistに別名（Aliases）があれば提供する。
       parameters: []
   '/songs/{songId}':
     parameters:
