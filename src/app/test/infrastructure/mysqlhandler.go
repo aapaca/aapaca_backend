@@ -2,17 +2,20 @@ package infrastructure
 
 import (
 	"database/sql"
+
+	"interfaces/database/rdb"
+
 	_ "github.com/go-sql-driver/mysql"
-	"interfaces/database"
 )
 
 type SqlHandler struct {
 	Conn *sql.DB
 }
 
-func NewSqlHandler() database.SqlHandler {
+func NewSqlHandler() rdb.SqlHandler {
 	c := NewDBConfig()
 	dbPath := c.User + ":" + c.Password + "@tcp(" + c.Container + ":" + c.Port + ")/" + c.Database + "?parseTime=true"
+	// dbPath := "aapaca_user:passwd@tcp(192.168.99.100:3306)/aapaca?parseTime=true"
 	conn, err := sql.Open("mysql", dbPath)
 	if err != nil {
 		panic(err)
@@ -22,7 +25,7 @@ func NewSqlHandler() database.SqlHandler {
 	return sqlHandler
 }
 
-func (handler *SqlHandler) Execute(statement string, args ...interface{}) (database.Result, error) {
+func (handler *SqlHandler) Execute(statement string, args ...interface{}) (rdb.Result, error) {
 	res := SqlResult{}
 	result, err := handler.Conn.Exec(statement, args...)
 	if err != nil {
@@ -32,7 +35,7 @@ func (handler *SqlHandler) Execute(statement string, args ...interface{}) (datab
 	return res, nil
 }
 
-func (handler *SqlHandler) Query(statement string, args ...interface{}) (database.Row, error) {
+func (handler *SqlHandler) Query(statement string, args ...interface{}) (rdb.Row, error) {
 	rows, err := handler.Conn.Query(statement, args...)
 	if err != nil {
 		return new(SqlRow), err

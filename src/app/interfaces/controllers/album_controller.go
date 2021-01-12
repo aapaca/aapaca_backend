@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"interfaces/database"
+	"interfaces/database/rdb"
 	"net/http"
 	"strconv"
 	"usecase"
@@ -13,7 +14,7 @@ type AlbumController struct {
 	Interactor usecase.AlbumInteractor
 }
 
-func NewAlbumController(sqlHandler database.SqlHandler) *AlbumController {
+func NewAlbumController(sqlHandler rdb.SqlHandler) *AlbumController {
 	return &AlbumController{
 		Interactor: usecase.AlbumInteractor{
 			AlbumRepository: &database.AlbumRepository{

@@ -4,10 +4,11 @@ import (
 	"database/sql"
 	"domain"
 	"errors"
+	"interfaces/database/rdb"
 )
 
 type ArtistRepository struct {
-	SqlHandler
+	rdb.SqlHandler
 }
 
 func generateArtistLink(id string, serviceName string) (string, string, error) {

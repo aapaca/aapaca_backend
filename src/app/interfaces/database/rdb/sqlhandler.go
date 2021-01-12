@@ -1,4 +1,4 @@
-package database
+package rdb
 
 type SqlHandler interface {
 	Execute(string, ...interface{}) (Result, error)
