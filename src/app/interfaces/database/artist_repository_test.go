@@ -2,7 +2,6 @@ package database
 
 import (
 	"domain"
-	"sort"
 	"test/infrastructure"
 	"testing"
 
@@ -96,8 +95,11 @@ func TestGetArtist(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		// must fix
-		assert.Equal(t, expectedArtist, artist)
+		assert.Equal(t, expectedArtist.ID, artist.ID)
+		assert.Equal(t, expectedArtist.Name, artist.Name)
+		assert.ElementsMatch(t, expectedArtist.Members, artist.Members)
+		assert.Equal(t, expectedArtist.Description, artist.Description)
+		assert.Equal(t, expectedArtist.ImageURL, artist.ImageURL)
 	})
 	t.Run("group, has aliases", func(t *testing.T) {
 		expectedArtist := domain.Artist{
@@ -117,11 +119,11 @@ func TestGetArtist(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		// Membersの順序がIDに対して昇順とは保障されていないのでソートする
-		sort.Slice(artist.Members, func(i, j int) bool {
-			return (*artist).Members[i].ID < artist.Members[j].ID
-		})
-		assert.Equal(t, expectedArtist, artist)
+		assert.Equal(t, expectedArtist.ID, artist.ID)
+		assert.Equal(t, expectedArtist.Name, artist.Name)
+		assert.ElementsMatch(t, expectedArtist.Members, artist.Members)
+		assert.Equal(t, expectedArtist.Aliases, artist.Aliases)
+		assert.Equal(t, expectedArtist.ImageURL, artist.ImageURL)
 	})
 	t.Run("Invalid ID", func(t *testing.T) {
 		emptyArtist := domain.Artist{}

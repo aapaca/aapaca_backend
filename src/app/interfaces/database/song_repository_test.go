@@ -99,7 +99,14 @@ func TestGetSong(t *testing.T) {
 			t.Error(err)
 		}
 		// must fix
-		assert.Equal(t, expectedSong, song)
+		assert.Equal(t, expectedSong.ID, song.ID)
+		assert.Equal(t, expectedSong.Name, song.Name)
+		assert.Equal(t, expectedSong.PrimaryArtist, song.PrimaryArtist)
+		assert.ElementsMatch(t, expectedSong.Credits, song.Credits)
+		assert.Equal(t, expectedSong.Album, song.Album)
+		assert.Equal(t, expectedSong.SongLen, song.SongLen)
+		assert.Equal(t, expectedSong.Genre, song.Genre)
+		assert.Equal(t, expectedSong.Links, song.Links)
 	})
 	t.Run("no credits", func(t *testing.T) {
 		expectedSong := domain.Song{
@@ -173,7 +180,7 @@ func TestGetAttendedSongs(t *testing.T) {
 	testDate, _ := time.Parse("2006-01-02", "2021-01-13")
 	testAlbum1 := domain.Album{ID: 1, Name: "Album 1", ImageURL: testURL, ReleasedDate: &testDate}
 	testAlbum2 := domain.Album{ID: 2, Name: "Album 2", ImageURL: testURL, ReleasedDate: &testDate}
-	t.Run("", func(t *testing.T) {
+	t.Run("Song 1 and 2 are returned (Artist 2 is the primary artist of Song 3)", func(t *testing.T) {
 		expectedSongs := []domain.Song{
 			domain.Song{ID: 1, Name: "Song 1", Album: testAlbum1},
 			domain.Song{ID: 2, Name: "Song 2", Album: testAlbum1},
@@ -184,7 +191,7 @@ func TestGetAttendedSongs(t *testing.T) {
 		}
 		assert.ElementsMatch(t, expectedSongs, songs)
 	})
-	t.Run("", func(t *testing.T) {
+	t.Run("All songs are returned", func(t *testing.T) {
 		expectedSongs := []domain.Song{
 			domain.Song{ID: 1, Name: "Song 1", Album: testAlbum1},
 			domain.Song{ID: 2, Name: "Song 2", Album: testAlbum1},
@@ -196,7 +203,7 @@ func TestGetAttendedSongs(t *testing.T) {
 		}
 		assert.ElementsMatch(t, expectedSongs, songs)
 	})
-	t.Run("Artist 1", func(t *testing.T) {
+	t.Run("Since Artist 1 is the primary artist for all song, songs is empty", func(t *testing.T) {
 		songs, err := songRepository.GetAttendedSongs(1)
 		if err != nil {
 			t.Error(err)

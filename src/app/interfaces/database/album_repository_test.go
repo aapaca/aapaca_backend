@@ -81,8 +81,15 @@ func TestGetAlbum(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		// must fix
-		assert.Equal(t, expectedAlbum, album)
+		assert.Equal(t, expectedAlbum.ID, album.ID)
+		assert.Equal(t, expectedAlbum.Name, album.Name)
+		assert.Equal(t, expectedAlbum.PrimaryArtist, album.PrimaryArtist)
+		assert.ElementsMatch(t, expectedAlbum.Credits, album.Credits)
+		assert.Equal(t, expectedAlbum.Label, album.Label)
+		assert.Equal(t, expectedAlbum.ReleasedDate, album.ReleasedDate)
+		assert.Equal(t, expectedAlbum.ImageURL, album.ImageURL)
+		assert.Equal(t, expectedAlbum.Description, album.Description)
+		assert.Equal(t, expectedAlbum.Links, album.Links)
 	})
 	t.Run("no credits", func(t *testing.T) {
 		expectedAlbum := domain.Album{
