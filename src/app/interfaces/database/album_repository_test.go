@@ -26,12 +26,12 @@ func deleteAllRecords(sqlHandler rdb.SqlHandler) error {
 func TestGetAlbum(t *testing.T) {
 	sqlHandler := infrastructure.NewSqlHandler()
 	queries := []string{
-		"INSERT INTO artists (name, status, image_url) VALUES ('Test Artist 1', 0, 'http://www.example.com')",
-		"INSERT INTO artists (name, status, image_url) VALUES ('Test Artist 2', 0, 'http://www.example.com')",
-		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Test Album 1', 1, 'Test Label', '2021-01-13', 'http://www.example.com', 'This is test album 1');",
-		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Test Album 2', 2, 'Test Label', '2021-01-13', 'http://www.example.com', 'This is test album 2');",
-		"INSERT INTO occupations (title) VALUE ('Test Part 1')",
-		"INSERT INTO occupations (title) VALUE ('Test Part 2')",
+		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 1', 0, 'http://www.example.com')",
+		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 2', 0, 'http://www.example.com')",
+		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Album 1', 1, 'Label 1', '2021-01-13', 'http://www.example.com', 'This is test album 1');",
+		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Album 2', 2, 'Label 2', '2021-01-13', 'http://www.example.com', 'This is test album 2');",
+		"INSERT INTO occupations (title) VALUE ('Part 1')",
+		"INSERT INTO occupations (title) VALUE ('Part 2')",
 		"INSERT INTO external_services (name) VALUE ('amazon_music')",
 		"INSERT INTO external_services (name) VALUE ('apple_music')",
 		"INSERT INTO external_services (name) VALUE ('spotify')",
@@ -51,23 +51,23 @@ func TestGetAlbum(t *testing.T) {
 	}
 	testURL := "http://www.example.com"
 	testDate, _ := time.Parse("2006-01-02", "2021-01-13")
-	testArtist1 := domain.Artist{ID: 1, Name: "Test Artist 1", ImageURL: testURL}
-	testArtist2 := domain.Artist{ID: 2, Name: "Test Artist 2", ImageURL: testURL}
-	testPart1 := domain.Occupation{ID: 1, Title: "Test Part 1"}
-	testPart2 := domain.Occupation{ID: 2, Title: "Test Part 2"}
+	testArtist1 := domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL}
+	testArtist2 := domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL}
+	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
+	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
 	albumRepository := AlbumRepository{
 		SqlHandler: sqlHandler,
 	}
 	t.Run("get all information of album", func(t *testing.T) {
 		expectedAlbum := domain.Album{
 			ID:            1,
-			Name:          "Test Album 1",
+			Name:          "Album 1",
 			PrimaryArtist: testArtist1,
 			Credits: []domain.Credit{
 				{Artist: testArtist1, Parts: []domain.Occupation{testPart1}},
 				{Artist: testArtist2, Parts: []domain.Occupation{testPart1, testPart2}},
 			},
-			Label:        "Test Label",
+			Label:        "Label 1",
 			ReleasedDate: &testDate,
 			ImageURL:     testURL,
 			Description:  "This is test album 1",
@@ -81,14 +81,14 @@ func TestGetAlbum(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		assert.Equal(t, expectedAlbum, album, "Error")
+		assert.Equal(t, expectedAlbum, album)
 	})
 	t.Run("no credits", func(t *testing.T) {
 		expectedAlbum := domain.Album{
 			ID:            2,
-			Name:          "Test Album 2",
+			Name:          "Album 2",
 			PrimaryArtist: testArtist2,
-			Label:         "Test Label",
+			Label:         "Label 2",
 			ReleasedDate:  &testDate,
 			ImageURL:      testURL,
 			Description:   "This is test album 2",
@@ -100,7 +100,7 @@ func TestGetAlbum(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		assert.Equal(t, expectedAlbum, album, "Error")
+		assert.Equal(t, expectedAlbum, album)
 	})
 	t.Run("empty album", func(t *testing.T) {
 		emptyAlbum := domain.Album{}
@@ -108,7 +108,7 @@ func TestGetAlbum(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		assert.Equal(t, emptyAlbum, album, "Error")
+		assert.Equal(t, emptyAlbum, album)
 	})
 	err := deleteAllRecords(sqlHandler)
 	if err != nil {
@@ -119,10 +119,10 @@ func TestGetAlbum(t *testing.T) {
 func TestGetAlbumByArtistId(t *testing.T) {
 	sqlHandler := infrastructure.NewSqlHandler()
 	queries := []string{
-		"INSERT INTO artists (name, status) VALUES ('Test Artist 1', 0);",
-		"INSERT INTO artists (name, status) VALUES ('Test Artist 2', 0);",
-		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Test Album 1', 1, 'Test Label', '1999-07-13', 'http://www.example.com', 'This is test album 1');",
-		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url) VALUES('Test Album 2', 1, 'Test Label', '2021-01-13', 'http://www.example.com');",
+		"INSERT INTO artists (name, status) VALUES ('Artist 1', 0);",
+		"INSERT INTO artists (name, status) VALUES ('Artist 2', 0);",
+		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Album 1', 1, 'Label 1', '1999-07-13', 'http://www.example.com', 'This is test album 1');",
+		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url) VALUES('Album 2', 1, 'Label 2', '2021-01-13', 'http://www.example.com');",
 	}
 	for _, query := range queries {
 		_, err := sqlHandler.Execute(query)
@@ -137,21 +137,21 @@ func TestGetAlbumByArtistId(t *testing.T) {
 	testDate2, _ := time.Parse("2006-01-02", "2021-01-13")
 	testURL := "http://www.example.com"
 	t.Run("Artist has 2 albums", func(t *testing.T) {
-		testAlbum1 := domain.Album{ID: 1, Name: "Test Album 1", ReleasedDate: &testDate1, ImageURL: testURL}
-		testAlbum2 := domain.Album{ID: 2, Name: "Test Album 2", ReleasedDate: &testDate2, ImageURL: testURL}
+		testAlbum1 := domain.Album{ID: 1, Name: "Album 1", ReleasedDate: &testDate1, ImageURL: testURL}
+		testAlbum2 := domain.Album{ID: 2, Name: "Album 2", ReleasedDate: &testDate2, ImageURL: testURL}
 		expectedAlbums := []domain.Album{testAlbum1, testAlbum2}
 		albums, err := albumRepository.GetAlbumsByArtistId(1)
 		if err != nil {
 			t.Error(err)
 		}
-		assert.Equal(t, expectedAlbums, albums, "Error")
+		assert.Equal(t, expectedAlbums, albums)
 	})
 	t.Run("artist has no album", func(t *testing.T) {
 		albums, err := albumRepository.GetAlbumsByArtistId(2)
 		if err != nil {
 			t.Error(err)
 		}
-		assert.Equal(t, 0, len(albums), "Error")
+		assert.Equal(t, 0, len(albums))
 	})
 	err := deleteAllRecords(sqlHandler)
 	if err != nil {
