@@ -81,6 +81,7 @@ func TestGetAlbum(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
+		// must fix
 		assert.Equal(t, expectedAlbum, album)
 	})
 	t.Run("no credits", func(t *testing.T) {
@@ -102,7 +103,7 @@ func TestGetAlbum(t *testing.T) {
 		}
 		assert.Equal(t, expectedAlbum, album)
 	})
-	t.Run("empty album", func(t *testing.T) {
+	t.Run("Invalid ID", func(t *testing.T) {
 		emptyAlbum := domain.Album{}
 		album, err := albumRepository.GetAlbum(100)
 		if err != nil {
@@ -144,10 +145,17 @@ func TestGetAlbumByArtistId(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		assert.Equal(t, expectedAlbums, albums)
+		assert.ElementsMatch(t, expectedAlbums, albums)
 	})
 	t.Run("artist has no album", func(t *testing.T) {
 		albums, err := albumRepository.GetAlbumsByArtistId(2)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, 0, len(albums))
+	})
+	t.Run("Invalid ID", func(t *testing.T) {
+		albums, err := albumRepository.GetAlbumsByArtistId(100)
 		if err != nil {
 			t.Error(err)
 		}

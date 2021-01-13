@@ -2,6 +2,7 @@ package database
 
 import (
 	"domain"
+	"sort"
 	"test/infrastructure"
 	"testing"
 
@@ -95,6 +96,7 @@ func TestGetArtist(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
+		// must fix
 		assert.Equal(t, expectedArtist, artist)
 	})
 	t.Run("group, has aliases", func(t *testing.T) {
@@ -116,9 +118,12 @@ func TestGetArtist(t *testing.T) {
 			t.Error(err)
 		}
 		// Membersの順序がIDに対して昇順とは保障されていないのでソートする
+		sort.Slice(artist.Members, func(i, j int) bool {
+			return (*artist).Members[i].ID < artist.Members[j].ID
+		})
 		assert.Equal(t, expectedArtist, artist)
 	})
-	t.Run("empty artist", func(t *testing.T) {
+	t.Run("Invalid ID", func(t *testing.T) {
 		emptyArtist := domain.Artist{}
 		artist, err := artistRepository.GetArtist(100)
 		if err != nil {

@@ -98,6 +98,7 @@ func TestGetSong(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
+		// must fix
 		assert.Equal(t, expectedSong, song)
 	})
 	t.Run("no credits", func(t *testing.T) {
@@ -118,7 +119,7 @@ func TestGetSong(t *testing.T) {
 		}
 		assert.Equal(t, expectedSong, song)
 	})
-	t.Run("empty song", func(t *testing.T) {
+	t.Run("Invalid ID", func(t *testing.T) {
 		emptySong := domain.Song{PrimaryArtist: domain.Artist{}, Album: domain.Album{}}
 		song, err := songRepository.GetSong(100)
 		if err != nil {
@@ -195,8 +196,15 @@ func TestGetAttendedSongs(t *testing.T) {
 		}
 		assert.ElementsMatch(t, expectedSongs, songs)
 	})
-	t.Run("", func(t *testing.T) {
+	t.Run("Artist 1", func(t *testing.T) {
 		songs, err := songRepository.GetAttendedSongs(1)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, 0, len(songs))
+	})
+	t.Run("Invalid ID", func(t *testing.T) {
+		songs, err := songRepository.GetAttendedSongs(100)
 		if err != nil {
 			t.Error(err)
 		}
@@ -268,13 +276,20 @@ func TestGetSongsInAlbum(t *testing.T) {
 			"spotify": "https://open.spotify.com/track/Test3333",
 		},
 	}
-	t.Run("", func(t *testing.T) {
+	t.Run("Album 1 contains 3 songs", func(t *testing.T) {
 		expectedSongs := []domain.Song{testSong1, testSong2, testSong3}
 		songs, err := songRepository.GetSongsInAlbum(1)
 		if err != nil {
 			t.Error(err)
 		}
 		assert.ElementsMatch(t, expectedSongs, songs)
+	})
+	t.Run("Invalid ID", func(t *testing.T) {
+		songs, err := songRepository.GetSongsInAlbum(100)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, 0, len(songs))
 	})
 	err := deleteAllRecords(sqlHandler)
 	if err != nil {
