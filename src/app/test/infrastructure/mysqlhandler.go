@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"database/sql"
-
 	"interfaces/database/rdb"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -17,6 +16,10 @@ func NewSqlHandler() rdb.SqlHandler {
 	dbPath := c.User + ":" + c.Password + "@tcp(" + c.Container + ":" + c.Port + ")/" + c.Database + "?parseTime=true"
 	// dbPath := "aapaca_user:passwd@tcp(192.168.99.100:3306)/aapaca?parseTime=true"
 	conn, err := sql.Open("mysql", dbPath)
+	if err != nil {
+		panic(err)
+	}
+	err = conn.Ping()
 	if err != nil {
 		panic(err)
 	}
