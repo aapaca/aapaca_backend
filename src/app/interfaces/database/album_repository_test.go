@@ -59,7 +59,6 @@ func TestGetAlbum(t *testing.T) {
 		SqlHandler: sqlHandler,
 	}
 	t.Run("get all information of album", func(t *testing.T) {
-		album, err := albumRepository.GetAlbum(1)
 		expectedAlbum := domain.Album{
 			ID:            1,
 			Name:          "Test Album 1",
@@ -78,13 +77,13 @@ func TestGetAlbum(t *testing.T) {
 				"spotify":     "https://open.spotify.com/album/Test1111",
 			},
 		}
+		album, err := albumRepository.GetAlbum(1)
 		if err != nil {
 			t.Error(err)
 		}
 		assert.Equal(t, expectedAlbum, album, "Error")
 	})
 	t.Run("no credits", func(t *testing.T) {
-		album, err := albumRepository.GetAlbum(2)
 		expectedAlbum := domain.Album{
 			ID:            2,
 			Name:          "Test Album 2",
@@ -97,6 +96,7 @@ func TestGetAlbum(t *testing.T) {
 				"spotify": "https://open.spotify.com/album/Test2222",
 			},
 		}
+		album, err := albumRepository.GetAlbum(2)
 		if err != nil {
 			t.Error(err)
 		}
