@@ -11,8 +11,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest    
+    env:
+      DB_DATABASE: test_db
+      DB_USER: developer
+      DB_PASSWORD: pass
     steps:
-
     - name: Set up Go 1.14
       uses: actions/setup-go@v2
       with:
@@ -34,6 +37,13 @@ jobs:
     - name: Build
       run: go build -v .
       working-directory: ./src/app
+    
+    - name: Set up MySQL
+      run: |
+        sudo /etc/init.d/mysql start
+        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        mysql ${{ env.DB_DATABASE }} < ./mysql/initdb.d/1_main_tables.sql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        mysql ${{ env.DB_DATABASE }} < ./mysql/initdb.d/2_junction_tables.sql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
     - name: Test interfaces
       run: go test -v interfaces/...

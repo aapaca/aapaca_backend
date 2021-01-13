@@ -12,9 +12,7 @@ type SqlHandler struct {
 }
 
 func NewSqlHandler() rdb.SqlHandler {
-	c := NewDBConfig()
-	dbPath := c.User + ":" + c.Password + "@tcp(" + c.Container + ":" + c.Port + ")/" + c.Database + "?parseTime=true"
-	// dbPath := "aapaca_user:passwd@tcp(192.168.99.100:3306)/aapaca?parseTime=true"
+	dbPath := "developer:pass@tcp(127.0.0.1:3306)/test_db?parseTime=true"
 	conn, err := sql.Open("mysql", dbPath)
 	if err != nil {
 		panic(err)
