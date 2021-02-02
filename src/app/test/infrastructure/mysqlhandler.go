@@ -12,9 +12,6 @@ type SqlHandler struct {
 }
 
 func NewSqlHandler() rdb.SqlHandler {
-	// c := NewDBConfig()
-	// dbPath := c.User + ":" + c.Password + "@tcp(" + c.Container + ":" + c.Port + ")/" + c.Database + "?parseTime=true"
-	// dbPath := "aapaca_user:passwd@tcp(192.168.99.100:3306)/aapaca?parseTime=true"
 	dbPath := "root:root@tcp(127.0.0.1:3306)/test_db?parseTime=true"
 	conn, err := sql.Open("mysql", dbPath)
 	if err != nil {
@@ -75,4 +72,17 @@ func (r SqlRow) Next() bool {
 
 func (r SqlRow) Close() error {
 	return r.Rows.Close()
+}
+
+func DeleteAllRecords(sqlHandler rdb.SqlHandler) error {
+	sqlHandler.Execute("SET FOREIGN_KEY_CHECKS = 0;")
+	tables := []string{"aliases", "memberships", "contents", "performances", "participations", "external_services", "external_ids", "occupations", "artists", "songs", "albums"}
+	for _, table := range tables {
+		_, err := sqlHandler.Execute("TRUNCATE TABLE " + table + ";")
+		if err != nil {
+			return err
+		}
+	}
+	sqlHandler.Execute("SET FOREIGN_KEY_CHECKS = 1;")
+	return nil
 }

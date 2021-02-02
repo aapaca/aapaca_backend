@@ -2,14 +2,29 @@ package database
 
 import (
 	"domain"
+	"interfaces/database/rdb"
 	"test/infrastructure"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestGetArtist(t *testing.T) {
-	sqlHandler := infrastructure.NewSqlHandler()
+type GetArtistTestSuite struct {
+	suite.Suite
+	sqlHandler       rdb.SqlHandler
+	artistRepository ArtistRepository
+}
+
+func TestGetArtistTestSuite(t *testing.T) {
+	suite.Run(t, new(GetArtistTestSuite))
+}
+
+func (suite *GetArtistTestSuite) SetupSuite() {
+	suite.sqlHandler = infrastructure.NewSqlHandler()
+}
+
+func (suite *GetArtistTestSuite) SetupTest() {
 	queries := []string{
 		"INSERT INTO artists (name, status, image_url, description) VALUES ('Artist 1', 0, 'http://www.example.com', 'This is test artist 1')",
 		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 2', 0, 'http://www.example.com')",
@@ -35,106 +50,117 @@ func TestGetArtist(t *testing.T) {
 		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (2, 'artist', 'Test2222', 3)",
 	}
 	for _, query := range queries {
-		_, err := sqlHandler.Execute(query)
+		_, err := suite.sqlHandler.Execute(query)
 		if err != nil {
-			t.Error(err)
+			suite.T().Error(err)
 		}
 	}
-	artistRepository := ArtistRepository{
-		SqlHandler: sqlHandler,
+	suite.artistRepository = ArtistRepository{
+		SqlHandler: suite.sqlHandler,
 	}
-	testURL := "http://www.example.com"
-	t.Run("get all information of artist (not group, no aliases)", func(t *testing.T) {
-		expectedArtist := domain.Artist{
-			ID:          1,
-			Name:        "Artist 1",
-			ImageURL:    testURL,
-			Description: "This is test artist 1",
-			Links: map[string]string{
-				"amazonMusic": "https://www.amazon.com/TEST1111",
-				"appleMusic":  "https://music.apple.com/artist/1111",
-				"spotify":     "https://open.spotify.com/artist/Test1111",
-			},
-		}
-		artist, err := artistRepository.GetArtist(1)
-		if err != nil {
-			t.Error(err)
-		}
-		assert.Equal(t, expectedArtist, artist)
-	})
-	t.Run("not group, has aliases", func(t *testing.T) {
-		expectedArtist := domain.Artist{
-			ID:   2,
-			Name: "Artist 2",
-			Aliases: []domain.Artist{
-				domain.Artist{ID: 3, Name: "Alias Artist 2", ImageURL: testURL},
-			},
-			ImageURL: testURL,
-			Links: map[string]string{
-				"spotify": "https://open.spotify.com/artist/Test2222",
-			},
-		}
-		artist, err := artistRepository.GetArtist(2)
-		if err != nil {
-			t.Error(err)
-		}
-		assert.Equal(t, expectedArtist, artist)
-	})
-	t.Run("group, no aliases", func(t *testing.T) {
-		expectedArtist := domain.Artist{
-			ID:   4,
-			Name: "Group Artist 1",
-			Members: []domain.Artist{
-				domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
-				domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
-			},
-			Description: "This is test group artist 1",
-			ImageURL:    testURL,
-		}
-		artist, err := artistRepository.GetArtist(4)
-		if err != nil {
-			t.Error(err)
-		}
-		assert.Equal(t, expectedArtist.ID, artist.ID)
-		assert.Equal(t, expectedArtist.Name, artist.Name)
-		assert.ElementsMatch(t, expectedArtist.Members, artist.Members)
-		assert.Equal(t, expectedArtist.Description, artist.Description)
-		assert.Equal(t, expectedArtist.ImageURL, artist.ImageURL)
-	})
-	t.Run("group, has aliases", func(t *testing.T) {
-		expectedArtist := domain.Artist{
-			ID:   5,
-			Name: "Group Artist 2",
-			Members: []domain.Artist{
-				domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
-				domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
-				domain.Artist{ID: 4, Name: "Group Artist 1", ImageURL: testURL},
-			},
-			Aliases: []domain.Artist{
-				domain.Artist{ID: 6, Name: "Alias Group Artist 2", ImageURL: testURL},
-			},
-			ImageURL: testURL,
-		}
-		artist, err := artistRepository.GetArtist(5)
-		if err != nil {
-			t.Error(err)
-		}
-		assert.Equal(t, expectedArtist.ID, artist.ID)
-		assert.Equal(t, expectedArtist.Name, artist.Name)
-		assert.ElementsMatch(t, expectedArtist.Members, artist.Members)
-		assert.Equal(t, expectedArtist.Aliases, artist.Aliases)
-		assert.Equal(t, expectedArtist.ImageURL, artist.ImageURL)
-	})
-	t.Run("Invalid ID", func(t *testing.T) {
-		emptyArtist := domain.Artist{}
-		artist, err := artistRepository.GetArtist(100)
-		if err != nil {
-			t.Error(err)
-		}
-		assert.Equal(t, emptyArtist, artist)
-	})
-	err := deleteAllRecords(sqlHandler)
+}
+
+func (suite *GetArtistTestSuite) TearDownTest() {
+	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
 	if err != nil {
-		t.Error(err)
+		suite.T().Error(err)
 	}
+}
+
+func (suite *GetArtistTestSuite) TestGetArtist() {
+	testURL := "http://www.example.com"
+	expectedArtist := domain.Artist{
+		ID:          1,
+		Name:        "Artist 1",
+		ImageURL:    testURL,
+		Description: "This is test artist 1",
+		Links: map[string]string{
+			"amazonMusic": "https://www.amazon.com/TEST1111",
+			"appleMusic":  "https://music.apple.com/artist/1111",
+			"spotify":     "https://open.spotify.com/artist/Test1111",
+		},
+	}
+	artist, err := suite.artistRepository.GetArtist(1)
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(suite.T(), expectedArtist, artist)
+}
+
+func (suite *GetArtistTestSuite) TestGetArtistAlias() {
+	testURL := "http://www.example.com"
+	expectedArtist := domain.Artist{
+		ID:   2,
+		Name: "Artist 2",
+		Aliases: []domain.Artist{
+			domain.Artist{ID: 3, Name: "Alias Artist 2", ImageURL: testURL},
+		},
+		ImageURL: testURL,
+		Links: map[string]string{
+			"spotify": "https://open.spotify.com/artist/Test2222",
+		},
+	}
+	artist, err := suite.artistRepository.GetArtist(2)
+	if err != nil {
+		suite.T().Error(err)
+	}
+	assert.Equal(suite.T(), expectedArtist, artist)
+}
+
+func (suite *GetArtistTestSuite) TestGetArtistGroup() {
+	testURL := "http://www.example.com"
+	expectedArtist := domain.Artist{
+		ID:   4,
+		Name: "Group Artist 1",
+		Members: []domain.Artist{
+			domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
+			domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
+		},
+		Description: "This is test group artist 1",
+		ImageURL:    testURL,
+	}
+	artist, err := suite.artistRepository.GetArtist(4)
+	if err != nil {
+		suite.T().Error(err)
+	}
+	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
+	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
+	assert.ElementsMatch(suite.T(), expectedArtist.Members, artist.Members)
+	assert.Equal(suite.T(), expectedArtist.Description, artist.Description)
+	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
+}
+
+func (suite *GetArtistTestSuite) TestGetArtistGroupAlias() {
+	testURL := "http://www.example.com"
+	expectedArtist := domain.Artist{
+		ID:   5,
+		Name: "Group Artist 2",
+		Members: []domain.Artist{
+			domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
+			domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
+			domain.Artist{ID: 4, Name: "Group Artist 1", ImageURL: testURL},
+		},
+		Aliases: []domain.Artist{
+			domain.Artist{ID: 6, Name: "Alias Group Artist 2", ImageURL: testURL},
+		},
+		ImageURL: testURL,
+	}
+	artist, err := suite.artistRepository.GetArtist(5)
+	if err != nil {
+		suite.T().Error(err)
+	}
+	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
+	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
+	assert.ElementsMatch(suite.T(), expectedArtist.Members, artist.Members)
+	assert.Equal(suite.T(), expectedArtist.Aliases, artist.Aliases)
+	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
+}
+
+func (suite *GetArtistTestSuite) TestGetArtistInvalidID() {
+	emptyArtist := domain.Artist{}
+	artist, err := suite.artistRepository.GetArtist(100)
+	if err != nil {
+		suite.T().Error(err)
+	}
+	assert.Equal(suite.T(), emptyArtist, artist)
 }
