@@ -11,7 +11,7 @@ type AlbumRepository struct {
 	rdb.SqlHandler
 }
 
-func generateAlbumLink(id string, serviceName string) (string, string, error) {
+func generateAlbumLink(id, serviceName string) (string, string, error) {
 	if serviceName == "amazon_music" {
 		return "amazonMusic", "https://www.amazon.com/dp/" + id, nil
 	}
@@ -96,7 +96,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 		}
 		creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
 	}
-	// if rows have no columns, album.Name is empty string.
+	// if rows have no columns, album does not exist and album.Name becomes empty string.
 	if album.Name == "" {
 		return
 	}

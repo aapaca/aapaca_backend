@@ -11,7 +11,7 @@ type SongRepository struct {
 	rdb.SqlHandler
 }
 
-func generateSongLink(id string, serviceName string) (string, string, error) {
+func generateSongLink(id, serviceName string) (string, string, error) {
 	if serviceName == "amazon_music" {
 		return "amazonMusic", "https://www.amazon.com/dp/" + id, nil
 	}
