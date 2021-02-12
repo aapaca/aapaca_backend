@@ -4,13 +4,14 @@ import (
 	"database/sql"
 	"domain"
 	"errors"
+	"interfaces/database/rdb"
 )
 
 type AlbumRepository struct {
-	SqlHandler
+	rdb.SqlHandler
 }
 
-func generateAlbumLink(id string, serviceName string) (string, string, error) {
+func generateAlbumLink(id, serviceName string) (string, string, error) {
 	if serviceName == "amazon_music" {
 		return "amazonMusic", "https://www.amazon.com/dp/" + id, nil
 	}
@@ -34,7 +35,7 @@ func partExists(partList []domain.Occupation, partID int) bool {
 
 func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title,
-								albums.id, albums.name, albums.released_date, albums.image_url, albums.description,
+								albums.id, albums.name, albums.released_date, albums.image_url, albums.label, albums.description,
 								external_ids.external_id, external_services.name,
 								p_art.id, p_art.name, p_art.image_url
 							FROM albums
@@ -62,7 +63,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	for rows.Next() {
 		var nullableArtistID, partID sql.NullInt64
 		var artistName, artistImgURL, partTitle, extID, extSName sql.NullString
-		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &releasedDate, &album.ImageURL, &description, &extID, &extSName, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
+		if err = rows.Scan(&nullableArtistID, &artistName, &artistImgURL, &partID, &partTitle, &album.ID, &album.Name, &releasedDate, &album.ImageURL, &album.Label, &description, &extID, &extSName, &pArtist.ID, &pArtist.Name, &pArtist.ImageURL); err != nil {
 			return
 		}
 		if extID.Valid {
@@ -95,7 +96,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 		}
 		creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
 	}
-	// if rows have no columns, album.Name is empty string.
+	// if rows have no columns, album does not exist and album.Name becomes empty string.
 	if album.Name == "" {
 		return
 	}

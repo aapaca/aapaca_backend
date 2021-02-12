@@ -4,13 +4,14 @@ import (
 	"database/sql"
 	"domain"
 	"errors"
+	"interfaces/database/rdb"
 )
 
 type ArtistRepository struct {
-	SqlHandler
+	rdb.SqlHandler
 }
 
-func generateArtistLink(id string, serviceName string) (string, string, error) {
+func generateArtistLink(id, serviceName string) (string, string, error) {
 	if serviceName == "amazon_music" {
 		return "amazonMusic", "https://www.amazon.com/" + id, nil
 	}

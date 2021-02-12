@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"interfaces/database"
+	"interfaces/database/rdb"
 	"net/http"
 	"strconv"
 	"usecase"
@@ -13,7 +14,7 @@ type ArtistController struct {
 	Interactor usecase.ArtistInteractor
 }
 
-func NewArtistController(sqlHandler database.SqlHandler) *ArtistController {
+func NewArtistController(sqlHandler rdb.SqlHandler) *ArtistController {
 	return &ArtistController{
 		Interactor: usecase.ArtistInteractor{
 			ArtistRepository: &database.ArtistRepository{
