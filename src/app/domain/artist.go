@@ -12,4 +12,5 @@ type Artist struct {
 	ImageURL    string            `json:"imageUrl,omitempty"`
 	Description string            `json:"description,omitempty"`
 	Links       map[string]string `json:"links,omitempty"`
+	Parts       []Occupation      `json:"parts,omitempty"`
 }
