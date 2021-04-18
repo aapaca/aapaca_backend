@@ -3,7 +3,9 @@ package database
 import (
 	"domain"
 	"interfaces/database/rdb"
+	"sort"
 	"test/infrastructure"
+	"test/interfaces"
 	"testing"
 	"time"
 
@@ -62,6 +64,23 @@ func (suite *GetAlbumTestSuite) TearDownTest() {
 	}
 }
 
+func assertCredits(t *testing.T, expected []domain.Credit, got []domain.Credit) {
+	assert.Equal(t, len(expected), len(got))
+	// sort expected and got by ArtistID
+	sort.Slice(expected, func(i, j int) bool {
+		p, q := expected[i], expected[j]
+		return p.Artist.ID < q.Artist.ID
+	})
+	sort.Slice(got, func(i, j int) bool {
+		p, q := got[i], got[j]
+		return p.Artist.ID < q.Artist.ID
+	})
+	for i := range expected {
+		assert.Equal(t, expected[i].Artist, got[i].Artist)
+		assert.ElementsMatch(t, expected[i].Parts, got[i].Parts)
+	}
+}
+
 func (suite *GetAlbumTestSuite) TestGetAlbum() {
 	testURL := "http://www.example.com"
 	testDate, _ := time.Parse("2006-01-02", "2021-01-13")
@@ -94,7 +113,7 @@ func (suite *GetAlbumTestSuite) TestGetAlbum() {
 	assert.Equal(suite.T(), expectedAlbum.ID, album.ID)
 	assert.Equal(suite.T(), expectedAlbum.Name, album.Name)
 	assert.Equal(suite.T(), expectedAlbum.PrimaryArtist, album.PrimaryArtist)
-	assert.ElementsMatch(suite.T(), expectedAlbum.Credits, album.Credits)
+	interfaces.AssertCredits(suite.T(), expectedAlbum.Credits, album.Credits)
 	assert.Equal(suite.T(), expectedAlbum.Label, album.Label)
 	assert.Equal(suite.T(), expectedAlbum.ReleasedDate, album.ReleasedDate)
 	assert.Equal(suite.T(), expectedAlbum.ImageURL, album.ImageURL)
