@@ -4,6 +4,7 @@ import (
 	"domain"
 	"interfaces/database/rdb"
 	"test/infrastructure"
+	"test/interfaces"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -104,7 +105,12 @@ func (suite *GetArtistTestSuite) TestGetArtist() {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(suite.T(), expectedArtist, artist)
+	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
+	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
+	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
+	assert.Equal(suite.T(), expectedArtist.Description, artist.Description)
+	assert.Equal(suite.T(), expectedArtist.Links, artist.Links)
+	assert.ElementsMatch(suite.T(), expectedArtist.Parts, artist.Parts)
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistAlias() {
@@ -160,7 +166,7 @@ func (suite *GetArtistTestSuite) TestGetArtistGroup() {
 	}
 	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
 	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
-	assert.ElementsMatch(suite.T(), expectedArtist.Members, artist.Members)
+	interfaces.AssertCredits(suite.T(), expectedArtist.Members.([]domain.Credit), artist.Members.([]domain.Credit))
 	assert.Equal(suite.T(), expectedArtist.Description, artist.Description)
 	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
 }

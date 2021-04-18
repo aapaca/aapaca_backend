@@ -5,6 +5,7 @@ import (
 	"interfaces/database/rdb"
 	"sort"
 	"test/infrastructure"
+	"test/interfaces"
 	"testing"
 	"time"
 
@@ -67,7 +68,7 @@ func assertCredits(t *testing.T, expected []domain.Credit, got []domain.Credit) 
 	assert.Equal(t, len(expected), len(got))
 	// sort expected and got by ArtistID
 	sort.Slice(expected, func(i, j int) bool {
-		p, q := got[i], got[j]
+		p, q := expected[i], expected[j]
 		return p.Artist.ID < q.Artist.ID
 	})
 	sort.Slice(got, func(i, j int) bool {
@@ -112,7 +113,7 @@ func (suite *GetAlbumTestSuite) TestGetAlbum() {
 	assert.Equal(suite.T(), expectedAlbum.ID, album.ID)
 	assert.Equal(suite.T(), expectedAlbum.Name, album.Name)
 	assert.Equal(suite.T(), expectedAlbum.PrimaryArtist, album.PrimaryArtist)
-	assertCredits(suite.T(), expectedAlbum.Credits, album.Credits)
+	interfaces.AssertCredits(suite.T(), expectedAlbum.Credits, album.Credits)
 	assert.Equal(suite.T(), expectedAlbum.Label, album.Label)
 	assert.Equal(suite.T(), expectedAlbum.ReleasedDate, album.ReleasedDate)
 	assert.Equal(suite.T(), expectedAlbum.ImageURL, album.ImageURL)
