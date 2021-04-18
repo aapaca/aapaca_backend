@@ -3,7 +3,6 @@ package database
 import (
 	"domain"
 	"interfaces/database/rdb"
-	"sort"
 	"test/infrastructure"
 	"test/interfaces"
 	"testing"
