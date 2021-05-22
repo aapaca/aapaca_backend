@@ -47,7 +47,7 @@ func (controller *AlbumController) GetAlbumsByArtistId() echo.HandlerFunc {
 		}
 		albums, err := controller.Interactor.GetAlbumsByArtistId(id)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, APIError("Albums not Found"))
+			return c.JSON(http.StatusBadRequest, APIError("Albums Not Found"))
 		}
 		return c.JSON(http.StatusOK, albums)
 	}
