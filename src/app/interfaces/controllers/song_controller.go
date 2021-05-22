@@ -5,18 +5,19 @@ import (
 	"interfaces/database/rdb"
 	"net/http"
 	"strconv"
-	"usecase/interactor"
+	"usecases/interactor"
+	"usecases/usecase"
 
 	"github.com/labstack/echo"
 )
 
 type SongController struct {
-	Interactor interactor.SongInteractor
+	Interactor usecase.SongUsecase
 }
 
 func NewSongController(sqlHandler rdb.SqlHandler) *SongController {
 	return &SongController{
-		Interactor: interactor.SongInteractor{
+		Interactor: &interactor.SongInteractor{
 			SongRepository: &database.SongRepository{
 				SqlHandler: sqlHandler,
 			},

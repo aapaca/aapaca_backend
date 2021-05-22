@@ -3,7 +3,7 @@ package interactor
 import (
 	"domain"
 	"errors"
-	"usecase/repository"
+	"usecases/repository"
 )
 
 type SongInteractor struct {
