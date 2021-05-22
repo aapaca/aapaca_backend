@@ -5,18 +5,18 @@ import (
 	"interfaces/database/rdb"
 	"net/http"
 	"strconv"
-	"usecase"
+	"usecase/interactor"
 
 	"github.com/labstack/echo"
 )
 
 type AlbumController struct {
-	Interactor usecase.AlbumInteractor
+	Interactor interactor.AlbumInteractor
 }
 
 func NewAlbumController(sqlHandler rdb.SqlHandler) *AlbumController {
 	return &AlbumController{
-		Interactor: usecase.AlbumInteractor{
+		Interactor: interactor.AlbumInteractor{
 			AlbumRepository: &database.AlbumRepository{
 				SqlHandler: sqlHandler,
 			},

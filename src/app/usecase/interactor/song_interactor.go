@@ -1,12 +1,13 @@
-package usecase
+package interactor
 
 import (
 	"domain"
 	"errors"
+	"usecase/repository"
 )
 
 type SongInteractor struct {
-	SongRepository SongRepository
+	SongRepository repository.SongRepository
 }
 
 func (interactor *SongInteractor) GetSong(songId int) (song domain.Song, err error) {
