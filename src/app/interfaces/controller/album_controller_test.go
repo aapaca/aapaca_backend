@@ -15,7 +15,6 @@ import (
 
 type AlbumControllerTestSuite struct {
 	suite.Suite
-	controller AlbumController
 }
 
 type AlbumInteractorMock struct {
