@@ -1,8 +1,8 @@
-package controllers
+package controller
 
 import (
-	"interfaces/database"
-	"interfaces/database/rdb"
+	"interfaces/repository"
+	"interfaces/repository/rdb"
 	"net/http"
 	"strconv"
 	"usecases/interactor"
@@ -18,7 +18,7 @@ type ArtistController struct {
 func NewArtistController(sqlHandler rdb.SqlHandler) *ArtistController {
 	return &ArtistController{
 		Interactor: &interactor.ArtistInteractor{
-			ArtistRepository: &database.ArtistRepository{
+			ArtistRepository: &repository.ArtistRepository{
 				SqlHandler: sqlHandler,
 			},
 		},

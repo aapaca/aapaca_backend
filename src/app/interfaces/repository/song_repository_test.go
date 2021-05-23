@@ -1,10 +1,10 @@
-package database
+package repository
 
 import (
 	"domain"
-	"interfaces/database/rdb"
+	"interfaces/repository/rdb"
+	"test"
 	"test/infrastructure"
-	"test/interfaces"
 	"testing"
 	"time"
 
@@ -126,7 +126,7 @@ func (suite *GetSongTestSuite) TestGetSong() {
 	assert.Equal(suite.T(), expectedSong.ID, song.ID)
 	assert.Equal(suite.T(), expectedSong.Name, song.Name)
 	assert.Equal(suite.T(), expectedSong.PrimaryArtist, song.PrimaryArtist)
-	interfaces.AssertCredits(suite.T(), expectedSong.Credits, song.Credits)
+	test.AssertCredits(suite.T(), expectedSong.Credits, song.Credits)
 	assert.Equal(suite.T(), expectedSong.Album, song.Album)
 	assert.Equal(suite.T(), expectedSong.SongLen, song.SongLen)
 	assert.Equal(suite.T(), expectedSong.Genre, song.Genre)

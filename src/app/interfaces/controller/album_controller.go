@@ -1,8 +1,8 @@
-package controllers
+package controller
 
 import (
-	"interfaces/database"
-	"interfaces/database/rdb"
+	"interfaces/repository"
+	"interfaces/repository/rdb"
 	"net/http"
 	"strconv"
 	"usecases/interactor"
@@ -18,7 +18,7 @@ type AlbumController struct {
 func NewAlbumController(sqlHandler rdb.SqlHandler) *AlbumController {
 	return &AlbumController{
 		Interactor: &interactor.AlbumInteractor{
-			AlbumRepository: &database.AlbumRepository{
+			AlbumRepository: &repository.AlbumRepository{
 				SqlHandler: sqlHandler,
 			},
 		},

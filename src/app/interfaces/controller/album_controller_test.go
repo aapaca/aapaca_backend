@@ -1,14 +1,13 @@
-package controllers
+package controller
 
 import (
 	"domain"
 	"encoding/json"
 	"errors"
 	"net/http"
-	"net/http/httptest"
+	"test"
 	"testing"
 
-	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -16,6 +15,7 @@ import (
 
 type AlbumControllerTestSuite struct {
 	suite.Suite
+	controller AlbumController
 }
 
 type AlbumInteractorMock struct {
@@ -36,17 +36,6 @@ func TestAlbumControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(AlbumControllerTestSuite))
 }
 
-func createContextInstance(path string, paramName string, paramValue string) (*httptest.ResponseRecorder, echo.Context) {
-	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	c.SetPath(path)
-	c.SetParamNames(paramName)
-	c.SetParamValues(paramValue)
-	return rec, c
-}
-
 func (suite *AlbumControllerTestSuite) TestGetAlbumWhenFound() {
 	// mockを設定, setup
 	album := domain.Album{ID: 1, Name: "Test Album"}
@@ -59,7 +48,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumWhenFound() {
 	}
 
 	// GETリクエストを投げる準備
-	rec, c := createContextInstance("/albums/:id", "id", "1")
+	rec, c := test.CreateContextInstance("/albums/:id", "id", "1")
 	handler := albumController.GetAlbum()
 
 	// 検証
@@ -80,7 +69,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumWhenNotFound() {
 	expected := string(expectedJson) + "\n"
 
 	// GETリクエストを投げる準備
-	rec, c := createContextInstance("/albums/:id", "id", "1")
+	rec, c := test.CreateContextInstance("/albums/:id", "id", "1")
 	handler := albumController.GetAlbum()
 
 	// 検証
@@ -100,7 +89,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumWhenInvalidId() {
 	expected := string(expectedJson) + "\n"
 
 	// GETリクエストを投げる準備
-	rec, c := createContextInstance("/albums/:id", "id", "invalid")
+	rec, c := test.CreateContextInstance("/albums/:id", "id", "invalid")
 	handler := albumController.GetAlbum()
 
 	// 検証
@@ -122,7 +111,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumByArtistIdWhenFound() {
 	}
 
 	// GETリクエストを投げる準備
-	rec, c := createContextInstance("/artists/:id/albums", "id", "1")
+	rec, c := test.CreateContextInstance("/artists/:id/albums", "id", "1")
 	handler := albumController.GetAlbumsByArtistId()
 
 	// 検証
@@ -143,7 +132,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumByArtistIdWhenNotFound() {
 	expected := string(expectedJson) + "\n"
 
 	// GETリクエストを投げる準備
-	rec, c := createContextInstance("/artists/:id/albums", "id", "1")
+	rec, c := test.CreateContextInstance("/artists/:id/albums", "id", "1")
 	handler := albumController.GetAlbumsByArtistId()
 
 	// 検証
@@ -163,7 +152,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumByArtistIdWhenInvalidId() {
 	expected := string(expectedJson) + "\n"
 
 	// GETリクエストを投げる準備
-	rec, c := createContextInstance("/artists/:id/albums", "id", "invalid")
+	rec, c := test.CreateContextInstance("/artists/:id/albums", "id", "invalid")
 	handler := albumController.GetAlbumsByArtistId()
 
 	// 検証
