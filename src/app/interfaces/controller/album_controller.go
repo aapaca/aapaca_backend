@@ -1,23 +1,24 @@
-package controllers
+package controller
 
 import (
-	"interfaces/database"
-	"interfaces/database/rdb"
+	"interfaces/repository"
+	"interfaces/repository/rdb"
 	"net/http"
 	"strconv"
-	"usecase"
+	"usecases/interactor"
+	"usecases/usecase"
 
 	"github.com/labstack/echo"
 )
 
 type AlbumController struct {
-	Interactor usecase.AlbumInteractor
+	Interactor usecase.AlbumUsecase
 }
 
 func NewAlbumController(sqlHandler rdb.SqlHandler) *AlbumController {
 	return &AlbumController{
-		Interactor: usecase.AlbumInteractor{
-			AlbumRepository: &database.AlbumRepository{
+		Interactor: &interactor.AlbumInteractor{
+			AlbumRepository: &repository.AlbumRepository{
 				SqlHandler: sqlHandler,
 			},
 		},
@@ -46,7 +47,7 @@ func (controller *AlbumController) GetAlbumsByArtistId() echo.HandlerFunc {
 		}
 		albums, err := controller.Interactor.GetAlbumsByArtistId(id)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, APIError("Albums not Found"))
+			return c.JSON(http.StatusBadRequest, APIError("Albums Not Found"))
 		}
 		return c.JSON(http.StatusOK, albums)
 	}

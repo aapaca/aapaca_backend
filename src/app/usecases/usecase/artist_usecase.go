@@ -2,6 +2,6 @@ package usecase
 
 import "domain"
 
-type ArtistRepository interface {
+type ArtistUsecase interface {
 	GetArtist(int) (domain.Artist, error)
 }

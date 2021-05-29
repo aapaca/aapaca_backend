@@ -1,10 +1,10 @@
-package database
+package repository
 
 import (
 	"domain"
-	"interfaces/database/rdb"
+	"interfaces/repository/rdb"
+	"test"
 	"test/infrastructure"
-	"test/interfaces"
 	"testing"
 	"time"
 
@@ -95,7 +95,7 @@ func (suite *GetAlbumTestSuite) TestGetAlbum() {
 	assert.Equal(suite.T(), expectedAlbum.ID, album.ID)
 	assert.Equal(suite.T(), expectedAlbum.Name, album.Name)
 	assert.Equal(suite.T(), expectedAlbum.PrimaryArtist, album.PrimaryArtist)
-	interfaces.AssertCredits(suite.T(), expectedAlbum.Credits, album.Credits)
+	test.AssertCredits(suite.T(), expectedAlbum.Credits, album.Credits)
 	assert.Equal(suite.T(), expectedAlbum.Label, album.Label)
 	assert.Equal(suite.T(), expectedAlbum.ReleasedDate, album.ReleasedDate)
 	assert.Equal(suite.T(), expectedAlbum.ImageURL, album.ImageURL)

@@ -1,10 +1,10 @@
-package database
+package repository
 
 import (
 	"domain"
-	"interfaces/database/rdb"
+	"interfaces/repository/rdb"
+	"test"
 	"test/infrastructure"
-	"test/interfaces"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -166,7 +166,7 @@ func (suite *GetArtistTestSuite) TestGetArtistGroup() {
 	}
 	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
 	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
-	interfaces.AssertCredits(suite.T(), expectedArtist.Members.([]domain.Credit), artist.Members.([]domain.Credit))
+	test.AssertCredits(suite.T(), expectedArtist.Members.([]domain.Credit), artist.Members.([]domain.Credit))
 	assert.Equal(suite.T(), expectedArtist.Description, artist.Description)
 	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
 }

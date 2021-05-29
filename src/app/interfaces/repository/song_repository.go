@@ -1,10 +1,10 @@
-package database
+package repository
 
 import (
 	"database/sql"
 	"domain"
 	"errors"
-	"interfaces/database/rdb"
+	"interfaces/repository/rdb"
 )
 
 type SongRepository struct {

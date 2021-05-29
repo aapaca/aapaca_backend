@@ -1,23 +1,24 @@
-package controllers
+package controller
 
 import (
-	"interfaces/database"
-	"interfaces/database/rdb"
+	"interfaces/repository"
+	"interfaces/repository/rdb"
 	"net/http"
 	"strconv"
-	"usecase"
+	"usecases/interactor"
+	"usecases/usecase"
 
 	"github.com/labstack/echo"
 )
 
 type SongController struct {
-	Interactor usecase.SongInteractor
+	Interactor usecase.SongUsecase
 }
 
 func NewSongController(sqlHandler rdb.SqlHandler) *SongController {
 	return &SongController{
-		Interactor: usecase.SongInteractor{
-			SongRepository: &database.SongRepository{
+		Interactor: &interactor.SongInteractor{
+			SongRepository: &repository.SongRepository{
 				SqlHandler: sqlHandler,
 			},
 		},

@@ -10,7 +10,7 @@ replace interfaces => ./interfaces
 
 replace test => ./test
 
-replace usecase => ./usecase
+replace usecases => ./usecases
 
 require (
 	domain v0.0.0-00010101000000-000000000000 // indirect
@@ -20,5 +20,5 @@ require (
 	infrastructure v0.0.0-00010101000000-000000000000
 	interfaces v0.0.0-00010101000000-000000000000
 	test v0.0.0-00010101000000-000000000000 // indirect
-	usecase v0.0.0-00010101000000-000000000000 // indirect
+	usecases v0.0.0-00010101000000-000000000000 // indirect
 )
