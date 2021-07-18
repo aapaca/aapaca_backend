@@ -3,11 +3,11 @@ package infrastructure
 import "github.com/kelseyhightower/envconfig"
 
 type DBConfig struct {
-	User      string
-	Password  string
-	Database  string
-	Container string
-	Port      string
+	User     string
+	Password string
+	Database string
+	Host     string
+	Port     string
 }
 
 func NewDBConfig() DBConfig {
