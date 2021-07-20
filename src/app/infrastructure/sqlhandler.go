@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"database/sql"
 	"interfaces/repository/rdb"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -12,19 +13,39 @@ type SqlHandler struct {
 }
 
 func NewSqlHandler() rdb.SqlHandler {
-	c := NewDBConfig()
-	dbPath := c.User + ":" + c.Password + "@tcp(" + c.Container + ":" + c.Port + ")/" + c.Database + "?parseTime=true"
-	conn, err := sql.Open("mysql", dbPath)
-	if err != nil {
-		panic(err)
+	var conn *sql.DB
+	if app_env := os.Getenv("APP_ENV"); app_env == "production" {
+		conn = NewCloudSqlConnection()
+	} else {
+		conn = NewMysqlConnection()
 	}
-	err = conn.Ping()
+	err := conn.Ping()
 	if err != nil {
 		panic(err)
 	}
 	sqlHandler := new(SqlHandler)
 	sqlHandler.Conn = conn
 	return sqlHandler
+}
+
+func NewMysqlConnection() *sql.DB {
+	c := NewMysqlConfig()
+	dbPath := c.User + ":" + c.Password + "@tcp(" + c.Host + ":" + c.Port + ")/" + c.Database + "?parseTime=true"
+	conn, err := sql.Open("mysql", dbPath)
+	if err != nil {
+		panic(err)
+	}
+	return conn
+}
+
+func NewCloudSqlConnection() *sql.DB {
+	c := NewCloudSqlConfig()
+	dbPath := c.User + ":" + c.Password + "@unix(/cloudsql/" + c.ConnectionName + ")/" + c.Database + "?parseTime=true"
+	conn, err := sql.Open("mysql", dbPath)
+	if err != nil {
+		panic(err)
+	}
+	return conn
 }
 
 func (handler *SqlHandler) Execute(statement string, args ...interface{}) (rdb.Result, error) {
