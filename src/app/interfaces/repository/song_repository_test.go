@@ -5,6 +5,7 @@ import (
 	"interfaces/repository/rdb"
 	"test"
 	"test/infrastructure"
+	"test/interfaces/repository"
 	"testing"
 	"time"
 
@@ -54,27 +55,9 @@ func (suite *GetSongTestSuite) SetupSuite() {
 }
 
 func (suite *GetSongTestSuite) SetupTest() {
-	queries := []string{
-		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 1', 0, 'http://www.example.com')",
-		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 2', 0, 'http://www.example.com')",
-		"INSERT INTO songs (name, primary_artist_id, genre, song_len) VALUES('Song 1', 1, 'Genre 1', '00:02:40');",
-		"INSERT INTO songs (name, primary_artist_id, genre, song_len) VALUES('Song 2', 1, 'Genre 2', '00:00:40');",
-		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Album 1', 1, 'Label', '2021-01-13', 'http://www.example.com', 'This is test album 1');",
-		"INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Album 2', 2, 'Label', '2021-01-13', 'http://www.example.com', 'This is test album 2');",
-		"INSERT INTO contents (album_id, song_id, song_order) VALUES (1, 1, '1')",
-		"INSERT INTO contents (album_id, song_id, song_order) VALUES (1, 2, '2')",
-		"INSERT INTO occupations (title) VALUES ('Part 1')",
-		"INSERT INTO occupations (title) VALUES ('Part 2')",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (1, 1, 1)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (1, 1, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (2, 1, 2)",
-		"INSERT INTO external_services (name) VALUES ('amazon_music')",
-		"INSERT INTO external_services (name) VALUES ('apple_music')",
-		"INSERT INTO external_services (name) VALUES ('spotify')",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'song', 'TEST1111', 1)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'song', '1111', 2)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUES (1, 'song', 'Test1111', 3)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUES (2, 'song', '2222', 2)",
+	queries, err := repository.ReadSqlFile("testdata/get_song_init.sql")
+	if err != nil {
+		suite.T().Error(err)
 	}
 	for _, query := range queries {
 		_, err := suite.sqlHandler.Execute(query)
@@ -180,30 +163,9 @@ func (suite *GetAttendedSongsTestSuite) SetupSuite() {
 }
 
 func (suite *GetAttendedSongsTestSuite) SetupTest() {
-	queries := []string{
-		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 1', 0, 'http://www.example.com')",
-		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 2', 0, 'http://www.example.com')",
-		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 3', 0, 'http://www.example.com')",
-		"INSERT INTO songs (name, primary_artist_id) VALUES('Song 1', 1);",
-		"INSERT INTO songs (name, primary_artist_id) VALUES('Song 2', 1);",
-		"INSERT INTO songs (name, primary_artist_id) VALUES('Song 3', 2);",
-		"INSERT INTO albums (name, primary_artist_id, released_date, image_url) VALUES('Album 1', 1, '2021-01-13', 'http://www.example.com');",
-		"INSERT INTO albums (name, primary_artist_id, released_date, image_url) VALUES('Album 2', 2, '2021-01-13', 'http://www.example.com');",
-		"INSERT INTO contents (album_id, song_id, song_order) VALUES (1, 1, '1')",
-		"INSERT INTO contents (album_id, song_id, song_order) VALUES (1, 2, '2')",
-		"INSERT INTO contents (album_id, song_id, song_order) VALUES (2, 3, '1')",
-		"INSERT INTO occupations (title) VALUES ('Part 1')",
-		"INSERT INTO occupations (title) VALUES ('Part 2')",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (1, 1, 1)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (1, 1, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (1, 2, 1)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (2, 1, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (2, 2, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (2, 3, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (3, 1, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (3, 2, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (3, 3, 1)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (3, 3, 2)",
+	queries, err := repository.ReadSqlFile("testdata/get_attended_songs_init.sql")
+	if err != nil {
+		suite.T().Error(err)
 	}
 	for _, query := range queries {
 		_, err := suite.sqlHandler.Execute(query)
@@ -289,24 +251,9 @@ func (suite *GetSongsInAlbumTestSuite) SetupSuite() {
 }
 
 func (suite *GetSongsInAlbumTestSuite) SetupTest() {
-	queries := []string{
-		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 1', 0, 'http://www.example.com')",
-		"INSERT INTO songs (name, primary_artist_id, song_len) VALUES('Song 1', 1, '00:02:40');",
-		"INSERT INTO songs (name, primary_artist_id, song_len) VALUES('Song 2', 1, '00:00:40');",
-		"INSERT INTO songs (name, primary_artist_id, song_len) VALUES('Song 3', 1, '00:12:34');",
-		"INSERT INTO albums (name, primary_artist_id, released_date, image_url) VALUES('Album 1', 1, '2021-01-13', 'http://www.example.com');",
-		"INSERT INTO contents (album_id, song_id, song_order) VALUES (1, 1, '1')",
-		"INSERT INTO contents (album_id, song_id, song_order) VALUES (1, 2, '2')",
-		"INSERT INTO contents (album_id, song_id, song_order) VALUES (1, 3, '3')",
-		"INSERT INTO external_services (name) VALUE ('amazon_music')",
-		"INSERT INTO external_services (name) VALUE ('apple_music')",
-		"INSERT INTO external_services (name) VALUE ('spotify')",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'song', 'TEST1111', 1)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'song', '1111', 2)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'song', 'Test1111', 3)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (2, 'song', 'TEST2222', 1)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (2, 'song', '2222', 2)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (3, 'song', 'Test3333', 3)",
+	queries, err := repository.ReadSqlFile("testdata/get_songs_in_album_init.sql")
+	if err != nil {
+		suite.T().Error(err)
 	}
 	for _, query := range queries {
 		_, err := suite.sqlHandler.Execute(query)

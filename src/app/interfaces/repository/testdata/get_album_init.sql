@@ -1,0 +1,16 @@
+INSERT INTO artists (name, status, image_url) VALUES ('Artist 1', 0, 'http://www.example.com');
+INSERT INTO artists (name, status, image_url) VALUES ('Artist 2', 0, 'http://www.example.com');
+INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Album 1', 1, 'Label 1', '2021-01-13', 'http://www.example.com', 'This is test album 1');
+INSERT INTO albums (name, primary_artist_id, label, released_date, image_url, description) VALUES('Album 2', 2, 'Label 2', '2021-01-13', 'http://www.example.com', 'This is test album 2');
+INSERT INTO occupations (title) VALUE ('Part 1');
+INSERT INTO occupations (title) VALUE ('Part 2');
+INSERT INTO external_services (name) VALUE ('amazon_music');
+INSERT INTO external_services (name) VALUE ('apple_music');
+INSERT INTO external_services (name) VALUE ('spotify');
+INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'album', 'TEST1111', 1);
+INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'album', '1111', 2);
+INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'album', 'Test1111', 3);
+INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (2, 'album', 'Test2222', 3);
+INSERT INTO participations (artist_id, album_id, occupation_id) VALUES (1, 1, 1);
+INSERT INTO participations (artist_id, album_id, occupation_id) VALUES (2, 1, 1);
+INSERT INTO participations (artist_id, album_id, occupation_id) VALUES (2, 1, 2);

@@ -5,6 +5,7 @@ import (
 	"interfaces/repository/rdb"
 	"test"
 	"test/infrastructure"
+	"test/interfaces/repository"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -26,46 +27,9 @@ func (suite *GetArtistTestSuite) SetupSuite() {
 }
 
 func (suite *GetArtistTestSuite) SetupTest() {
-	queries := []string{
-		"INSERT INTO artists (name, status, image_url, description) VALUES ('Artist 1', 0, 'http://www.example.com', 'This is test artist 1')",
-		"INSERT INTO artists (name, status, image_url) VALUES ('Artist 2', 0, 'http://www.example.com')",
-		"INSERT INTO artists (name, status, image_url) VALUES ('Alias Artist 2', 0, 'http://www.example.com')",
-		"INSERT INTO artists (name, status, image_url, description) VALUES ('Group Artist 1', 1, 'http://www.example.com', 'This is test group artist 1')",
-		"INSERT INTO artists (name, status, image_url) VALUES ('Group Artist 2', 1, 'http://www.example.com')",
-		"INSERT INTO artists (name, status, image_url, description) VALUES ('Alias Group Artist 2', 1, 'http://www.example.com', 'This is test alias group artist 2')",
-		"INSERT INTO aliases (artist_id, alias_artist_id) VALUES (2, 3);",
-		"INSERT INTO aliases (artist_id, alias_artist_id) VALUES (3, 2);",
-		"INSERT INTO aliases (artist_id, alias_artist_id) VALUES (5, 6);",
-		"INSERT INTO aliases (artist_id, alias_artist_id) VALUES (6, 5);",
-		"INSERT INTO memberships (member_id, group_id) VALUES (1, 4);",
-		"INSERT INTO memberships (member_id, group_id) VALUES (2, 4);",
-		"INSERT INTO memberships (member_id, group_id) VALUES (1, 5);",
-		"INSERT INTO memberships (member_id, group_id) VALUES (2, 5);",
-		"INSERT INTO memberships (member_id, group_id) VALUES (4, 5);",
-		"INSERT INTO external_services (name) VALUE ('amazon_music')",
-		"INSERT INTO external_services (name) VALUE ('apple_music')",
-		"INSERT INTO external_services (name) VALUE ('spotify')",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'artist', 'TEST1111', 1)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'artist', '1111', 2)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (1, 'artist', 'Test1111', 3)",
-		"INSERT INTO external_ids (record_id, record_type, external_id, service_id) VALUE (2, 'artist', 'Test2222', 3)",
-		"INSERT INTO songs (name, primary_artist_id) VALUES('Song 1', 1);",
-		"INSERT INTO songs (name, primary_artist_id) VALUES('Song 2', 4);",
-		"INSERT INTO albums (name, primary_artist_id) VALUES('Album 1', 1);",
-		"INSERT INTO albums (name, primary_artist_id) VALUES('Album 2', 4);",
-		"INSERT INTO occupations (title) VALUES ('Part 1')",
-		"INSERT INTO occupations (title) VALUES ('Part 2')",
-		"INSERT INTO occupations (title) VALUES ('Part 3')",
-		"INSERT INTO participations (artist_id, album_id, occupation_id) VALUES (1, 1, 1)",
-		"INSERT INTO participations (artist_id, album_id, occupation_id) VALUES (1, 2, 1)",
-		"INSERT INTO participations (artist_id, album_id, occupation_id) VALUES (4, 2, 1)",
-		"INSERT INTO participations (artist_id, album_id, occupation_id) VALUES (4, 2, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (1, 1, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (1, 2, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (2, 1, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (2, 2, 2)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (3, 1, 3)",
-		"INSERT INTO performances (artist_id, song_id, occupation_id) VALUES (6, 2, 3)",
+	queries, err := repository.ReadSqlFile("testdata/get_artist_init.sql")
+	if err != nil {
+		suite.T().Error(err)
 	}
 	for _, query := range queries {
 		_, err := suite.sqlHandler.Execute(query)
