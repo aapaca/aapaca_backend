@@ -73,7 +73,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumWhenNotFound() {
 
 	// 検証
 	if assert.NoError(suite.T(), handler(c)) {
-		assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
+		assert.Equal(suite.T(), http.StatusNotFound, rec.Code)
 		assert.Equal(suite.T(), expected, rec.Body.String())
 	}
 }
@@ -136,7 +136,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumByArtistIdWhenNotFound() {
 
 	// 検証
 	if assert.NoError(suite.T(), handler(c)) {
-		assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
+		assert.Equal(suite.T(), http.StatusNotFound, rec.Code)
 		assert.Equal(suite.T(), expected, rec.Body.String())
 	}
 }

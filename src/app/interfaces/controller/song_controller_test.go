@@ -78,7 +78,7 @@ func (suite *SongControllerTestSuite) TestGetSongWhenNotFound() {
 
 	// 検証
 	if assert.NoError(suite.T(), handler(c)) {
-		assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
+		assert.Equal(suite.T(), http.StatusNotFound, rec.Code)
 		assert.Equal(suite.T(), expected, rec.Body.String())
 	}
 }
@@ -141,7 +141,7 @@ func (suite *SongControllerTestSuite) TestGetAttendedSongsWhenNotFound() {
 
 	// 検証
 	if assert.NoError(suite.T(), handler(c)) {
-		assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
+		assert.Equal(suite.T(), http.StatusNotFound, rec.Code)
 		assert.Equal(suite.T(), expected, rec.Body.String())
 	}
 }
@@ -204,7 +204,7 @@ func (suite *SongControllerTestSuite) TestGetSongsInAlbumWhenNotFound() {
 
 	// 検証
 	if assert.NoError(suite.T(), handler(c)) {
-		assert.Equal(suite.T(), http.StatusBadRequest, rec.Code)
+		assert.Equal(suite.T(), http.StatusNotFound, rec.Code)
 		assert.Equal(suite.T(), expected, rec.Body.String())
 	}
 }
