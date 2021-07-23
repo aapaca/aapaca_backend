@@ -33,7 +33,7 @@ func (controller *ArtistController) GetArtist() echo.HandlerFunc {
 		}
 		artist, err := controller.Interactor.GetArtist(id)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, APIError("Artist Not Found"))
+			return c.JSON(http.StatusNotFound, APIError("Artist Not Found"))
 		}
 		return c.JSON(http.StatusOK, artist)
 	}
