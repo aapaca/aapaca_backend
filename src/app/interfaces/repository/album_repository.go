@@ -54,7 +54,11 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 							LEFT OUTER JOIN external_services
 								ON external_ids.service_id = external_services.id
 							`, id, domain.RecordType.Album)
+	if err != nil {
+		return
+	}
 	defer rows.Close()
+
 	pArtist := domain.Artist{}
 	creditMap := map[int]*domain.Credit{}
 	var description sql.NullString
@@ -119,7 +123,11 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 func (repo *AlbumRepository) GetAlbumsByArtistId(artistId int) (albums []domain.Album, err error) {
 	rows, err := repo.Query(`SELECT id, name, released_date, image_url FROM albums
 							WHERE primary_artist_id = ?`, artistId)
+	if err != nil {
+		return
+	}
 	defer rows.Close()
+
 	for rows.Next() {
 		album := domain.Album{}
 		var releasedDate sql.NullTime
