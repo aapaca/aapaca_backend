@@ -80,7 +80,11 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 								ON external_ids.service_id = external_services.id
 							`, id, id, id, id, id, id, domain.RecordType.Artist)
 
+	if err != nil {
+		return
+	}
 	defer rows.Close()
+
 	memberMap := map[int]*domain.Credit{}
 	aliasMap := map[int]*domain.Credit{}
 	links := map[string]string{}

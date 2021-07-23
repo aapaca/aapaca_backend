@@ -60,7 +60,11 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 							LEFT OUTER JOIN external_services
 								ON external_ids.service_id = external_services.id
 							`, id, domain.RecordType.Song)
+	if err != nil {
+		return
+	}
 	defer rows.Close()
+
 	var genre, songLen sql.NullString // mysqlのTIME型はgoのtime.Timeで受け取れない
 	var releasedDate sql.NullTime
 	pArtist := domain.Artist{}
@@ -127,7 +131,11 @@ func (repo *SongRepository) GetAttendedSongs(artistId int) (songs []domain.Song,
 								ON albums.id = contents.album_id
 							WHERE songs.primary_artist_id <> ?
 							`, artistId, artistId)
+	if err != nil {
+		return
+	}
 	defer rows.Close()
+
 	for rows.Next() {
 		song := domain.Song{}
 		album := domain.Album{}
@@ -157,7 +165,11 @@ func (repo *SongRepository) GetSongsInAlbum(albumId int) (songs []domain.Song, e
 							LEFT OUTER JOIN external_services
 								ON external_ids.service_id = external_services.id
 							`, albumId, domain.RecordType.Song)
+	if err != nil {
+		return
+	}
 	defer rows.Close()
+
 	songMap := map[int]*domain.Song{}
 	for rows.Next() {
 		song := domain.Song{}
