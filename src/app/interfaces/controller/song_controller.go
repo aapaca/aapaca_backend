@@ -33,7 +33,7 @@ func (controller *SongController) GetSong() echo.HandlerFunc {
 		}
 		song, err := controller.Interactor.GetSong(id)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, APIError("Song Not Found"))
+			return c.JSON(http.StatusNotFound, APIError("Song Not Found"))
 		}
 		return c.JSON(http.StatusOK, song)
 	}
@@ -47,7 +47,7 @@ func (controller *SongController) GetAttendedSongs() echo.HandlerFunc {
 		}
 		songs, err := controller.Interactor.GetAttendedSongs(id)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, APIError("Songs Not Found"))
+			return c.JSON(http.StatusNotFound, APIError("Songs Not Found"))
 		}
 		return c.JSON(http.StatusOK, songs)
 	}
@@ -61,7 +61,7 @@ func (controller *SongController) GetSongsInAlbum() echo.HandlerFunc {
 		}
 		songs, err := controller.Interactor.GetSongsInAlbum(id)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, APIError("Songs Not Found"))
+			return c.JSON(http.StatusNotFound, APIError("Songs Not Found"))
 		}
 		return c.JSON(http.StatusOK, songs)
 	}
