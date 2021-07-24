@@ -4,7 +4,6 @@ import (
 	"interfaces/controller"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 func Init() {
@@ -23,8 +22,5 @@ func Init() {
 	artistController := controller.NewArtistController(sqlHandler)
 	e.GET("/artists/:id", artistController.GetArtist())
 
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "${time_rfc3339} method=${method}, uri=${uri}, status=${status}\n",
-	}))
 	e.Logger.Fatal(e.Start(":1323"))
 }
