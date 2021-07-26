@@ -3,25 +3,11 @@ package repository
 import (
 	"database/sql"
 	"domain"
-	"errors"
 	"interfaces/repository/rdb"
 )
 
 type AlbumRepository struct {
 	rdb.SqlHandler
-}
-
-func generateAlbumLink(id, serviceName string) (string, string, error) {
-	if serviceName == "amazon_music" {
-		return "amazonMusic", "https://www.amazon.com/dp/" + id, nil
-	}
-	if serviceName == "apple_music" {
-		return "appleMusic", "https://music.apple.com/album/" + id, nil
-	}
-	if serviceName == "spotify" {
-		return "spotify", "https://open.spotify.com/album/" + id, nil
-	}
-	return "", "", errors.New("invalid service name")
 }
 
 func partExists(partList []domain.Occupation, partID int) bool {
@@ -63,7 +49,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	creditMap := map[int]*domain.Credit{}
 	var description sql.NullString
 	var releasedDate sql.NullTime
-	links := map[string]string{}
+	links := domain.NewAlbumLinks()
 	for rows.Next() {
 		var nullableArtistID, partID sql.NullInt64
 		var artistName, artistImgURL, partTitle, extID, extSName sql.NullString
@@ -71,11 +57,10 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 			return
 		}
 		if extID.Valid {
-			c, l, e := generateAlbumLink(extID.String, extSName.String)
-			if err = e; err != nil {
+			err = links.AddLink(extID.String, extSName.String)
+			if err != nil {
 				return
 			}
-			links[c] = l
 		}
 		if !nullableArtistID.Valid { // credit is empty
 			continue
@@ -105,7 +90,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 		return
 	}
 	album.PrimaryArtist = pArtist
-	if len(links) > 0 {
+	if links.Length() > 0 {
 		album.Links = links
 	}
 	if releasedDate.Valid {

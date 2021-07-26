@@ -3,25 +3,11 @@ package repository
 import (
 	"database/sql"
 	"domain"
-	"errors"
 	"interfaces/repository/rdb"
 )
 
 type SongRepository struct {
 	rdb.SqlHandler
-}
-
-func generateSongLink(id, serviceName string) (string, string, error) {
-	if serviceName == "amazon_music" {
-		return "amazonMusic", "https://www.amazon.com/dp/" + id, nil
-	}
-	if serviceName == "apple_music" {
-		return "appleMusic", "https://music.apple.com/album/" + id, nil
-	}
-	if serviceName == "spotify" {
-		return "spotify", "https://open.spotify.com/track/" + id, nil
-	}
-	return "", "", errors.New("invalid service name")
 }
 
 func shortenSongLen(songLen string) string {
@@ -70,7 +56,7 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 	pArtist := domain.Artist{}
 	album := domain.Album{}
 	creditMap := map[int]*domain.Credit{}
-	links := map[string]string{}
+	links := domain.NewSongLinks()
 	for rows.Next() {
 		var aID, pID sql.NullInt64
 		var aName, aImgURL, pTitle, extID, extSName sql.NullString
@@ -78,11 +64,10 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 			return
 		}
 		if extID.Valid {
-			c, l, e := generateSongLink(extID.String, extSName.String)
-			if err = e; err != nil {
+			err = links.AddLink(extID.String, extSName.String)
+			if err != nil {
 				return
 			}
-			links[c] = l
 		}
 		if !aID.Valid { // no credit information
 			continue
@@ -112,7 +97,7 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 		album.ReleasedDate = &releasedDate.Time
 	}
 	song.Album = album
-	if len(links) > 0 {
+	if links.Length() > 0 {
 		song.Links = links
 	}
 	song.PrimaryArtist = pArtist
@@ -187,14 +172,12 @@ func (repo *SongRepository) GetSongsInAlbum(albumId int) (songs []domain.Song, e
 			continue
 		}
 		if songMap[song.ID].Links == nil {
-			links := map[string]string{}
-			songMap[song.ID].Links = links
+			songMap[song.ID].Links = domain.NewSongLinks()
 		}
-		c, l, e := generateSongLink(extID.String, extSName.String)
-		if err = e; err != nil {
+		err = songMap[song.ID].Links.AddLink(extID.String, extSName.String)
+		if err != nil {
 			return
 		}
-		songMap[song.ID].Links[c] = l
 	}
 	for _, v := range songMap {
 		songs = append(songs, *v)

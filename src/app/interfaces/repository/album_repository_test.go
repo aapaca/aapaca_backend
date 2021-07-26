@@ -57,6 +57,10 @@ func (suite *GetAlbumTestSuite) TestGetAlbum() {
 	testArtist2 := domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL}
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
+	links := domain.NewAlbumLinks()
+	links.AddLink("TEST1111", "amazon_music")
+	links.AddLink("1111", "apple_music")
+	links.AddLink("Test1111", "spotify")
 	expectedAlbum := domain.Album{
 		ID:            1,
 		Name:          "Album 1",
@@ -69,11 +73,7 @@ func (suite *GetAlbumTestSuite) TestGetAlbum() {
 		ReleasedDate: &testDate,
 		ImageURL:     testURL,
 		Description:  "This is test album 1",
-		Links: map[string]string{
-			"amazonMusic": "https://www.amazon.com/dp/TEST1111",
-			"appleMusic":  "https://music.apple.com/album/1111",
-			"spotify":     "https://open.spotify.com/album/Test1111",
-		},
+		Links:        links,
 	}
 	album, err := suite.albumRepository.GetAlbum(1)
 	if err != nil {
@@ -94,6 +94,8 @@ func (suite *GetAlbumTestSuite) TestGetAlbumNoCredit() {
 	testURL := "http://www.example.com"
 	testDate, _ := time.Parse("2006-01-02", "2021-01-13")
 	testArtist2 := domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL}
+	links := domain.NewAlbumLinks()
+	links.AddLink("Test2222", "spotify")
 	expectedAlbum := domain.Album{
 		ID:            2,
 		Name:          "Album 2",
@@ -102,9 +104,7 @@ func (suite *GetAlbumTestSuite) TestGetAlbumNoCredit() {
 		ReleasedDate:  &testDate,
 		ImageURL:      testURL,
 		Description:   "This is test album 2",
-		Links: map[string]string{
-			"spotify": "https://open.spotify.com/album/Test2222",
-		},
+		Links:         links,
 	}
 	album, err := suite.albumRepository.GetAlbum(2)
 	if err != nil {

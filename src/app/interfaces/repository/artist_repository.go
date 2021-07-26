@@ -3,25 +3,11 @@ package repository
 import (
 	"database/sql"
 	"domain"
-	"errors"
 	"interfaces/repository/rdb"
 )
 
 type ArtistRepository struct {
 	rdb.SqlHandler
-}
-
-func generateArtistLink(id, serviceName string) (string, string, error) {
-	if serviceName == "amazon_music" {
-		return "amazonMusic", "https://www.amazon.com/" + id, nil
-	}
-	if serviceName == "apple_music" {
-		return "appleMusic", "https://music.apple.com/artist/" + id, nil
-	}
-	if serviceName == "spotify" {
-		return "spotify", "https://open.spotify.com/artist/" + id, nil
-	}
-	return "", "", errors.New("invalid service name")
 }
 
 func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error) {
@@ -87,7 +73,7 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 
 	memberMap := map[int]*domain.Credit{}
 	aliasMap := map[int]*domain.Credit{}
-	links := map[string]string{}
+	links := domain.NewArtistLinks()
 	parts := []domain.Occupation{}
 	for rows.Next() {
 		var aID int
@@ -103,11 +89,10 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 				artist.Description = desc.String
 			}
 			if extID.Valid {
-				c, l, e := generateArtistLink(extID.String, extSName.String)
-				if err = e; err != nil {
+				err = links.AddLink(extID.String, extSName.String)
+				if err != nil {
 					return
 				}
-				links[c] = l
 			}
 			if !ocID.Valid {
 				continue
@@ -149,7 +134,7 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 			aliasMap[aID].Parts = append(aliasMap[aID].Parts, part)
 		}
 	}
-	if len(links) > 0 {
+	if links.Length() > 0 {
 		artist.Links = links
 	}
 	if len(parts) > 0 {

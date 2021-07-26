@@ -53,17 +53,17 @@ func (suite *GetArtistTestSuite) TestGetArtist() {
 	testURL := "http://www.example.com"
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
+	links := domain.NewArtistLinks()
+	links.AddLink("TEST1111", "amazon_music")
+	links.AddLink("1111", "apple_music")
+	links.AddLink("Test1111", "spotify")
 	expectedArtist := domain.Artist{
 		ID:          1,
 		Name:        "Artist 1",
 		ImageURL:    testURL,
 		Description: "This is test artist 1",
-		Links: map[string]string{
-			"amazonMusic": "https://www.amazon.com/TEST1111",
-			"appleMusic":  "https://music.apple.com/artist/1111",
-			"spotify":     "https://open.spotify.com/artist/Test1111",
-		},
-		Parts: []domain.Occupation{testPart1, testPart2},
+		Links:       links,
+		Parts:       []domain.Occupation{testPart1, testPart2},
 	}
 	artist, err := suite.artistRepository.GetArtist(1)
 	if err != nil {
@@ -81,6 +81,8 @@ func (suite *GetArtistTestSuite) TestGetArtistAlias() {
 	testURL := "http://www.example.com"
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
 	testPart3 := domain.Occupation{ID: 3, Title: "Part 3"}
+	links := domain.NewArtistLinks()
+	links.AddLink("Test2222", "spotify")
 	expectedArtist := domain.Artist{
 		ID:   2,
 		Name: "Artist 2",
@@ -91,10 +93,8 @@ func (suite *GetArtistTestSuite) TestGetArtistAlias() {
 			},
 		},
 		ImageURL: testURL,
-		Links: map[string]string{
-			"spotify": "https://open.spotify.com/artist/Test2222",
-		},
-		Parts: []domain.Occupation{testPart2},
+		Links:    links,
+		Parts:    []domain.Occupation{testPart2},
 	}
 	artist, err := suite.artistRepository.GetArtist(2)
 	if err != nil {
