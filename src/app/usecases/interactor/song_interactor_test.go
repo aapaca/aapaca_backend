@@ -59,7 +59,7 @@ func TestGetSong(t *testing.T) {
 
 func TestGetAttendedSongs(t *testing.T) {
 	testArtist := domain.Artist{ID: 100}
-	credit := domain.Credit{Artist: testArtist}
+	credit := domain.Credit{Artist: &testArtist}
 	testSong1 := domain.Song{ID: 1, Name: "Song1", Credits: []domain.Credit{credit}}
 	testSong2 := domain.Song{ID: 2, Name: "Song2", Credits: []domain.Credit{credit}}
 	testSongs := []domain.Song{testSong1, testSong2}
