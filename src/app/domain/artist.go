@@ -12,5 +12,5 @@ type Artist struct {
 	ImageURL    string       `json:"imageUrl,omitempty"`
 	Description string       `json:"description,omitempty"`
 	Links       *ArtistLinks `json:"links,omitempty"`
-	Parts       []Occupation `json:"parts,omitempty"`
+	Parts       *Occupations `json:"parts,omitempty"`
 }

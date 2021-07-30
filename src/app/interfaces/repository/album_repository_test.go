@@ -3,7 +3,6 @@ package repository
 import (
 	"domain"
 	"interfaces/repository/rdb"
-	"test"
 	"test/infrastructure"
 	"test/interfaces/repository"
 	"testing"
@@ -28,15 +27,9 @@ func (suite *GetAlbumTestSuite) SetupSuite() {
 }
 
 func (suite *GetAlbumTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_album_init.sql")
+	err := repository.InitDb("testdata/get_album_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.albumRepository = AlbumRepository{
 		SqlHandler: suite.sqlHandler,
@@ -57,6 +50,8 @@ func (suite *GetAlbumTestSuite) TestGetAlbum() {
 	testArtist2 := domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL}
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
+	testParts1 := domain.Occupations{Occupations: []domain.Occupation{testPart1}}
+	testParts2 := domain.Occupations{Occupations: []domain.Occupation{testPart1, testPart2}}
 	links := domain.NewAlbumLinks()
 	links.AddLink("TEST1111", "amazon_music")
 	links.AddLink("1111", "apple_music")
@@ -66,8 +61,8 @@ func (suite *GetAlbumTestSuite) TestGetAlbum() {
 		Name:          "Album 1",
 		PrimaryArtist: testArtist1,
 		Credits: []domain.Credit{
-			{Artist: testArtist1, Parts: []domain.Occupation{testPart1}},
-			{Artist: testArtist2, Parts: []domain.Occupation{testPart1, testPart2}},
+			{Artist: &testArtist1, Parts: &testParts1},
+			{Artist: &testArtist2, Parts: &testParts2},
 		},
 		Label:        "Label 1",
 		ReleasedDate: &testDate,
@@ -82,7 +77,7 @@ func (suite *GetAlbumTestSuite) TestGetAlbum() {
 	assert.Equal(suite.T(), expectedAlbum.ID, album.ID)
 	assert.Equal(suite.T(), expectedAlbum.Name, album.Name)
 	assert.Equal(suite.T(), expectedAlbum.PrimaryArtist, album.PrimaryArtist)
-	test.AssertCredits(suite.T(), expectedAlbum.Credits, album.Credits)
+	repository.AssertCredits(suite.T(), expectedAlbum.Credits, album.Credits)
 	assert.Equal(suite.T(), expectedAlbum.Label, album.Label)
 	assert.Equal(suite.T(), expectedAlbum.ReleasedDate, album.ReleasedDate)
 	assert.Equal(suite.T(), expectedAlbum.ImageURL, album.ImageURL)
@@ -137,15 +132,9 @@ func (suite *GetAlbumByArtistIdTestSuite) SetupSuite() {
 }
 
 func (suite *GetAlbumByArtistIdTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_album_by_artist_id_init.sql")
+	err := repository.InitDb("testdata/get_album_by_artist_id_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.albumRepository = AlbumRepository{
 		SqlHandler: suite.sqlHandler,

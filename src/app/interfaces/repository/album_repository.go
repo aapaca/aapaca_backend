@@ -10,15 +10,6 @@ type AlbumRepository struct {
 	rdb.SqlHandler
 }
 
-func partExists(partList []domain.Occupation, partID int) bool {
-	for _, p := range partList {
-		if p.ID == partID {
-			return true
-		}
-	}
-	return false
-}
-
 func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title,
 								albums.id, albums.name, albums.released_date, albums.image_url, albums.label, albums.description,
@@ -68,22 +59,22 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 		artistID := int(nullableArtistID.Int64)
 		if _, ok := creditMap[artistID]; !ok {
 			creditMap[artistID] = &domain.Credit{
-				Artist: domain.Artist{
+				Artist: &domain.Artist{
 					ID:       int(artistID),
 					Name:     artistName.String,
 					ImageURL: artistImgURL.String,
 				},
-				Parts: []domain.Occupation{},
+				Parts: &domain.Occupations{},
 			}
 		}
-		if partExists(creditMap[artistID].Parts, int(partID.Int64)) {
+		if creditMap[artistID].Parts.Contains(int(partID.Int64)) {
 			continue
 		}
 		part := domain.Occupation{
 			ID:    int(partID.Int64),
 			Title: partTitle.String,
 		}
-		creditMap[artistID].Parts = append(creditMap[artistID].Parts, part)
+		creditMap[artistID].Parts.Append(part)
 	}
 	// if rows have no columns, album does not exist and album.Name becomes empty string.
 	if album.Name == "" {

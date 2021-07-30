@@ -3,7 +3,6 @@ package repository
 import (
 	"domain"
 	"interfaces/repository/rdb"
-	"test"
 	"test/infrastructure"
 	"test/interfaces/repository"
 	"testing"
@@ -55,15 +54,9 @@ func (suite *GetSongTestSuite) SetupSuite() {
 }
 
 func (suite *GetSongTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_song_init.sql")
+	err := repository.InitDb("testdata/get_song_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.songRepository = SongRepository{
 		SqlHandler: suite.sqlHandler,
@@ -85,6 +78,8 @@ func (suite *GetSongTestSuite) TestGetSong() {
 	testArtist2 := domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL}
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
+	testParts1 := domain.Occupations{[]domain.Occupation{testPart1, testPart2}}
+	testParts2 := domain.Occupations{[]domain.Occupation{testPart2}}
 	links := domain.NewSongLinks()
 	links.AddLink("TEST1111", "amazon_music")
 	links.AddLink("1111", "apple_music")
@@ -94,8 +89,8 @@ func (suite *GetSongTestSuite) TestGetSong() {
 		Name:          "Song 1",
 		PrimaryArtist: testArtist1,
 		Credits: []domain.Credit{
-			{Artist: testArtist1, Parts: []domain.Occupation{testPart1, testPart2}},
-			{Artist: testArtist2, Parts: []domain.Occupation{testPart2}},
+			{Artist: &testArtist1, Parts: &testParts1},
+			{Artist: &testArtist2, Parts: &testParts2},
 		},
 		Album:   testAlbum1,
 		SongLen: "2:40",
@@ -109,7 +104,7 @@ func (suite *GetSongTestSuite) TestGetSong() {
 	assert.Equal(suite.T(), expectedSong.ID, song.ID)
 	assert.Equal(suite.T(), expectedSong.Name, song.Name)
 	assert.Equal(suite.T(), expectedSong.PrimaryArtist, song.PrimaryArtist)
-	test.AssertCredits(suite.T(), expectedSong.Credits, song.Credits)
+	repository.AssertCredits(suite.T(), expectedSong.Credits, song.Credits)
 	assert.Equal(suite.T(), expectedSong.Album, song.Album)
 	assert.Equal(suite.T(), expectedSong.SongLen, song.SongLen)
 	assert.Equal(suite.T(), expectedSong.Genre, song.Genre)
@@ -163,15 +158,9 @@ func (suite *GetAttendedSongsTestSuite) SetupSuite() {
 }
 
 func (suite *GetAttendedSongsTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_attended_songs_init.sql")
+	err := repository.InitDb("testdata/get_attended_songs_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.songRepository = SongRepository{
 		SqlHandler: suite.sqlHandler,
@@ -251,15 +240,9 @@ func (suite *GetSongsInAlbumTestSuite) SetupSuite() {
 }
 
 func (suite *GetSongsInAlbumTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_songs_in_album_init.sql")
+	err := repository.InitDb("testdata/get_songs_in_album_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.songRepository = SongRepository{
 		SqlHandler: suite.sqlHandler,
