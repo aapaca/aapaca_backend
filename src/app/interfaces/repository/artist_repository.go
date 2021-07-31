@@ -74,7 +74,7 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 	memberMap := map[int]*domain.Credit{}
 	aliasMap := map[int]*domain.Credit{}
 	links := domain.NewArtistLinks()
-	parts := domain.Occupations{}
+	parts := domain.NewOccupations()
 	for rows.Next() {
 		var aID int
 		var name, attr, imageURL string
@@ -106,7 +106,7 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 			if _, ok := memberMap[aID]; !ok {
 				memberMap[aID] = &domain.Credit{
 					Artist: &domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
-					Parts:  &domain.Occupations{},
+					Parts:  domain.NewOccupations(),
 				}
 			}
 			if !ocID.Valid {
@@ -121,7 +121,7 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 			if _, ok := aliasMap[aID]; !ok {
 				aliasMap[aID] = &domain.Credit{
 					Artist: &domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
-					Parts:  &domain.Occupations{},
+					Parts:  domain.NewOccupations(),
 				}
 			}
 			if !ocID.Valid {
@@ -138,7 +138,7 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 		artist.Links = links
 	}
 	if !parts.IsEmpty() {
-		artist.Parts = &parts
+		artist.Parts = parts
 	}
 	if len(memberMap) > 0 {
 		members := []domain.Credit{}

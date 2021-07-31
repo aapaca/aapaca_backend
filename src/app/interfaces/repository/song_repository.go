@@ -75,7 +75,7 @@ func (repo *SongRepository) GetSong(id int) (song domain.Song, err error) {
 		artistID := int(aID.Int64)
 		if _, ok := creditMap[artistID]; !ok {
 			artist := domain.Artist{ID: artistID, Name: aName.String, ImageURL: aImgURL.String}
-			creditMap[artistID] = &domain.Credit{Artist: &artist, Parts: &domain.Occupations{}}
+			creditMap[artistID] = &domain.Credit{Artist: &artist, Parts: domain.NewOccupations()}
 		}
 		partID := int(pID.Int64)
 		if creditMap[artistID].Parts.Contains(partID) {

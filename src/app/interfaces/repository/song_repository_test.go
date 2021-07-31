@@ -78,8 +78,11 @@ func (suite *GetSongTestSuite) TestGetSong() {
 	testArtist2 := domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL}
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
-	testParts1 := domain.Occupations{[]domain.Occupation{testPart1, testPart2}}
-	testParts2 := domain.Occupations{[]domain.Occupation{testPart2}}
+	testParts1 := domain.NewOccupations()
+	testParts2 := domain.NewOccupations()
+	testParts1.Append(testPart1)
+	testParts1.Append(testPart2)
+	testParts2.Append(testPart2)
 	links := domain.NewSongLinks()
 	links.AddLink("TEST1111", "amazon_music")
 	links.AddLink("1111", "apple_music")
@@ -89,8 +92,8 @@ func (suite *GetSongTestSuite) TestGetSong() {
 		Name:          "Song 1",
 		PrimaryArtist: testArtist1,
 		Credits: []domain.Credit{
-			{Artist: &testArtist1, Parts: &testParts1},
-			{Artist: &testArtist2, Parts: &testParts2},
+			{Artist: &testArtist1, Parts: testParts1},
+			{Artist: &testArtist2, Parts: testParts2},
 		},
 		Album:   testAlbum1,
 		SongLen: "2:40",

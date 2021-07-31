@@ -64,7 +64,7 @@ func (repo *AlbumRepository) GetAlbum(id int) (album domain.Album, err error) {
 					Name:     artistName.String,
 					ImageURL: artistImgURL.String,
 				},
-				Parts: &domain.Occupations{},
+				Parts: domain.NewOccupations(),
 			}
 		}
 		if creditMap[artistID].Parts.Contains(int(partID.Int64)) {

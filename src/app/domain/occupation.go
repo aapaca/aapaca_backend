@@ -1,20 +1,26 @@
 package domain
 
+import "encoding/json"
+
 type Occupation struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`
 }
 
 type Occupations struct {
-	Occupations []Occupation
+	occupations []Occupation
+}
+
+func NewOccupations() *Occupations {
+	return &Occupations{occupations: []Occupation{}}
 }
 
 func (o *Occupations) Append(oc Occupation) {
-	o.Occupations = append(o.Occupations, oc)
+	o.occupations = append(o.occupations, oc)
 }
 
 func (o *Occupations) Contains(id int) bool {
-	for _, p := range o.Occupations {
+	for _, p := range o.occupations {
 		if p.ID == id {
 			return true
 		}
@@ -23,5 +29,9 @@ func (o *Occupations) Contains(id int) bool {
 }
 
 func (o *Occupations) IsEmpty() bool {
-	return len(o.Occupations) == 0
+	return len(o.occupations) == 0
+}
+
+func (o *Occupations) MarshalJSON() ([]byte, error) {
+	return json.Marshal(o.occupations)
 }

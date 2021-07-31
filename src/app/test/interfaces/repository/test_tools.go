@@ -2,6 +2,7 @@ package repository
 
 import (
 	"domain"
+	"encoding/json"
 	"interfaces/repository/rdb"
 	"io/ioutil"
 	"sort"
@@ -35,6 +36,20 @@ func readSqlFile(filepath string) ([]string, error) {
 	return queries, nil
 }
 
+func AssertParts(t *testing.T, expected *domain.Occupations, got *domain.Occupations) {
+	// private fieldのリストをassertする方法がわからないので、
+	// JSONに変換してJSONEqを使う方法を暫定的に採用
+	expectJson, err := json.Marshal(expected)
+	if err != nil {
+		t.Error(err)
+	}
+	gotJson, err := json.Marshal(got)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.JSONEq(t, string(expectJson), string(gotJson))
+}
+
 func AssertCredits(t *testing.T, expected []domain.Credit, got []domain.Credit) {
 	assert.Equal(t, len(expected), len(got))
 	// sort expected and got by ArtistID
@@ -48,6 +63,6 @@ func AssertCredits(t *testing.T, expected []domain.Credit, got []domain.Credit) 
 	})
 	for i := range expected {
 		assert.Equal(t, expected[i].Artist, got[i].Artist)
-		assert.ElementsMatch(t, expected[i].Parts.Occupations, got[i].Parts.Occupations)
+		AssertParts(t, expected[i].Parts, got[i].Parts)
 	}
 }
