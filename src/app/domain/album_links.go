@@ -1,29 +1,36 @@
 package domain
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
 type AlbumLinks struct {
-	Links map[string]string
+	links map[string]string
 }
 
 func NewAlbumLinks() *AlbumLinks {
-	return &AlbumLinks{Links: map[string]string{}}
+	return &AlbumLinks{links: map[string]string{}}
 }
 
 func (l *AlbumLinks) Length() int {
-	return len(l.Links)
+	return len(l.links)
 }
 
 func (l *AlbumLinks) AddLink(id, serviceName string) error {
 	switch serviceName {
 	case "amazon_music":
-		l.Links["amazonMusic"] = "https://www.amazon.com/dp/" + id
+		l.links["amazonMusic"] = "https://www.amazon.com/dp/" + id
 	case "apple_music":
-		l.Links["appleMusic"] = "https://music.apple.com/album/" + id
+		l.links["appleMusic"] = "https://music.apple.com/album/" + id
 	case "spotify":
-		l.Links["spotify"] = "https://open.spotify.com/album/" + id
+		l.links["spotify"] = "https://open.spotify.com/album/" + id
 	default:
 		return errors.New("invalid service name")
 	}
 	return nil
+}
+
+func (l *AlbumLinks) MarshalJSON() ([]byte, error) {
+	return json.Marshal(l.links)
 }
