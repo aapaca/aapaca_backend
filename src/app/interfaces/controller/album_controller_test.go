@@ -43,7 +43,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumWhenFound() {
 	albumInteractorMock := new(AlbumInteractorMock)
 	albumInteractorMock.On("GetAlbum", 1).Return(album, nil).Once()
 	albumController := AlbumController{
-		Interactor: albumInteractorMock,
+		Usecase: albumInteractorMock,
 	}
 
 	// GETリクエストを投げる準備
@@ -62,7 +62,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumWhenNotFound() {
 	albumInteractorMock := new(AlbumInteractorMock)
 	albumInteractorMock.On("GetAlbum", 1).Return(domain.Album{}, errors.New("album not found")).Once()
 	albumController := AlbumController{
-		Interactor: albumInteractorMock,
+		Usecase: albumInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Album Not Found"})
 	expected := string(expectedJson) + "\n"
@@ -82,7 +82,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumWhenInvalidId() {
 	// mockを設定, setup
 	albumInteractorMock := new(AlbumInteractorMock)
 	albumController := AlbumController{
-		Interactor: albumInteractorMock,
+		Usecase: albumInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Invalid Parameter"})
 	expected := string(expectedJson) + "\n"
@@ -106,7 +106,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumByArtistIdWhenFound() {
 	albumInteractorMock := new(AlbumInteractorMock)
 	albumInteractorMock.On("GetAlbumsByArtistId", 1).Return(albums, nil).Once()
 	albumController := AlbumController{
-		Interactor: albumInteractorMock,
+		Usecase: albumInteractorMock,
 	}
 
 	// GETリクエストを投げる準備
@@ -125,7 +125,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumByArtistIdWhenNotFound() {
 	albumInteractorMock := new(AlbumInteractorMock)
 	albumInteractorMock.On("GetAlbumsByArtistId", 1).Return([]domain.Album{}, errors.New("album not found")).Once()
 	albumController := AlbumController{
-		Interactor: albumInteractorMock,
+		Usecase: albumInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Albums Not Found"})
 	expected := string(expectedJson) + "\n"
@@ -145,7 +145,7 @@ func (suite *AlbumControllerTestSuite) TestGetAlbumByArtistIdWhenInvalidId() {
 	// mockを設定, setup
 	albumInteractorMock := new(AlbumInteractorMock)
 	albumController := AlbumController{
-		Interactor: albumInteractorMock,
+		Usecase: albumInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Invalid Parameter"})
 	expected := string(expectedJson) + "\n"

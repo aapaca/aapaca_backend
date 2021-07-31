@@ -12,12 +12,12 @@ import (
 )
 
 type SongController struct {
-	Interactor usecase.SongUsecase
+	Usecase usecase.SongUsecase
 }
 
 func NewSongController(sqlHandler rdb.SqlHandler) *SongController {
 	return &SongController{
-		Interactor: &interactor.SongInteractor{
+		Usecase: &interactor.SongInteractor{
 			SongRepository: &repository.SongRepository{
 				SqlHandler: sqlHandler,
 			},
@@ -31,7 +31,7 @@ func (controller *SongController) GetSong() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
-		song, err := controller.Interactor.GetSong(id)
+		song, err := controller.Usecase.GetSong(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Song Not Found"))
 		}
@@ -45,7 +45,7 @@ func (controller *SongController) GetAttendedSongs() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
-		songs, err := controller.Interactor.GetAttendedSongs(id)
+		songs, err := controller.Usecase.GetAttendedSongs(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Songs Not Found"))
 		}
@@ -59,7 +59,7 @@ func (controller *SongController) GetSongsInAlbum() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
-		songs, err := controller.Interactor.GetSongsInAlbum(id)
+		songs, err := controller.Usecase.GetSongsInAlbum(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Songs Not Found"))
 		}

@@ -38,7 +38,7 @@ func (suite *ArtistControllerTestSuite) TestGetArtistWhenFound() {
 	artistInteractorMock := new(ArtistInteractorMock)
 	artistInteractorMock.On("GetArtist", 1).Return(artist, nil).Once()
 	artistController := ArtistController{
-		Interactor: artistInteractorMock,
+		Usecase: artistInteractorMock,
 	}
 
 	// GETリクエストを投げる準備
@@ -57,7 +57,7 @@ func (suite *ArtistControllerTestSuite) TestGetArtistWhenNotFound() {
 	artistInteractorMock := new(ArtistInteractorMock)
 	artistInteractorMock.On("GetArtist", 1).Return(domain.Artist{}, errors.New("artist not found")).Once()
 	artistController := ArtistController{
-		Interactor: artistInteractorMock,
+		Usecase: artistInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Artist Not Found"})
 	expected := string(expectedJson) + "\n"
@@ -77,7 +77,7 @@ func (suite *ArtistControllerTestSuite) TestGetArtistWhenInvalidId() {
 	// mockを設定, setup
 	artistInteractorMock := new(ArtistInteractorMock)
 	artistController := ArtistController{
-		Interactor: artistInteractorMock,
+		Usecase: artistInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Invalid Parameter"})
 	expected := string(expectedJson) + "\n"
