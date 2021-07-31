@@ -15,6 +15,13 @@ func NewOccupations() *Occupations {
 	return &Occupations{occupations: []Occupation{}}
 }
 
+func (o *Occupations) GetOccupationList() []Occupation {
+	// deep copy
+	new_oc := make([]Occupation, len(o.occupations))
+	copy(new_oc, o.occupations)
+	return new_oc
+}
+
 func (o *Occupations) Append(oc Occupation) {
 	o.occupations = append(o.occupations, oc)
 }
