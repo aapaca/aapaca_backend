@@ -48,7 +48,7 @@ func (suite *SongControllerTestSuite) TestGetSongWhenFound() {
 	songInteractorMock := new(SongInteractorMock)
 	songInteractorMock.On("GetSong", 1).Return(song, nil).Once()
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 
 	// GETリクエストを投げる準備
@@ -67,7 +67,7 @@ func (suite *SongControllerTestSuite) TestGetSongWhenNotFound() {
 	songInteractorMock := new(SongInteractorMock)
 	songInteractorMock.On("GetSong", 1).Return(domain.Song{}, errors.New("song not found")).Once()
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Song Not Found"})
 	expected := string(expectedJson) + "\n"
@@ -87,7 +87,7 @@ func (suite *SongControllerTestSuite) TestGetSongWhenInvalidId() {
 	// mockを設定, setup
 	songInteractorMock := new(SongInteractorMock)
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Invalid Parameter"})
 	expected := string(expectedJson) + "\n"
@@ -111,7 +111,7 @@ func (suite *SongControllerTestSuite) TestGetAttendedSongsWhenFound() {
 	songInteractorMock := new(SongInteractorMock)
 	songInteractorMock.On("GetAttendedSongs", 1).Return(songs, nil).Once()
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 
 	// GETリクエストを投げる準備
@@ -130,7 +130,7 @@ func (suite *SongControllerTestSuite) TestGetAttendedSongsWhenNotFound() {
 	songInteractorMock := new(SongInteractorMock)
 	songInteractorMock.On("GetAttendedSongs", 1).Return([]domain.Song{}, errors.New("songs not found")).Once()
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Songs Not Found"})
 	expected := string(expectedJson) + "\n"
@@ -150,7 +150,7 @@ func (suite *SongControllerTestSuite) TestGetAttendedSongsWhenInvalidId() {
 	// mockを設定, setup
 	songInteractorMock := new(SongInteractorMock)
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Invalid Parameter"})
 	expected := string(expectedJson) + "\n"
@@ -174,7 +174,7 @@ func (suite *SongControllerTestSuite) TestGetSongsInAlbumWhenFound() {
 	songInteractorMock := new(SongInteractorMock)
 	songInteractorMock.On("GetSongsInAlbum", 1).Return(songs, nil).Once()
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 
 	// GETリクエストを投げる準備
@@ -193,7 +193,7 @@ func (suite *SongControllerTestSuite) TestGetSongsInAlbumWhenNotFound() {
 	songInteractorMock := new(SongInteractorMock)
 	songInteractorMock.On("GetSongsInAlbum", 1).Return([]domain.Song{}, errors.New("songs not found")).Once()
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Songs Not Found"})
 	expected := string(expectedJson) + "\n"
@@ -213,7 +213,7 @@ func (suite *SongControllerTestSuite) TestGetSongsInAlbumWhenInvalidId() {
 	// mockを設定, setup
 	songInteractorMock := new(SongInteractorMock)
 	songController := SongController{
-		Interactor: songInteractorMock,
+		Usecase: songInteractorMock,
 	}
 	expectedJson, _ := json.Marshal(map[string]string{"Message": "Invalid Parameter"})
 	expected := string(expectedJson) + "\n"

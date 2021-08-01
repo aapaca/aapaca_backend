@@ -3,7 +3,6 @@ package repository
 import (
 	"domain"
 	"interfaces/repository/rdb"
-	"test"
 	"test/infrastructure"
 	"test/interfaces/repository"
 	"testing"
@@ -27,15 +26,9 @@ func (suite *GetArtistTestSuite) SetupSuite() {
 }
 
 func (suite *GetArtistTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_artist_init.sql")
+	err := repository.InitDb("testdata/get_artist_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.artistRepository = ArtistRepository{
 		SqlHandler: suite.sqlHandler,
@@ -53,17 +46,20 @@ func (suite *GetArtistTestSuite) TestGetArtist() {
 	testURL := "http://www.example.com"
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
+	testParts1 := domain.NewOccupations()
+	testParts1.Append(testPart1)
+	testParts1.Append(testPart2)
+	links := domain.NewArtistLinks()
+	links.AddLink("TEST1111", "amazon_music")
+	links.AddLink("1111", "apple_music")
+	links.AddLink("Test1111", "spotify")
 	expectedArtist := domain.Artist{
 		ID:          1,
 		Name:        "Artist 1",
 		ImageURL:    testURL,
 		Description: "This is test artist 1",
-		Links: map[string]string{
-			"amazonMusic": "https://www.amazon.com/TEST1111",
-			"appleMusic":  "https://music.apple.com/artist/1111",
-			"spotify":     "https://open.spotify.com/artist/Test1111",
-		},
-		Parts: []domain.Occupation{testPart1, testPart2},
+		Links:       links,
+		Parts:       testParts1,
 	}
 	artist, err := suite.artistRepository.GetArtist(1)
 	if err != nil {
@@ -74,27 +70,31 @@ func (suite *GetArtistTestSuite) TestGetArtist() {
 	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
 	assert.Equal(suite.T(), expectedArtist.Description, artist.Description)
 	assert.Equal(suite.T(), expectedArtist.Links, artist.Links)
-	assert.ElementsMatch(suite.T(), expectedArtist.Parts, artist.Parts)
+	repository.AssertParts(suite.T(), expectedArtist.Parts, artist.Parts)
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistAlias() {
 	testURL := "http://www.example.com"
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
 	testPart3 := domain.Occupation{ID: 3, Title: "Part 3"}
+	testParts2 := domain.NewOccupations()
+	testParts3 := domain.NewOccupations()
+	testParts2.Append(testPart2)
+	testParts3.Append(testPart3)
+	links := domain.NewArtistLinks()
+	links.AddLink("Test2222", "spotify")
 	expectedArtist := domain.Artist{
 		ID:   2,
 		Name: "Artist 2",
 		Aliases: []domain.Credit{
 			{
-				Artist: domain.Artist{ID: 3, Name: "Alias Artist 2", ImageURL: testURL},
-				Parts:  []domain.Occupation{testPart3},
+				Artist: &domain.Artist{ID: 3, Name: "Alias Artist 2", ImageURL: testURL},
+				Parts:  testParts3,
 			},
 		},
 		ImageURL: testURL,
-		Links: map[string]string{
-			"spotify": "https://open.spotify.com/artist/Test2222",
-		},
-		Parts: []domain.Occupation{testPart2},
+		Links:    links,
+		Parts:    testParts2,
 	}
 	artist, err := suite.artistRepository.GetArtist(2)
 	if err != nil {
@@ -107,22 +107,29 @@ func (suite *GetArtistTestSuite) TestGetArtistGroup() {
 	testURL := "http://www.example.com"
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
+	testParts1 := domain.NewOccupations()
+	testParts2 := domain.NewOccupations()
+	testParts4 := domain.NewOccupations()
+	testParts1.Append(testPart1)
+	testParts1.Append(testPart2)
+	testParts2.Append(testPart2)
+	testParts4.Append(testPart1)
 	expectedArtist := domain.Artist{
 		ID:   4,
 		Name: "Group Artist 1",
 		Members: []domain.Credit{
 			{
-				Artist: domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
-				Parts:  []domain.Occupation{testPart1, testPart2},
+				Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
+				Parts:  testParts1,
 			},
 			{
-				Artist: domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
-				Parts:  []domain.Occupation{testPart2},
+				Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
+				Parts:  testParts2,
 			},
 		},
 		Description: "This is test group artist 1",
 		ImageURL:    testURL,
-		Parts:       []domain.Occupation{testPart1},
+		Parts:       testParts4,
 	}
 	artist, err := suite.artistRepository.GetArtist(4)
 	if err != nil {
@@ -130,35 +137,36 @@ func (suite *GetArtistTestSuite) TestGetArtistGroup() {
 	}
 	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
 	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
-	test.AssertCredits(suite.T(), expectedArtist.Members.([]domain.Credit), artist.Members.([]domain.Credit))
+	repository.AssertCredits(suite.T(), expectedArtist.Members.([]domain.Credit), artist.Members.([]domain.Credit))
 	assert.Equal(suite.T(), expectedArtist.Description, artist.Description)
 	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistGroupAlias() {
 	testURL := "http://www.example.com"
-	testPart3 := domain.Occupation{ID: 3, Title: "Part 3"}
+	testParts3 := domain.NewOccupations()
+	testParts3.Append(domain.Occupation{ID: 3, Title: "Part 3"})
 	expectedArtist := domain.Artist{
 		ID:   5,
 		Name: "Group Artist 2",
 		Members: []domain.Credit{
 			{
-				Artist: domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
-				Parts:  []domain.Occupation{},
+				Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
+				Parts:  domain.NewOccupations(),
 			},
 			{
-				Artist: domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
-				Parts:  []domain.Occupation{},
+				Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
+				Parts:  domain.NewOccupations(),
 			},
 			{
-				Artist: domain.Artist{ID: 4, Name: "Group Artist 1", ImageURL: testURL},
-				Parts:  []domain.Occupation{},
+				Artist: &domain.Artist{ID: 4, Name: "Group Artist 1", ImageURL: testURL},
+				Parts:  domain.NewOccupations(),
 			},
 		},
 		Aliases: []domain.Credit{
 			{
-				Artist: domain.Artist{ID: 6, Name: "Alias Group Artist 2", ImageURL: testURL},
-				Parts:  []domain.Occupation{testPart3},
+				Artist: &domain.Artist{ID: 6, Name: "Alias Group Artist 2", ImageURL: testURL},
+				Parts:  testParts3,
 			},
 		},
 		ImageURL: testURL,

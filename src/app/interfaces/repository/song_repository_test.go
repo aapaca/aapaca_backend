@@ -3,7 +3,6 @@ package repository
 import (
 	"domain"
 	"interfaces/repository/rdb"
-	"test"
 	"test/infrastructure"
 	"test/interfaces/repository"
 	"testing"
@@ -55,15 +54,9 @@ func (suite *GetSongTestSuite) SetupSuite() {
 }
 
 func (suite *GetSongTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_song_init.sql")
+	err := repository.InitDb("testdata/get_song_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.songRepository = SongRepository{
 		SqlHandler: suite.sqlHandler,
@@ -85,22 +78,27 @@ func (suite *GetSongTestSuite) TestGetSong() {
 	testArtist2 := domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL}
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
+	testParts1 := domain.NewOccupations()
+	testParts2 := domain.NewOccupations()
+	testParts1.Append(testPart1)
+	testParts1.Append(testPart2)
+	testParts2.Append(testPart2)
+	links := domain.NewSongLinks()
+	links.AddLink("TEST1111", "amazon_music")
+	links.AddLink("1111", "apple_music")
+	links.AddLink("Test1111", "spotify")
 	expectedSong := domain.Song{
 		ID:            1,
 		Name:          "Song 1",
 		PrimaryArtist: testArtist1,
 		Credits: []domain.Credit{
-			{Artist: testArtist1, Parts: []domain.Occupation{testPart1, testPart2}},
-			{Artist: testArtist2, Parts: []domain.Occupation{testPart2}},
+			{Artist: &testArtist1, Parts: testParts1},
+			{Artist: &testArtist2, Parts: testParts2},
 		},
 		Album:   testAlbum1,
 		SongLen: "2:40",
 		Genre:   "Genre 1",
-		Links: map[string]string{
-			"amazonMusic": "https://www.amazon.com/dp/TEST1111",
-			"appleMusic":  "https://music.apple.com/album/1111",
-			"spotify":     "https://open.spotify.com/track/Test1111",
-		},
+		Links:   links,
 	}
 	song, err := suite.songRepository.GetSong(1)
 	if err != nil {
@@ -109,7 +107,7 @@ func (suite *GetSongTestSuite) TestGetSong() {
 	assert.Equal(suite.T(), expectedSong.ID, song.ID)
 	assert.Equal(suite.T(), expectedSong.Name, song.Name)
 	assert.Equal(suite.T(), expectedSong.PrimaryArtist, song.PrimaryArtist)
-	test.AssertCredits(suite.T(), expectedSong.Credits, song.Credits)
+	repository.AssertCredits(suite.T(), expectedSong.Credits, song.Credits)
 	assert.Equal(suite.T(), expectedSong.Album, song.Album)
 	assert.Equal(suite.T(), expectedSong.SongLen, song.SongLen)
 	assert.Equal(suite.T(), expectedSong.Genre, song.Genre)
@@ -121,6 +119,8 @@ func (suite *GetSongTestSuite) TestGetSongNoCredit() {
 	testDate, _ := time.Parse("2006-01-02", "2021-01-13")
 	testAlbum1 := domain.Album{ID: 1, Name: "Album 1", ImageURL: testURL, ReleasedDate: &testDate}
 	testArtist1 := domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL}
+	links := domain.NewSongLinks()
+	links.AddLink("2222", "apple_music")
 	expectedSong := domain.Song{
 		ID:            2,
 		Name:          "Song 2",
@@ -128,9 +128,7 @@ func (suite *GetSongTestSuite) TestGetSongNoCredit() {
 		Album:         testAlbum1,
 		SongLen:       "0:40",
 		Genre:         "Genre 2",
-		Links: map[string]string{
-			"appleMusic": "https://music.apple.com/album/2222",
-		},
+		Links:         links,
 	}
 	song, err := suite.songRepository.GetSong(2)
 	if err != nil {
@@ -163,15 +161,9 @@ func (suite *GetAttendedSongsTestSuite) SetupSuite() {
 }
 
 func (suite *GetAttendedSongsTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_attended_songs_init.sql")
+	err := repository.InitDb("testdata/get_attended_songs_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.songRepository = SongRepository{
 		SqlHandler: suite.sqlHandler,
@@ -251,15 +243,9 @@ func (suite *GetSongsInAlbumTestSuite) SetupSuite() {
 }
 
 func (suite *GetSongsInAlbumTestSuite) SetupTest() {
-	queries, err := repository.ReadSqlFile("testdata/get_songs_in_album_init.sql")
+	err := repository.InitDb("testdata/get_songs_in_album_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
-	}
-	for _, query := range queries {
-		_, err := suite.sqlHandler.Execute(query)
-		if err != nil {
-			suite.T().Error(err)
-		}
 	}
 	suite.songRepository = SongRepository{
 		SqlHandler: suite.sqlHandler,
@@ -275,35 +261,35 @@ func (suite *GetSongsInAlbumTestSuite) TearDownTest() {
 
 func (suite *GetSongsInAlbumTestSuite) TestGetSongsInAlbum() {
 	// Album 1 contains 3 songs
+	links1 := domain.NewSongLinks()
+	links1.AddLink("TEST1111", "amazon_music")
+	links1.AddLink("1111", "apple_music")
+	links1.AddLink("Test1111", "spotify")
 	testSong1 := domain.Song{
 		ID:      1,
 		Name:    "Song 1",
 		SongLen: "2:40",
 		Order:   "1",
-		Links: map[string]string{
-			"amazonMusic": "https://www.amazon.com/dp/TEST1111",
-			"appleMusic":  "https://music.apple.com/album/1111",
-			"spotify":     "https://open.spotify.com/track/Test1111",
-		},
+		Links:   links1,
 	}
+	links2 := domain.NewSongLinks()
+	links2.AddLink("TEST2222", "amazon_music")
+	links2.AddLink("2222", "apple_music")
 	testSong2 := domain.Song{
 		ID:      2,
 		Name:    "Song 2",
 		SongLen: "0:40",
 		Order:   "2",
-		Links: map[string]string{
-			"amazonMusic": "https://www.amazon.com/dp/TEST2222",
-			"appleMusic":  "https://music.apple.com/album/2222",
-		},
+		Links:   links2,
 	}
+	links3 := domain.NewSongLinks()
+	links3.AddLink("Test3333", "spotify")
 	testSong3 := domain.Song{
 		ID:      3,
 		Name:    "Song 3",
 		SongLen: "12:34",
 		Order:   "3",
-		Links: map[string]string{
-			"spotify": "https://open.spotify.com/track/Test3333",
-		},
+		Links:   links3,
 	}
 	expectedSongs := []domain.Song{testSong1, testSong2, testSong3}
 	songs, err := suite.songRepository.GetSongsInAlbum(1)

@@ -12,12 +12,12 @@ import (
 )
 
 type ArtistController struct {
-	Interactor usecase.ArtistUsecase
+	Usecase usecase.ArtistUsecase
 }
 
 func NewArtistController(sqlHandler rdb.SqlHandler) *ArtistController {
 	return &ArtistController{
-		Interactor: &interactor.ArtistInteractor{
+		Usecase: &interactor.ArtistInteractor{
 			ArtistRepository: &repository.ArtistRepository{
 				SqlHandler: sqlHandler,
 			},
@@ -31,7 +31,7 @@ func (controller *ArtistController) GetArtist() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
-		artist, err := controller.Interactor.GetArtist(id)
+		artist, err := controller.Usecase.GetArtist(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Artist Not Found"))
 		}

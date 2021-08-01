@@ -12,12 +12,12 @@ import (
 )
 
 type AlbumController struct {
-	Interactor usecase.AlbumUsecase
+	Usecase usecase.AlbumUsecase
 }
 
 func NewAlbumController(sqlHandler rdb.SqlHandler) *AlbumController {
 	return &AlbumController{
-		Interactor: &interactor.AlbumInteractor{
+		Usecase: &interactor.AlbumInteractor{
 			AlbumRepository: &repository.AlbumRepository{
 				SqlHandler: sqlHandler,
 			},
@@ -31,7 +31,7 @@ func (controller *AlbumController) GetAlbum() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
-		album, err := controller.Interactor.GetAlbum(id)
+		album, err := controller.Usecase.GetAlbum(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Album Not Found"))
 		}
@@ -45,7 +45,7 @@ func (controller *AlbumController) GetAlbumsByArtistId() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
-		albums, err := controller.Interactor.GetAlbumsByArtistId(id)
+		albums, err := controller.Usecase.GetAlbumsByArtistId(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Albums Not Found"))
 		}

@@ -3,25 +3,11 @@ package repository
 import (
 	"database/sql"
 	"domain"
-	"errors"
 	"interfaces/repository/rdb"
 )
 
 type ArtistRepository struct {
 	rdb.SqlHandler
-}
-
-func generateArtistLink(id, serviceName string) (string, string, error) {
-	if serviceName == "amazon_music" {
-		return "amazonMusic", "https://www.amazon.com/" + id, nil
-	}
-	if serviceName == "apple_music" {
-		return "appleMusic", "https://music.apple.com/artist/" + id, nil
-	}
-	if serviceName == "spotify" {
-		return "spotify", "https://open.spotify.com/artist/" + id, nil
-	}
-	return "", "", errors.New("invalid service name")
 }
 
 func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error) {
@@ -87,8 +73,8 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 
 	memberMap := map[int]*domain.Credit{}
 	aliasMap := map[int]*domain.Credit{}
-	links := map[string]string{}
-	parts := []domain.Occupation{}
+	links := domain.NewArtistLinks()
+	parts := domain.NewOccupations()
 	for rows.Next() {
 		var aID int
 		var name, attr, imageURL string
@@ -103,56 +89,55 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 				artist.Description = desc.String
 			}
 			if extID.Valid {
-				c, l, e := generateArtistLink(extID.String, extSName.String)
-				if err = e; err != nil {
+				err = links.AddLink(extID.String, extSName.String)
+				if err != nil {
 					return
 				}
-				links[c] = l
 			}
 			if !ocID.Valid {
 				continue
 			}
-			if partExists(parts, int(ocID.Int64)) {
+			if parts.Contains(int(ocID.Int64)) {
 				continue
 			}
 			part := domain.Occupation{ID: int(ocID.Int64), Title: ocTitle.String}
-			parts = append(parts, part)
+			parts.Append(part)
 		} else if attr == "member" {
 			if _, ok := memberMap[aID]; !ok {
 				memberMap[aID] = &domain.Credit{
-					Artist: domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
-					Parts:  []domain.Occupation{},
+					Artist: &domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
+					Parts:  domain.NewOccupations(),
 				}
 			}
 			if !ocID.Valid {
 				continue
 			}
-			if partExists(memberMap[aID].Parts, int(ocID.Int64)) {
+			if memberMap[aID].Parts.Contains(int(ocID.Int64)) {
 				continue
 			}
 			part := domain.Occupation{ID: int(ocID.Int64), Title: ocTitle.String}
-			memberMap[aID].Parts = append(memberMap[aID].Parts, part)
+			memberMap[aID].Parts.Append(part)
 		} else { // attr == "alias"
 			if _, ok := aliasMap[aID]; !ok {
 				aliasMap[aID] = &domain.Credit{
-					Artist: domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
-					Parts:  []domain.Occupation{},
+					Artist: &domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
+					Parts:  domain.NewOccupations(),
 				}
 			}
 			if !ocID.Valid {
 				continue
 			}
-			if partExists(aliasMap[aID].Parts, int(ocID.Int64)) {
+			if aliasMap[aID].Parts.Contains(int(ocID.Int64)) {
 				continue
 			}
 			part := domain.Occupation{ID: int(ocID.Int64), Title: ocTitle.String}
-			aliasMap[aID].Parts = append(aliasMap[aID].Parts, part)
+			aliasMap[aID].Parts.Append(part)
 		}
 	}
-	if len(links) > 0 {
+	if links.Length() > 0 {
 		artist.Links = links
 	}
-	if len(parts) > 0 {
+	if !parts.IsEmpty() {
 		artist.Parts = parts
 	}
 	if len(memberMap) > 0 {
