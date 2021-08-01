@@ -71,6 +71,27 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 	return
 }
 
+func scanCredit(rows rdb.Row, creditMap map[int]*domain.Credit) {
+	var aID int
+	var name, imageURL string
+	var ocID sql.NullInt64
+	var ocTitle sql.NullString
+	if err := rows.Scan(&aID, &name, &imageURL, &ocID, &ocTitle); err != nil {
+		return
+	}
+	if _, ok := creditMap[aID]; !ok {
+		creditMap[aID] = &domain.Credit{
+			Artist: &domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
+			Parts:  domain.NewOccupations(),
+		}
+	}
+	if !ocID.Valid {
+		return
+	}
+	part := domain.Occupation{ID: int(ocID.Int64), Title: ocTitle.String}
+	creditMap[aID].Parts.Append(part)
+}
+
 func (repo *ArtistRepository) FindMembers(id int) (members []domain.Credit, err error) {
 	rows, err := repo.Query(`SELECT DISTINCT artists.id, artists.name, artists.image_url, oc.id, oc.title
 							FROM artists
@@ -101,24 +122,7 @@ func (repo *ArtistRepository) FindMembers(id int) (members []domain.Credit, err 
 
 	memberMap := map[int]*domain.Credit{}
 	for rows.Next() {
-		var aID int
-		var name, imageURL string
-		var ocID sql.NullInt64
-		var ocTitle sql.NullString
-		if err = rows.Scan(&aID, &name, &imageURL, &ocID, &ocTitle); err != nil {
-			return
-		}
-		if _, ok := memberMap[aID]; !ok {
-			memberMap[aID] = &domain.Credit{
-				Artist: &domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
-				Parts:  domain.NewOccupations(),
-			}
-		}
-		if !ocID.Valid {
-			continue
-		}
-		part := domain.Occupation{ID: int(ocID.Int64), Title: ocTitle.String}
-		memberMap[aID].Parts.Append(part)
+		scanCredit(rows, memberMap)
 	}
 	for _, v := range memberMap {
 		members = append(members, *v)
@@ -150,24 +154,7 @@ func (repo *ArtistRepository) FindAliases(id int) (aliases []domain.Credit, err 
 
 	aliasMap := map[int]*domain.Credit{}
 	for rows.Next() {
-		var aID int
-		var name, imageURL string
-		var ocID sql.NullInt64
-		var ocTitle sql.NullString
-		if err = rows.Scan(&aID, &name, &imageURL, &ocID, &ocTitle); err != nil {
-			return
-		}
-		if _, ok := aliasMap[aID]; !ok {
-			aliasMap[aID] = &domain.Credit{
-				Artist: &domain.Artist{ID: aID, Name: name, ImageURL: imageURL},
-				Parts:  domain.NewOccupations(),
-			}
-		}
-		if !ocID.Valid {
-			continue
-		}
-		part := domain.Occupation{ID: int(ocID.Int64), Title: ocTitle.String}
-		aliasMap[aID].Parts.Append(part)
+		scanCredit(rows, aliasMap)
 	}
 	for _, v := range aliasMap {
 		aliases = append(aliases, *v)

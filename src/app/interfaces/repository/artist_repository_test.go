@@ -11,6 +11,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+const (
+	TestURL = "http://www.example.com"
+)
+
 type GetArtistTestSuite struct {
 	suite.Suite
 	sqlHandler       rdb.SqlHandler
@@ -43,7 +47,6 @@ func (suite *GetArtistTestSuite) TearDownTest() {
 }
 
 func (suite *GetArtistTestSuite) TestGetArtist() {
-	testURL := "http://www.example.com"
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
 	testParts1 := domain.NewOccupations()
@@ -56,7 +59,7 @@ func (suite *GetArtistTestSuite) TestGetArtist() {
 	expectedArtist := domain.Artist{
 		ID:          1,
 		Name:        "Artist 1",
-		ImageURL:    testURL,
+		ImageURL:    TestURL,
 		Description: "This is test artist 1",
 		Links:       links,
 		Parts:       testParts1,
@@ -74,7 +77,6 @@ func (suite *GetArtistTestSuite) TestGetArtist() {
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistAlias() {
-	testURL := "http://www.example.com"
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
 	testParts2 := domain.NewOccupations()
 	testParts2.Append(testPart2)
@@ -83,7 +85,7 @@ func (suite *GetArtistTestSuite) TestGetArtistAlias() {
 	expectedArtist := domain.Artist{
 		ID:       2,
 		Name:     "Artist 2",
-		ImageURL: testURL,
+		ImageURL: TestURL,
 		Links:    links,
 		Parts:    testParts2,
 	}
@@ -95,7 +97,6 @@ func (suite *GetArtistTestSuite) TestGetArtistAlias() {
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistGroup() {
-	testURL := "http://www.example.com"
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
 	testParts4 := domain.NewOccupations()
@@ -105,7 +106,7 @@ func (suite *GetArtistTestSuite) TestGetArtistGroup() {
 		ID:          4,
 		Name:        "Group Artist 1",
 		Description: "This is test group artist 1",
-		ImageURL:    testURL,
+		ImageURL:    TestURL,
 		Parts:       testParts4,
 	}
 
@@ -120,11 +121,10 @@ func (suite *GetArtistTestSuite) TestGetArtistGroup() {
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistGroupAlias() {
-	testURL := "http://www.example.com"
 	expectedArtist := domain.Artist{
 		ID:       5,
 		Name:     "Group Artist 2",
-		ImageURL: testURL,
+		ImageURL: TestURL,
 	}
 
 	artist, err := suite.artistRepository.GetArtist(5)
@@ -176,7 +176,6 @@ func (suite *FindMembersTestSuite) TearDownTest() {
 }
 
 func (suite *FindMembersTestSuite) TestFindMembers() {
-	testURL := "http://www.example.com"
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
 	testParts1 := domain.NewOccupations()
@@ -186,11 +185,11 @@ func (suite *FindMembersTestSuite) TestFindMembers() {
 	testParts2.Append(testPart2)
 	expect := []domain.Credit{
 		{
-			Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
+			Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: TestURL},
 			Parts:  testParts1,
 		},
 		{
-			Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
+			Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: TestURL},
 			Parts:  testParts2,
 		},
 	}
@@ -202,18 +201,17 @@ func (suite *FindMembersTestSuite) TestFindMembers() {
 }
 
 func (suite *FindMembersTestSuite) TestNoParts() {
-	testURL := "http://www.example.com"
 	expect := []domain.Credit{
 		{
-			Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
+			Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: TestURL},
 			Parts:  domain.NewOccupations(),
 		},
 		{
-			Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
+			Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: TestURL},
 			Parts:  domain.NewOccupations(),
 		},
 		{
-			Artist: &domain.Artist{ID: 4, Name: "Group Artist 1", ImageURL: testURL},
+			Artist: &domain.Artist{ID: 4, Name: "Group Artist 1", ImageURL: TestURL},
 			Parts:  domain.NewOccupations(),
 		},
 	}
@@ -263,13 +261,12 @@ func (suite *FindAliasesTestSuite) TearDownTest() {
 }
 
 func (suite *FindAliasesTestSuite) TestFindAliases() {
-	testURL := "http://www.example.com"
 	testPart3 := domain.Occupation{ID: 3, Title: "Part 3"}
 	testParts3 := domain.NewOccupations()
 	testParts3.Append(testPart3)
 	expect := []domain.Credit{
 		{
-			Artist: &domain.Artist{ID: 3, Name: "Alias Artist 2", ImageURL: testURL},
+			Artist: &domain.Artist{ID: 3, Name: "Alias Artist 2", ImageURL: TestURL},
 			Parts:  testParts3,
 		},
 	}
