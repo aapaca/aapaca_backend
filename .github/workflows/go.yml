@@ -45,10 +45,14 @@ jobs:
         mysql ${{ env.DB_DATABASE }} < ./mysql/initdb.d/1_main_tables.sql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
         mysql ${{ env.DB_DATABASE }} < ./mysql/initdb.d/2_junction_tables.sql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
-    - name: Test interfaces
-      run: go test -v interfaces/...
+    - name: Test domain
+      run: go test -v domain/...
       working-directory: ./src/app
-    
+
     - name: Test usecases
       run: go test -v usecases/...
+      working-directory: ./src/app
+
+    - name: Test interfaces
+      run: go test -v interfaces/...
       working-directory: ./src/app
