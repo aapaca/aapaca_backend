@@ -61,7 +61,7 @@ func (suite *GetSongTestSuite) SetupSuite() {
 	}
 }
 
-func (suite *GetSongTestSuite) TearDownTest() {
+func (suite *GetSongTestSuite) TearDownSuite() {
 	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -166,7 +166,7 @@ func (suite *GetAttendedSongsTestSuite) SetupSuite() {
 	}
 }
 
-func (suite *GetAttendedSongsTestSuite) TearDownTest() {
+func (suite *GetAttendedSongsTestSuite) TearDownSuite() {
 	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -246,7 +246,7 @@ func (suite *GetSongsInAlbumTestSuite) SetupSuite() {
 	}
 }
 
-func (suite *GetSongsInAlbumTestSuite) TearDownTest() {
+func (suite *GetSongsInAlbumTestSuite) TearDownSuite() {
 	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)

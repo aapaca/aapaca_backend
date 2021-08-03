@@ -37,7 +37,7 @@ func (suite *GetArtistTestSuite) SetupSuite() {
 	}
 }
 
-func (suite *GetArtistTestSuite) TearDownTest() {
+func (suite *GetArtistTestSuite) TearDownSuite() {
 	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -164,7 +164,7 @@ func (suite *FindMembersTestSuite) SetupSuite() {
 	}
 }
 
-func (suite *FindMembersTestSuite) TearDownTest() {
+func (suite *FindMembersTestSuite) TearDownSuite() {
 	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -247,7 +247,7 @@ func (suite *FindAliasesTestSuite) SetupSuite() {
 	}
 }
 
-func (suite *FindAliasesTestSuite) TearDownTest() {
+func (suite *FindAliasesTestSuite) TearDownSuite() {
 	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
