@@ -27,9 +27,7 @@ func TestGetArtistTestSuite(t *testing.T) {
 
 func (suite *GetArtistTestSuite) SetupSuite() {
 	suite.sqlHandler = infrastructure.NewSqlHandler()
-}
 
-func (suite *GetArtistTestSuite) SetupTest() {
 	err := repository.InitDb("testdata/get_artist_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -156,9 +154,7 @@ func TestFindMembersTestSuite(t *testing.T) {
 
 func (suite *FindMembersTestSuite) SetupSuite() {
 	suite.sqlHandler = infrastructure.NewSqlHandler()
-}
 
-func (suite *FindMembersTestSuite) SetupTest() {
 	err := repository.InitDb("testdata/find_members_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -241,9 +237,7 @@ func TestFindAliasesTestSuite(t *testing.T) {
 
 func (suite *FindAliasesTestSuite) SetupSuite() {
 	suite.sqlHandler = infrastructure.NewSqlHandler()
-}
 
-func (suite *FindAliasesTestSuite) SetupTest() {
 	err := repository.InitDb("testdata/find_aliases_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)

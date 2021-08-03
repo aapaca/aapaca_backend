@@ -51,9 +51,7 @@ func TestGetSongTestSuite(t *testing.T) {
 
 func (suite *GetSongTestSuite) SetupSuite() {
 	suite.sqlHandler = infrastructure.NewSqlHandler()
-}
 
-func (suite *GetSongTestSuite) SetupTest() {
 	err := repository.InitDb("testdata/get_song_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -158,9 +156,7 @@ func TestGetAttendedSongsTestSuite(t *testing.T) {
 
 func (suite *GetAttendedSongsTestSuite) SetupSuite() {
 	suite.sqlHandler = infrastructure.NewSqlHandler()
-}
 
-func (suite *GetAttendedSongsTestSuite) SetupTest() {
 	err := repository.InitDb("testdata/get_attended_songs_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -240,9 +236,7 @@ func TestGetSongsInAlbumTestSuite(t *testing.T) {
 
 func (suite *GetSongsInAlbumTestSuite) SetupSuite() {
 	suite.sqlHandler = infrastructure.NewSqlHandler()
-}
 
-func (suite *GetSongsInAlbumTestSuite) SetupTest() {
 	err := repository.InitDb("testdata/get_songs_in_album_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
