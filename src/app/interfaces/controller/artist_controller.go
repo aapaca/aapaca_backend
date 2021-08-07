@@ -31,6 +31,7 @@ func (controller *ArtistController) GetArtist() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
+
 		artist, err := controller.Usecase.GetArtist(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Artist Not Found"))

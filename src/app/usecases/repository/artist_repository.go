@@ -4,7 +4,7 @@ import "domain"
 
 type ArtistRepository interface {
 	/*
-	 * アーティストを取得する
+	 * IDに対応するアーティストを取得する
 	 */
 	GetArtist(int) (domain.Artist, error)
 
