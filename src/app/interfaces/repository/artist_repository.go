@@ -71,13 +71,27 @@ func (repo *ArtistRepository) GetArtist(id int) (artist domain.Artist, err error
 	return
 }
 
-func scanCredit(rows rdb.Row, creditMap map[int]*domain.Credit) {
+func scanCredits(rows rdb.Row) ([]domain.Credit, error) {
+	creditMap := map[int]*domain.Credit{}
+	for rows.Next() {
+		if err := scanCredit(rows, creditMap); err != nil {
+			return nil, err
+		}
+	}
+	credits := []domain.Credit{}
+	for _, v := range creditMap {
+		credits = append(credits, *v)
+	}
+	return credits, nil
+}
+
+func scanCredit(rows rdb.Row, creditMap map[int]*domain.Credit) error {
 	var aID int
 	var name, imageURL string
 	var ocID sql.NullInt64
 	var ocTitle sql.NullString
 	if err := rows.Scan(&aID, &name, &imageURL, &ocID, &ocTitle); err != nil {
-		return
+		return err
 	}
 	if _, ok := creditMap[aID]; !ok {
 		creditMap[aID] = &domain.Credit{
@@ -85,11 +99,11 @@ func scanCredit(rows rdb.Row, creditMap map[int]*domain.Credit) {
 			Parts:  domain.NewOccupations(),
 		}
 	}
-	if !ocID.Valid {
-		return
+	if ocID.Valid {
+		part := domain.Occupation{ID: int(ocID.Int64), Title: ocTitle.String}
+		creditMap[aID].Parts.Append(part)
 	}
-	part := domain.Occupation{ID: int(ocID.Int64), Title: ocTitle.String}
-	creditMap[aID].Parts.Append(part)
+	return nil
 }
 
 func (repo *ArtistRepository) FindMembers(id int) (members []domain.Credit, err error) {
@@ -120,13 +134,7 @@ func (repo *ArtistRepository) FindMembers(id int) (members []domain.Credit, err 
 	}
 	defer rows.Close()
 
-	memberMap := map[int]*domain.Credit{}
-	for rows.Next() {
-		scanCredit(rows, memberMap)
-	}
-	for _, v := range memberMap {
-		members = append(members, *v)
-	}
+	members, err = scanCredits(rows)
 	return
 }
 
@@ -152,12 +160,6 @@ func (repo *ArtistRepository) FindAliases(id int) (aliases []domain.Credit, err 
 	}
 	defer rows.Close()
 
-	aliasMap := map[int]*domain.Credit{}
-	for rows.Next() {
-		scanCredit(rows, aliasMap)
-	}
-	for _, v := range aliasMap {
-		aliases = append(aliases, *v)
-	}
+	aliases, err = scanCredits(rows)
 	return
 }
