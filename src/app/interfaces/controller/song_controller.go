@@ -31,6 +31,7 @@ func (controller *SongController) GetSong() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
+
 		song, err := controller.Usecase.GetSong(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Song Not Found"))
@@ -45,6 +46,7 @@ func (controller *SongController) GetAttendedSongs() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
+
 		songs, err := controller.Usecase.GetAttendedSongs(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Songs Not Found"))
@@ -59,6 +61,7 @@ func (controller *SongController) GetSongsInAlbum() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, APIError("Invalid Parameter"))
 		}
+
 		songs, err := controller.Usecase.GetSongsInAlbum(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, APIError("Songs Not Found"))

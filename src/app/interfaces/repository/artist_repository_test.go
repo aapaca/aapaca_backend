@@ -11,6 +11,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+const (
+	TestURL = "http://www.example.com"
+)
+
 type GetArtistTestSuite struct {
 	suite.Suite
 	sqlHandler       rdb.SqlHandler
@@ -23,9 +27,7 @@ func TestGetArtistTestSuite(t *testing.T) {
 
 func (suite *GetArtistTestSuite) SetupSuite() {
 	suite.sqlHandler = infrastructure.NewSqlHandler()
-}
 
-func (suite *GetArtistTestSuite) SetupTest() {
 	err := repository.InitDb("testdata/get_artist_init.sql", suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -35,7 +37,7 @@ func (suite *GetArtistTestSuite) SetupTest() {
 	}
 }
 
-func (suite *GetArtistTestSuite) TearDownTest() {
+func (suite *GetArtistTestSuite) TearDownSuite() {
 	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
 	if err != nil {
 		suite.T().Error(err)
@@ -43,7 +45,6 @@ func (suite *GetArtistTestSuite) TearDownTest() {
 }
 
 func (suite *GetArtistTestSuite) TestGetArtist() {
-	testURL := "http://www.example.com"
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
 	testParts1 := domain.NewOccupations()
@@ -56,15 +57,15 @@ func (suite *GetArtistTestSuite) TestGetArtist() {
 	expectedArtist := domain.Artist{
 		ID:          1,
 		Name:        "Artist 1",
-		ImageURL:    testURL,
+		ImageURL:    TestURL,
 		Description: "This is test artist 1",
 		Links:       links,
 		Parts:       testParts1,
 	}
+
 	artist, err := suite.artistRepository.GetArtist(1)
-	if err != nil {
-		panic(err)
-	}
+
+	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
 	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
 	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
@@ -74,111 +75,61 @@ func (suite *GetArtistTestSuite) TestGetArtist() {
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistAlias() {
-	testURL := "http://www.example.com"
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
-	testPart3 := domain.Occupation{ID: 3, Title: "Part 3"}
 	testParts2 := domain.NewOccupations()
-	testParts3 := domain.NewOccupations()
 	testParts2.Append(testPart2)
-	testParts3.Append(testPart3)
 	links := domain.NewArtistLinks()
 	links.AddLink("Test2222", "spotify")
 	expectedArtist := domain.Artist{
-		ID:   2,
-		Name: "Artist 2",
-		Aliases: []domain.Credit{
-			{
-				Artist: &domain.Artist{ID: 3, Name: "Alias Artist 2", ImageURL: testURL},
-				Parts:  testParts3,
-			},
-		},
-		ImageURL: testURL,
+		ID:       2,
+		Name:     "Artist 2",
+		ImageURL: TestURL,
 		Links:    links,
 		Parts:    testParts2,
 	}
+
 	artist, err := suite.artistRepository.GetArtist(2)
-	if err != nil {
-		suite.T().Error(err)
-	}
+
+	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), expectedArtist, artist)
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistGroup() {
-	testURL := "http://www.example.com"
 	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
 	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
-	testParts1 := domain.NewOccupations()
-	testParts2 := domain.NewOccupations()
 	testParts4 := domain.NewOccupations()
-	testParts1.Append(testPart1)
-	testParts1.Append(testPart2)
-	testParts2.Append(testPart2)
 	testParts4.Append(testPart1)
+	testParts4.Append(testPart2)
 	expectedArtist := domain.Artist{
-		ID:   4,
-		Name: "Group Artist 1",
-		Members: []domain.Credit{
-			{
-				Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
-				Parts:  testParts1,
-			},
-			{
-				Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
-				Parts:  testParts2,
-			},
-		},
+		ID:          4,
+		Name:        "Group Artist 1",
 		Description: "This is test group artist 1",
-		ImageURL:    testURL,
+		ImageURL:    TestURL,
 		Parts:       testParts4,
 	}
+
 	artist, err := suite.artistRepository.GetArtist(4)
-	if err != nil {
-		suite.T().Error(err)
-	}
+
+	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
 	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
-	repository.AssertCredits(suite.T(), expectedArtist.Members.([]domain.Credit), artist.Members.([]domain.Credit))
 	assert.Equal(suite.T(), expectedArtist.Description, artist.Description)
 	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
+	repository.AssertParts(suite.T(), expectedArtist.Parts, artist.Parts)
 }
 
 func (suite *GetArtistTestSuite) TestGetArtistGroupAlias() {
-	testURL := "http://www.example.com"
-	testParts3 := domain.NewOccupations()
-	testParts3.Append(domain.Occupation{ID: 3, Title: "Part 3"})
 	expectedArtist := domain.Artist{
-		ID:   5,
-		Name: "Group Artist 2",
-		Members: []domain.Credit{
-			{
-				Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: testURL},
-				Parts:  domain.NewOccupations(),
-			},
-			{
-				Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: testURL},
-				Parts:  domain.NewOccupations(),
-			},
-			{
-				Artist: &domain.Artist{ID: 4, Name: "Group Artist 1", ImageURL: testURL},
-				Parts:  domain.NewOccupations(),
-			},
-		},
-		Aliases: []domain.Credit{
-			{
-				Artist: &domain.Artist{ID: 6, Name: "Alias Group Artist 2", ImageURL: testURL},
-				Parts:  testParts3,
-			},
-		},
-		ImageURL: testURL,
+		ID:       5,
+		Name:     "Group Artist 2",
+		ImageURL: TestURL,
 	}
+
 	artist, err := suite.artistRepository.GetArtist(5)
-	if err != nil {
-		suite.T().Error(err)
-	}
+
+	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), expectedArtist.ID, artist.ID)
 	assert.Equal(suite.T(), expectedArtist.Name, artist.Name)
-	assert.ElementsMatch(suite.T(), expectedArtist.Members, artist.Members)
-	assert.Equal(suite.T(), expectedArtist.Aliases, artist.Aliases)
 	assert.Equal(suite.T(), expectedArtist.ImageURL, artist.ImageURL)
 }
 
@@ -189,4 +140,140 @@ func (suite *GetArtistTestSuite) TestGetArtistInvalidID() {
 		suite.T().Error(err)
 	}
 	assert.Equal(suite.T(), emptyArtist, artist)
+}
+
+type FindMembersTestSuite struct {
+	suite.Suite
+	sqlHandler       rdb.SqlHandler
+	artistRepository ArtistRepository
+}
+
+func TestFindMembersTestSuite(t *testing.T) {
+	suite.Run(t, new(FindMembersTestSuite))
+}
+
+func (suite *FindMembersTestSuite) SetupSuite() {
+	suite.sqlHandler = infrastructure.NewSqlHandler()
+
+	err := repository.InitDb("testdata/find_members_init.sql", suite.sqlHandler)
+	if err != nil {
+		suite.T().Error(err)
+	}
+	suite.artistRepository = ArtistRepository{
+		SqlHandler: suite.sqlHandler,
+	}
+}
+
+func (suite *FindMembersTestSuite) TearDownSuite() {
+	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
+	if err != nil {
+		suite.T().Error(err)
+	}
+}
+
+func (suite *FindMembersTestSuite) TestFindMembers() {
+	testPart1 := domain.Occupation{ID: 1, Title: "Part 1"}
+	testPart2 := domain.Occupation{ID: 2, Title: "Part 2"}
+	testParts1 := domain.NewOccupations()
+	testParts2 := domain.NewOccupations()
+	testParts1.Append(testPart1)
+	testParts1.Append(testPart2)
+	testParts2.Append(testPart2)
+	expect := []domain.Credit{
+		{
+			Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: TestURL},
+			Parts:  testParts1,
+		},
+		{
+			Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: TestURL},
+			Parts:  testParts2,
+		},
+	}
+
+	actual, err := suite.artistRepository.FindMembers(4)
+
+	assert.NoError(suite.T(), err)
+	repository.AssertCredits(suite.T(), expect, actual)
+}
+
+func (suite *FindMembersTestSuite) TestNoParts() {
+	expect := []domain.Credit{
+		{
+			Artist: &domain.Artist{ID: 1, Name: "Artist 1", ImageURL: TestURL},
+			Parts:  domain.NewOccupations(),
+		},
+		{
+			Artist: &domain.Artist{ID: 2, Name: "Artist 2", ImageURL: TestURL},
+			Parts:  domain.NewOccupations(),
+		},
+		{
+			Artist: &domain.Artist{ID: 4, Name: "Group Artist 1", ImageURL: TestURL},
+			Parts:  domain.NewOccupations(),
+		},
+	}
+
+	actual, err := suite.artistRepository.FindMembers(5)
+
+	assert.NoError(suite.T(), err)
+	repository.AssertCredits(suite.T(), expect, actual)
+}
+
+func (suite *FindMembersTestSuite) TestNoMembers() {
+	actual, err := suite.artistRepository.FindMembers(100)
+
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), 0, len(actual))
+}
+
+type FindAliasesTestSuite struct {
+	suite.Suite
+	sqlHandler       rdb.SqlHandler
+	artistRepository ArtistRepository
+}
+
+func TestFindAliasesTestSuite(t *testing.T) {
+	suite.Run(t, new(FindAliasesTestSuite))
+}
+
+func (suite *FindAliasesTestSuite) SetupSuite() {
+	suite.sqlHandler = infrastructure.NewSqlHandler()
+
+	err := repository.InitDb("testdata/find_aliases_init.sql", suite.sqlHandler)
+	if err != nil {
+		suite.T().Error(err)
+	}
+	suite.artistRepository = ArtistRepository{
+		SqlHandler: suite.sqlHandler,
+	}
+}
+
+func (suite *FindAliasesTestSuite) TearDownSuite() {
+	err := infrastructure.DeleteAllRecords(suite.sqlHandler)
+	if err != nil {
+		suite.T().Error(err)
+	}
+}
+
+func (suite *FindAliasesTestSuite) TestFindAliases() {
+	testPart3 := domain.Occupation{ID: 3, Title: "Part 3"}
+	testParts3 := domain.NewOccupations()
+	testParts3.Append(testPart3)
+	expect := []domain.Credit{
+		{
+			Artist: &domain.Artist{ID: 3, Name: "Alias Artist 2", ImageURL: TestURL},
+			Parts:  testParts3,
+		},
+	}
+
+	actual, err := suite.artistRepository.FindAliases(2)
+
+	assert.NoError(suite.T(), err)
+	repository.AssertCredits(suite.T(), expect, actual)
+}
+
+func (suite *FindAliasesTestSuite) TestNoAliases() {
+	actual, err := suite.artistRepository.FindAliases(100)
+
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), 0, len(actual))
 }
